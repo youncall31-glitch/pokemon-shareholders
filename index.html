@@ -1163,6 +1163,257 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
 .board-svg g:focus { outline: none; }
 .board-svg g:focus-visible circle.hl { opacity: 1; stroke: var(--info-bd); }
 .board-svg .ns-moon:focus-visible .ns-halo { stroke: var(--info-bd); stroke-width: 1; }
+
+/* =========================================================
+   v3.4 · 칸 속성 · 계절 지도 · 말판의 야생 포켓몬 · 팀 배틀 · 볼 · 경험치
+   ========================================================= */
+:root {
+  --xp: #3b82f6;
+  --xp-bg: #dbeafe;
+  --tp-on: #fff7ed;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --xp: #60a5fa; --xp-bg: #0d2347; --tp-on: #33190a; }
+}
+:root[data-theme="dark"] { --xp: #60a5fa; --xp-bg: #0d2347; --tp-on: #33190a; }
+
+/* 칸 속성 동그라미 (칸 모서리) */
+.nt { pointer-events: none; }
+.nt circle { fill: #94a3b8; stroke: #ffffff; stroke-width: 1.1; transition: fill 0.5s ease; }
+.nt text { font-size: 5.2px; text-anchor: middle; dominant-baseline: central; }
+.nt-in { transform-box: fill-box; transform-origin: center; }
+.nt.flip .nt-in { animation: ntFlip 0.8s ease-out backwards; }
+@keyframes ntFlip { 0% { transform: scale(0.3) rotate(-180deg); opacity: 0.3; } 60% { transform: scale(1.7) rotate(20deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); } }
+.sw-type { width: 11px; height: 11px; border-radius: 50%; background: conic-gradient(var(--t-water) 0 33%, var(--t-fire) 0 66%, var(--t-grass) 0); box-shadow: 0 0 0 1.5px #ffffff; }
+
+/* 계절 지도: 봄(기본) · 여름 · 가을 · 겨울 */
+.m-land, .m-border, .m-edge, .m-home, .m-river { transition: fill 1.2s ease, stroke 1.2s ease; }
+.stage-wrap.season-1 { --map-land: #d9f99d; --map-border: #bef264; --map-edge: #4d7c0f; }
+.stage-wrap.season-2 { --map-land: #fde8cc; --map-border: #fcd9a8; --map-edge: #c2410c; --map-home: #fcd34d; }
+.stage-wrap.season-3 { --map-land: #f1f5f9; --map-border: #e2e8f0; --map-edge: #94a3b8; --map-home: #dbeafe; --map-river: #bae6fd; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .stage-wrap.season-1 { --map-land: #16301a; --map-border: #1f4224; --map-edge: #4d7c0f; }
+  :root:not([data-theme="light"]) .stage-wrap.season-2 { --map-land: #33240f; --map-border: #422f15; --map-edge: #9a3412; --map-home: #4a3a12; }
+  :root:not([data-theme="light"]) .stage-wrap.season-3 { --map-land: #1c2533; --map-border: #263246; --map-edge: #64748b; --map-home: #1e3350; --map-river: #24476e; }
+}
+:root[data-theme="dark"] .stage-wrap.season-1 { --map-land: #16301a; --map-border: #1f4224; --map-edge: #4d7c0f; }
+:root[data-theme="dark"] .stage-wrap.season-2 { --map-land: #33240f; --map-border: #422f15; --map-edge: #9a3412; --map-home: #4a3a12; }
+:root[data-theme="dark"] .stage-wrap.season-3 { --map-land: #1c2533; --map-border: #263246; --map-edge: #64748b; --map-home: #1e3350; --map-river: #24476e; }
+.season-deco .sd { font-size: 9px; text-anchor: middle; dominant-baseline: central; opacity: 0.8; transform-box: fill-box; transform-origin: center; animation: sdSway 3.2s ease-in-out infinite; }
+@keyframes sdSway { 0%, 100% { transform: rotate(-8deg) translateY(0); } 50% { transform: rotate(8deg) translateY(-1.5px); } }
+
+/* 말판에서 노는 야생 포켓몬 */
+.wd { position: absolute; left: 0; top: 0; width: 0; height: 0; transition: transform 0.24s ease-out; }
+.wd-in { position: absolute; left: 0; top: 0; width: 0; height: 0; animation: wdBob 2.6s ease-in-out infinite; }
+.wd-grass { position: absolute; left: calc(var(--u) * -10px); top: calc(var(--u) * -3.5px); width: calc(var(--u) * 20px); height: calc(var(--u) * 7px); border-radius: 50%; background: radial-gradient(closest-side, var(--tc), transparent); opacity: 0.55; }
+.wd-mon { position: absolute; left: 0; bottom: calc(var(--u) * -1px); height: calc(var(--u) * 21px); width: auto; max-width: none; transform: translateX(-50%); filter: drop-shadow(0 calc(var(--u) * 1px) calc(var(--u) * 1px) rgba(15, 23, 42, 0.35)); -webkit-user-drag: none; }
+.wd-mon.still { height: calc(var(--u) * 25px); bottom: calc(var(--u) * -3px); }
+.wd .tk2-emb { width: calc(var(--u) * 16px); height: calc(var(--u) * 16px); left: calc(var(--u) * -8px); font-size: calc(var(--u) * 9px); }
+.wd-mark { position: absolute; left: calc(var(--u) * 3px); top: calc(var(--u) * -27px); display: grid; place-items: center; width: calc(var(--u) * 7.5px); height: calc(var(--u) * 7.5px); border-radius: 50%; background: #facc15; color: #0f172a; font-size: calc(var(--u) * 5.6px); font-weight: 900; line-height: 1; box-shadow: 0 0 0 calc(var(--u) * 0.9px) #ffffff, 0 1px 3px rgba(15, 23, 42, 0.35); animation: wdMark 1.3s ease-in-out infinite; }
+.wd.legend .wd-mark { background: #a855f7; color: #ffffff; }
+.wd.legend .wd-grass { opacity: 0.9; box-shadow: 0 0 calc(var(--u) * 6px) #facc15; }
+.wd.pop .wd-in { animation: wdPop 0.7s cubic-bezier(0.3, 1.6, 0.5, 1), wdBob 2.6s ease-in-out 0.7s infinite; }
+@keyframes wdBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(calc(var(--u) * -1.3px)); } }
+@keyframes wdPop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+@keyframes wdMark { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(calc(var(--u) * -1.6px)); } }
+.hb-type { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px; font-weight: 800; color: var(--text-strong); }
+.hb-tc { display: grid; place-items: center; flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #ffffff; font-size: 12px; line-height: 1; box-shadow: 0 1px 3px var(--shadow-strong); }
+.hb-wild { margin-top: 6px; padding: 6px 10px; border-radius: 10px; background: var(--hint-bg); color: var(--hint-fg); font-size: 13px; font-weight: 800; }
+
+/* 볼 아이콘 */
+.bb-ico, .bb-big { --bc: #ef4444; position: relative; display: inline-block; flex: 0 0 auto; width: 13px; height: 13px; border-radius: 50%; border: 1.6px solid #0f172a; background: linear-gradient(to bottom, var(--bc) 0 44%, #0f172a 44% 56%, #ffffff 56%); vertical-align: -2px; margin-right: 2px; }
+.bb-ico.b-great, .bb-big.b-great, .bc-ball.b-great .bb-ico { --bc: #3b82f6; }
+.bb-ico.b-ultra, .bb-big.b-ultra, .bc-ball.b-ultra .bb-ico { background: linear-gradient(to bottom, #1f2937 0 16%, #facc15 16% 27%, #1f2937 27% 44%, #0f172a 44% 56%, #ffffff 56%); }
+.bb-big { width: 34px; height: 34px; border-width: 2.5px; margin: 0; }
+.bb-big::after, .bc-ball .bb-ico::after { content: ""; position: absolute; left: 50%; top: 50%; width: 34%; height: 34%; transform: translate(-50%, -50%); border-radius: 50%; background: #ffffff; border: 2px solid #0f172a; }
+.bt-ball.b-great { background: linear-gradient(to bottom, #3b82f6 0 45%, #0f172a 45% 56%, #ffffff 56%); }
+.bt-ball.b-ultra { background: linear-gradient(to bottom, #1f2937 0 15%, #facc15 15% 27%, #1f2937 27% 45%, #0f172a 45% 56%, #ffffff 56%); }
+.bag { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; }
+.bag-b { white-space: nowrap; }
+
+/* 배틀 전 카드: 상대 · 관장님 팀 · 내 팀 고르기 */
+.foe-card { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: center; gap: 10px; padding: 8px 10px; border-radius: 16px; background: var(--surface-2); border: 2px solid var(--border); }
+.foe-card .vis { height: 104px; margin: 0; }
+.foe-card .poke-img { height: 96px; }
+.fc-txt { display: grid; gap: 3px; min-width: 0; justify-items: start; }
+.fc-label { font-size: 11.5px; font-weight: 800; color: var(--muted); }
+.fc-txt b { font-family: var(--font-display); font-weight: 400; font-size: 21px; line-height: 1.2; color: var(--text-strong); }
+.fc-txt small { font-size: 12.5px; font-weight: 800; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+.type-chip { display: inline-flex; align-items: center; gap: 3px; padding: 1px 8px; border-radius: 999px; background: var(--tc); color: #ffffff; font-size: 11.5px; font-weight: 800; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25); }
+.boss-team { display: grid; gap: 6px; padding: 10px; border-radius: 16px; background: var(--surface-2); border: 2px solid var(--border); }
+.bt-who { font-size: 13px; font-weight: 800; color: var(--text-strong); }
+.bt-row { display: flex; gap: 8px; overflow-x: auto; }
+.bt-one { display: grid; justify-items: center; gap: 2px; min-width: 76px; text-align: center; }
+.bt-one .mini-em { width: 52px; height: 52px; }
+.bt-one b { font-size: 12.5px; line-height: 1.2; color: var(--text-strong); }
+.bt-one small { font-size: 11px; font-weight: 800; color: var(--muted); }
+.team-pick { display: grid; gap: 8px; padding: 10px; border-radius: 16px; border: 2px solid var(--warn-bd); background: var(--warn-bg); }
+.tp-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 8px; }
+.tp-head b { font-size: 14.5px; color: var(--text-strong); }
+.tp-head small { font-size: 11.5px; font-weight: 700; color: var(--muted-2); }
+.tp-slots { display: flex; align-items: center; gap: 8px; }
+.tp-slot { position: relative; display: grid; place-items: center; width: 52px; height: 52px; padding: 0; border: 2.5px solid var(--primary); border-radius: 50%; background: var(--surface); }
+.tp-slot .mini-em { width: 44px; height: 44px; border-width: 0; box-shadow: none; }
+.tp-slot b { position: absolute; right: -4px; top: -4px; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--primary); color: #ffffff; font-size: 11.5px; line-height: 1; }
+.tp-slot.empty { border-style: dashed; border-color: var(--border-strong); color: var(--muted); font-weight: 800; font-size: 16px; }
+.tp-auto { margin-left: auto; }
+.tp-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; max-height: 236px; overflow-y: auto; padding: 2px; overscroll-behavior: contain; }
+.tp-mon { position: relative; display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: center; gap: 7px; min-height: 58px; padding: 6px 8px; border: 2px solid var(--border); border-radius: 14px; background: var(--surface); text-align: left; }
+.tp-mon.on { border-color: var(--primary); background: var(--tp-on); box-shadow: 0 0 0 2px var(--primary-glow); }
+.tp-txt { display: grid; gap: 1px; min-width: 0; }
+.tp-txt b { font-size: 13.5px; line-height: 1.2; color: var(--text-strong); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tp-txt small { font-size: 11px; font-weight: 800; color: var(--muted-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.tp-tag { justify-self: start; padding: 0 6px; border-radius: 999px; font-size: 10.5px; font-weight: 800; }
+.tp-tag.good { background: var(--good-bg); color: var(--good-fg); }
+.tp-tag.bad { background: var(--bad-bg); color: var(--bad-fg); }
+.tp-no { position: absolute; left: -5px; top: -5px; z-index: 1; display: grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; background: var(--primary); color: #ffffff; font-size: 12px; font-weight: 900; line-height: 1; box-shadow: 0 0 0 2px var(--surface); }
+
+/* 볼 가게 */
+.ball-list { display: grid; gap: 8px; }
+.ball-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 10px; border: 2px solid var(--border); border-radius: 14px; background: var(--surface-2); }
+.ball-row.lock { opacity: 0.6; }
+.br-mid { display: grid; gap: 2px; min-width: 0; }
+.br-mid b { font-size: 14px; color: var(--text-strong); }
+.br-mid b small { font-size: 11.5px; color: var(--muted); }
+.br-mid > small { font-size: 11.5px; font-weight: 700; color: var(--muted-2); }
+.br-btns { display: flex; gap: 6px; }
+.br-btns .btn-small { display: grid; justify-items: center; gap: 0; min-width: 62px; padding: 4px 8px; line-height: 1.2; }
+.br-btns .btn-small small { font-size: 10.5px; font-weight: 800; opacity: 0.85; }
+
+/* 도감: 공격 · 체력 · 경험치 */
+.mon-stat2 { display: flex; justify-content: center; gap: 8px; font-size: 12px; font-weight: 800; color: var(--text-strong); font-variant-numeric: tabular-nums; }
+.mon-xp { height: 7px; margin: 3px 6px 0; border-radius: 999px; background: var(--xp-bg); overflow: hidden; }
+.mon-xp i { display: block; height: 100%; border-radius: 999px; background: var(--xp); }
+.mon-xp-t { font-size: 10.5px; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* 배틀 화면 더하기: 정보 상자 · 명령 · 끝 화면 (게임기 화면 느낌, 밝은 색 하나로 고정) */
+.bt-top button.on { background: #facc15; border-color: #facc15; color: #0f172a; }
+.bt-top .bt-auto { margin-left: 0; }
+.bt-info { padding: 5px 9px 6px; }
+.bt-name small { color: #334155; }
+.bt-sub { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 3px; }
+.bt-hpn { font-size: 11.5px; font-weight: 900; color: #0f172a; font-variant-numeric: tabular-nums; }
+.bt-dots { display: inline-flex; gap: 3px; }
+.bt-dots i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #0f172a; background: linear-gradient(to bottom, #ef4444 0 45%, #0f172a 45% 56%, #ffffff 56%); }
+.bt-dots i.cur { box-shadow: 0 0 0 2px #facc15; }
+.bt-dots i.out { background: #cbd5e1; border-color: #94a3b8; }
+.bt-xp { height: 5px; margin-top: 4px; border-radius: 999px; background: #dbeafe; overflow: hidden; }
+.bt-xp i { display: block; height: 100%; width: 0; background: #3b82f6; }
+.bt-dmg { position: absolute; left: 0; top: 0; padding: 0 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.92); color: #dc2626; font-family: var(--font-display); font-size: 22px; line-height: 1.2; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25); }
+.bt-dmg.crit { color: #ffffff; background: #dc2626; font-size: 26px; }
+.bt-text { min-height: 64px; padding: 10px 34px 10px 14px; font-size: 18px; }
+.bt-text.end .bt-next { display: none; }
+.bt-cmd { display: grid; gap: 8px; padding: 10px; border-top: 4px solid #0f172a; background: #f8fafc; color: #0f172a; }
+.bt-cmd .btn { background: #ffffff; color: #0f172a; border-color: #cbd5e1; }
+.bt-cmd .btn:disabled { opacity: 0.45; }
+.bc-atk { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 10px; min-height: 64px; padding: 8px 14px; border: 3px solid #0f172a; border-radius: 16px; background: linear-gradient(135deg, #ffffff, #fee2e2); color: #0f172a; text-align: left; box-shadow: 0 4px 0 #0f172a; }
+.bc-atk:active { transform: translateY(3px); box-shadow: 0 1px 0 #0f172a; }
+.ba-ico { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #0f172a; font-size: 24px; }
+.bc-atk b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 21px; line-height: 1.2; }
+.bc-atk small { display: block; font-size: 12px; font-weight: 800; color: #475569; }
+.bc-balls { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 6px; }
+.bc-ball { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: center; gap: 7px; min-height: 50px; padding: 6px 10px; border: 2.5px solid #0f172a; border-radius: 14px; background: #ffffff; color: #0f172a; text-align: left; }
+.bc-ball .bb-ico { width: 22px; height: 22px; border-width: 2px; margin: 0; }
+.bc-ball b { display: block; font-size: 13.5px; line-height: 1.2; }
+.bc-ball small { display: block; font-size: 11.5px; font-weight: 800; color: #b45309; }
+.bc-ball:disabled { opacity: 0.45; }
+.bc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bc-row .btn { min-height: 46px; }
+.bc-hint { padding: 7px 10px; border-radius: 12px; background: #fef9c3; color: #854d0e; font-size: 13px; font-weight: 800; line-height: 1.4; animation: hintGlow 1.2s ease-in-out infinite alternate; }
+.bc-hint.soft { animation: none; background: #eef2ff; color: #3730a3; font-weight: 700; }
+@keyframes hintGlow { from { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.0); } to { box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.35); } }
+.bc-title { font-size: 14px; font-weight: 800; }
+.bc-title small { display: block; font-size: 11.5px; color: #64748b; }
+.bc-list { display: grid; gap: 6px; }
+.bc-mon { display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: center; gap: 8px; min-height: 54px; padding: 5px 10px; border: 2.5px solid #0f172a; border-radius: 14px; background: #ffffff; color: #0f172a; text-align: left; }
+.bc-mon:disabled { opacity: 0.5; }
+.bc-mon.cur { border-color: #facc15; }
+.bc-mon b { display: block; font-size: 14px; }
+.bc-mon small { display: block; font-size: 11.5px; font-weight: 800; color: #475569; }
+.bc-back { min-height: 42px; }
+.bt-end { display: grid; gap: 8px; text-align: center; }
+.be-title { font-family: var(--font-display); font-size: 22px; line-height: 1.25; color: #0f172a; text-wrap: balance; }
+.be-caught { display: grid; place-items: center; }
+.be-caught .vis.sm { height: 72px; }
+.be-caught .poke-img { height: 68px; }
+.be-body { font-size: 13.5px; font-weight: 700; line-height: 1.55; color: #334155; white-space: pre-line; text-align: left; }
+.be-gains { display: grid; gap: 6px; text-align: left; }
+.be-mon { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 12px; background: #ffffff; border: 2px solid #e2e8f0; }
+.be-mid { min-width: 0; }
+.be-mid b { display: block; font-size: 13.5px; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.be-mid b small { font-size: 11.5px; color: #2563eb; }
+.be-xp { height: 6px; margin-top: 3px; border-radius: 999px; background: #dbeafe; overflow: hidden; }
+.be-xp i { display: block; height: 100%; background: #3b82f6; }
+.be-plus { font-size: 12.5px; font-weight: 900; color: #2563eb; white-space: nowrap; }
+.be-ok { min-height: 52px; }
+/* 다시 열었을 때 결과 카드 (테마 색을 따라가요) */
+.sheet-body .bt-end .be-title { color: var(--text-strong); }
+.sheet-body .bt-end .be-body { color: var(--text); }
+.sheet-body .bt-end .be-mon { background: var(--surface-2); border-color: var(--border); }
+.sheet-body .bt-end .be-mid b { color: var(--text-strong); }
+
+/* 초안 표시 · 시험용 버튼 */
+.draft-chip { display: inline-block; margin-left: 4px; padding: 1px 8px; border-radius: 999px; background: #facc15; color: #0f172a; font-family: var(--font-body); font-size: 11px; font-weight: 900; vertical-align: 3px; }
+.dev-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* 배틀 상자는 위에 붙여서, 명령이 바뀌어도 화면이 들썩이지 않게 */
+.battle { align-content: start; overflow-y: auto; overscroll-behavior: contain; }
+.bt-wrap { margin-top: clamp(0px, 3vh, 36px); }
+.bt-text.ask .bt-next { display: none; }
+.tp-txt small .tp-tag { margin-left: 2px; }
+.draft-chip { margin: 0 4px 0 0; vertical-align: 4px; }
+
+/* =========================================================
+   v3.4 · 내 주식 성적: 지갑 띠 아래 줄 · 성적표
+   ========================================================= */
+:root {
+  --ws-up: #fca5a5;
+  --ws-down: #93c5fd;
+  --ws-earn: #fde68a;
+}
+.wallet-sub { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.ws-box { display: grid; gap: 1px; min-width: 0; padding: 6px 10px; border: 1.5px solid rgba(255, 255, 255, 0.14); border-radius: 12px; background: var(--wallet-box); color: var(--wallet-fg); text-align: left; }
+.ws-top { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; min-width: 0; }
+.ws-label { flex: 0 1 auto; min-width: 0; font-size: 11px; color: var(--wallet-label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ws-val { flex: 0 0 auto; font-family: var(--font-display); font-size: clamp(15px, 4.4vw, 19px); line-height: 1.2; color: var(--wallet-fg); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ws-val.up { color: var(--ws-up); }
+.ws-val.down { color: var(--ws-down); }
+.ws-val.earn { color: var(--ws-earn); }
+.ws-val.earn.down { color: var(--ws-down); }
+.ws-sub { font-size: 11px; font-weight: 700; color: var(--wallet-label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ws-box.bump .ws-val { animation: bump 0.45s ease; }
+@media (max-width: 360px) { .ws-label { font-size: 10px; } .ws-box { padding: 5px 8px; } }
+
+/* 성적표 */
+.report-card { display: grid; gap: 10px; }
+.rp-hero { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.rp-cell { display: grid; gap: 2px; min-width: 0; padding: 10px 12px; border-radius: 14px; background: var(--surface-2); border: 2px solid var(--border); }
+.rp-l { font-size: 12px; font-weight: 800; color: var(--muted-2); }
+.rp-big { font-family: var(--font-display); font-size: 30px; line-height: 1.15; color: var(--text-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rp-big small { margin-left: 2px; font-family: var(--font-body); font-size: 14px; font-weight: 800; }
+.rp-big.up { color: var(--up); }
+.rp-big.down { color: var(--down); }
+.rp-big.earn { color: var(--gold-fg); }
+.rp-big.earn.down { color: var(--down); }
+.rp-s { font-size: 12px; font-weight: 700; color: var(--muted); }
+.rp-line { padding: 8px 12px; border-radius: 12px; background: var(--chip-bg); font-size: 13px; font-weight: 700; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+.rp-line b { color: var(--text-strong); }
+.rp-list { display: grid; gap: 6px; }
+.rp-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 48px; padding: 6px 10px; border: 2px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); text-align: left; font-variant-numeric: tabular-nums; }
+.rp-co { min-width: 0; font-size: 13.5px; font-weight: 800; color: var(--text-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rp-co small { font-size: 11.5px; color: var(--muted); }
+.rp-pr { min-width: 0; font-size: 12px; font-weight: 700; color: var(--muted-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rp-r { display: grid; justify-items: end; line-height: 1.2; }
+.rp-r b { font-size: 15px; }
+.rp-r small { font-size: 11px; font-weight: 800; }
+.rp-r.up { color: var(--up); }
+.rp-r.down { color: var(--down); }
+.rp-r.same { color: var(--muted); }
+.rp-next { display: grid; gap: 4px; padding: 10px 12px; border-radius: 14px; border: 2px dashed var(--border-strong); }
+.rp-next-t { font-size: 13.5px; font-weight: 800; color: var(--text-strong); }
+.rp-next .banner { margin-top: 4px; }
+.txt-up { color: var(--up); }
+.txt-down { color: var(--down); }
 </style>
 </head>
 <body>
@@ -1192,6 +1443,16 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         <div class="w-label">🏅 배지</div>
         <div class="w-val badge"><span id="badge-val">0</span><small>/8</small></div>
       </div>
+    </div>
+    <div class="wallet-sub">
+      <button class="ws-box" type="button" data-act="goto-report" aria-describedby="ret-sub">
+        <span class="ws-top"><span class="ws-label">📊 주식 수익률</span><span class="ws-val" id="ret-val">—</span></span>
+        <span class="ws-sub" id="ret-sub">주식을 사면 보여요</span>
+      </button>
+      <button class="ws-box" type="button" data-act="goto-report" aria-describedby="earn-sub">
+        <span class="ws-top"><span class="ws-label">💰 주식으로 번 돈</span><span class="ws-val earn" id="earn-val">0원</span></span>
+        <span class="ws-sub" id="earn-sub"></span>
+      </button>
     </div>
   </div>
 </header>
@@ -1244,6 +1505,8 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
           <span><span class="sw sw-river"></span>한강</span>
           <span><span class="sw sw-home"></span>우리 동네 강동구</span>
           <span>🌕 남산 보름달</span>
+          <span><span class="sw sw-type"></span>칸 속성 (그 타입이 잘 나와요)</span>
+          <span>🐾 야생 포켓몬 (딱 멈추면 배틀)</span>
         </div>
       </div>
       <div class="stack">
@@ -1262,6 +1525,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   <section id="tab-stock" role="tabpanel" aria-labelledby="tbtn-stock" hidden>
     <div class="cols">
       <div class="stack">
+        <div class="card report-card" id="report-card"></div>
         <div id="stock-news"></div>
         <div class="card">
           <h2 class="card-title">⚔️ 동네 회사 상성 원</h2>
@@ -1299,6 +1563,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       <div class="stack">
         <div id="draw-result" aria-live="polite"></div>
         <div class="card" id="shop-machine"></div>
+        <div class="card" id="shop-balls"></div>
         <div class="card" id="shop-capsules"></div>
       </div>
       <div class="stack">
@@ -1329,7 +1594,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
           <h2 class="card-title" style="margin: 0">🐾 내 포켓몬</h2>
           <span class="chip" id="mon-count"></span>
         </div>
-        <div class="caption mt8">같은 가족 3마리가 모이면 합체해서 진화해요. 말판을 같이 다닐 포켓몬을 골라 보세요.</div>
+        <div class="caption mt8">배틀하면 경험치가 쌓여서 레벨이 올라요. 레벨이 오르면 ⚡ 공격과 ❤️ 체력이 세져요. 같은 가족 3마리가 모이면 합체해서 진화해요.</div>
         <div class="mon-grid mt12" id="mon-grid"></div>
       </div>
       <div class="card">
@@ -1391,6 +1656,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
      1. 게임 설정 & 데이터
      ========================================================= */
   const VERSION = 3;
+  const DRAFT = false; // 초안(검사용) 빌드에서만 true → 엄마·아빠 메뉴에 시험용 버튼
   const SAVE_KEY = 'pokemon-shareholders-v3';
   const OLD_SAVE_KEY = 'pokemon-shareholders-v2';
   const DEVICE_KEY = 'pokemon-shareholders-device';
@@ -1399,20 +1665,62 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   const BONUS = 1000;
   const QUIZ_REWARD = 500;
   const WILD_PRIZE = 400;
-  const CATCH_RATE = 0.3;
   const PRACTICE_PRIZE = 500;
-  const DIV_PER_SHARE = 30;
+  const DIV_PER_SHARE = 50;
   const DRAW_PRICE = 500;
-  const MAX_LV = 10;
-  const LV_POWER = 5;
+  // 포켓몬 능력치: ⚡ 공격 = 기본 힘 + 레벨마다 2 + 별마다 10 · ❤️ 체력 = 24 + 기본 힘 × 0.9 + 레벨마다 4 + 별마다 8
+  const MAX_LV = 50;
+  const LV_ATK = 2;
+  const LV_HP = 4;
+  const HP_BASE = 24;
+  const HP_PER_POW = 0.9;
   const STAR_POWER = 10;
+  const STAR_HP = 8;
   const MAX_STARS = 3;
   const MAX_REFUND = 200;
+  // 배틀: 한 번 맞을 때 = 공격 × 상성 × 0.75 (± 15%), 가끔 급소(× 1.5)
+  const DMG_K = 0.75;
+  const CRIT_RATE = 0.08;
+  const TEAM_MAX = 3;
+  const REST_XP = 20;
+  const SNACK_XP = 30;
   const NEWS_ACCURACY = 0.75;
   const MEETING_EVERY = 7;
   const MAX_PLAYERS = 4;
   const MAX_SHARES = 30;
-  const DICE_CHOICES = [5, 10, 20];
+  // 주사위: 1시간에 N번 (0 = 제한 없음). 처음 굴린 때부터 1시간이 지나면 다시 채워져요
+  const DICE_CHOICES = [5, 10, 20, 0];
+  const DICE_HOUR = 3600000;
+  // 잡기용 볼 (가게에서 사요) · k = 잡히는 힘
+  const BALL_KEYS = ['poke', 'great', 'ultra'];
+  const BALLS = {
+    poke: { name: '몬스터볼', icon: '🔴', price: 200, k: 1, tier: 1 },
+    great: { name: '슈퍼볼', icon: '🔵', price: 500, k: 1.5, tier: 2 },
+    ultra: { name: '하이퍼볼', icon: '🟡', price: 1000, k: 2, tier: 3 },
+  };
+  const START_BALLS = 5;
+  const MAX_BALLS = 99;
+  // 말판에 나타나는 야생 포켓몬
+  const MAX_WILDS = 3;
+  const WILD_SPAWN = 0.6;
+  const TYPE_BOOST = 0.65; // 칸 속성과 같은 타입이 나올 확률
+  const CHAMP_TEAM = [['snorlax', 40], ['dragonite', 42], ['mewtwo', 45]];
+  // 배틀 난이도 (엄마·아빠 메뉴)
+  // wild: 야생 힘 = 내 팀 공격력 × 범위 · hp: 야생 체력 배수(포켓몬 3마리부터 다 적용)
+  // gym: 관장님 힘 배수 · gymHp: 관장님 포켓몬 체력 배수 · floor: 관장님 힘이 내 팀 공격력 × floor 아래로는 안 내려가요
+  // gymN: 관장님 포켓몬 수 = 처음 [0]마리 + 배지 [1]개마다 1마리 (최대 3) · champ: 챔피언 레벨 더하기
+  const DIFFS = [
+    { name: '쉬움', icon: '😊', wild: [0.65, 1.0], hp: 1.0, gym: 1.0, gymHp: 1.0, floor: 0.6, gymN: [1, 3], champ: -10, desc: '거의 다 이겨요' },
+    { name: '보통', icon: '🙂', wild: [0.95, 1.3], hp: 2.7, gym: 1.19, gymHp: 1.47, floor: 0.89, gymN: [1, 2], champ: -5, desc: '가끔 져요 · 팀을 잘 골라요' },
+    { name: '어려움', icon: '😤', wild: [0.98, 1.32], hp: 2.95, gym: 1.22, gymHp: 1.55, floor: 0.93, gymN: [1, 2], champ: 0, desc: '자주 져요 · 상성 · 레벨을 꼭 챙겨요' },
+  ];
+  // 한 바퀴를 돌면 계절이 바뀌고, 칸 속성도 새로 섞여요
+  const SEASONS = [
+    { name: '봄', icon: '🌸', types: ['grass', 'bug', 'fairy', 'flying', 'normal', 'poison'] },
+    { name: '여름', icon: '☀️', types: ['water', 'electric', 'fire', 'bug', 'flying', 'psychic'] },
+    { name: '가을', icon: '🍁', types: ['ground', 'rock', 'fighting', 'psychic', 'poison', 'ghost'] },
+    { name: '겨울', icon: '⛄', types: ['ice', 'water', 'ghost', 'normal', 'dragon', 'psychic'] },
+  ];
   const SUPPORT_PER_SHARE = 0.005;
   const SUPPORT_MAX = 0.05;
   const COUNTER_FROM = 5;
@@ -1425,15 +1733,14 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   const BOOST_PCT = 0.03;
   const GYM_BASE = 25;
   const GYM_STEP = 15;
-  const CHAMP_POWER = 150;
   const CHAMP_PRIZE = 10000;
 
   const TIERS = [
     null,
     { n: 1, ball: '🔴', name: '몬스터볼', stage: '처음 모습', shares: 0, earned: 0 },
-    { n: 2, ball: '🔵', name: '슈퍼볼', stage: '한 번 진화', shares: 3, earned: 1000 },
-    { n: 3, ball: '🟡', name: '하이퍼볼', stage: '최종 진화', shares: 8, earned: 5000 },
-    { n: 4, ball: '🟣', name: '마스터볼', stage: '전설', shares: 15, earned: 15000 },
+    { n: 2, ball: '🔵', name: '슈퍼볼', stage: '한 번 진화', shares: 2, earned: 300 },
+    { n: 3, ball: '🟡', name: '하이퍼볼', stage: '최종 진화', shares: 5, earned: 1500 },
+    { n: 4, ball: '🟣', name: '마스터볼', stage: '전설', shares: 10, earned: 5000 },
   ];
 
   const TYPES = {
@@ -1612,51 +1919,54 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   });
   const STARTERS = ['pikachu', 'charmander', 'squirtle', 'bulbasaur'];
 
-  // 말판 22칸: [종류, 지도 이름표, 장소 이름, 회사, 칸 x, 칸 y, 이름표 x, 이름표 y]
+  // 말판 22칸: [종류, 지도 이름표, 장소 이름, 회사, 칸 x, 칸 y, 이름표 x, 이름표 y, 첫 바퀴 칸 속성, 속성 이유]
   const PLACE_ROWS = [
-    ['home', '암사동', '강동구 암사동 · 우리 집', '', 328.3, 156.7, 328.5, 142],
-    ['wild', '올림픽\n공원', '올림픽공원', '', 320.8, 193.9, 320.5, 212],
-    ['gym', '잠실', '잠실 롯데월드타워', 'rock', 288.3, 212.3, 288.5, 233],
-    ['div', '코엑스', '삼성동 코엑스', '', 250.7, 216.4, 250.5, 234],
-    ['cost', '강남역', '강남역', '', 216.7, 223.7, 216.5, 212],
-    ['gym', '양재', '양재 꽃시장', 'grass', 235.1, 259.6, 235.5, 281],
-    ['quiz', '서울대', '서울대학교', '', 164.8, 260.7, 164.5, 279],
-    ['wild', '보라매', '보라매공원', '', 138.1, 231.0, 162.5, 234],
-    ['bank', '여의도', '여의도 증권가', '', 138.8, 196.2, 138.5, 184],
-    ['luck', '선유도', '선유도공원', '', 110.9, 175.4, 110.5, 193],
-    ['gym', '김포공항', '김포공항', 'flying', 36.0, 158.3, 36, 179],
-    ['gym', '상암', '상암 월드컵경기장', 'fighting', 136.7, 147.9, 136.5, 169],
-    ['news', '방송국', '상암 방송국', '', 103.1, 131.5, 78.5, 135],
-    ['gym', '북한산', '북한산', 'ground', 137.4, 75.5, 137.5, 61],
-    ['quiz', '광화문', '광화문 세종대왕', '', 178.8, 122.0, 154.5, 125],
-    ['again', '시청', '시청역', '', 179.8, 156.3, 200.5, 159],
-    ['gym', '용산', '용산 전자상가', 'electric', 176.4, 194.3, 176.5, 215],
-    ['luck', '남산', '남산 N서울타워', '', 209.0, 175.4, 209.5, 193],
-    ['gym', '광장\n시장', '광장시장', 'fire', 212.8, 138.0, 212.5, 113],
-    ['cost', '건대', '건대 맛집거리', '', 254.3, 182.0, 254.5, 200],
-    ['rest', '어린이\n대공원', '어린이대공원', '', 261.2, 148.1, 261.5, 126],
-    ['gym', '정수센터', '암사 정수센터', 'water', 290.8, 171.3, 291, 192],
+    ['home', '암사동', '강동구 암사동 · 우리 집', '', 328.3, 156.7, 328.5, 142, '', ''],
+    ['wild', '올림픽\n공원', '올림픽공원', '', 320.8, 193.9, 320.5, 212, 'grass', '넓은 잔디밭'],
+    ['gym', '잠실', '잠실 롯데월드타워', 'rock', 288.3, 212.3, 288.5, 233, 'rock', ''],
+    ['div', '코엑스', '삼성동 코엑스', '', 250.7, 216.4, 250.5, 234, 'water', '코엑스 아쿠아리움'],
+    ['cost', '강남역', '강남역', '', 216.7, 223.7, 216.5, 212, 'fighting', '태권도장이 많은 거리'],
+    ['gym', '양재', '양재 꽃시장', 'grass', 235.1, 259.6, 235.5, 281, 'grass', ''],
+    ['quiz', '서울대', '서울대학교', '', 164.8, 260.7, 164.5, 279, 'psychic', '열심히 공부하는 머리'],
+    ['wild', '보라매', '보라매공원', '', 138.1, 231.0, 162.5, 234, 'flying', '보라매 = 사냥하는 매'],
+    ['bank', '여의도', '여의도 증권가', '', 138.8, 196.2, 138.5, 184, 'electric', '반짝반짝 증권가 전광판'],
+    ['luck', '선유도', '선유도공원', '', 110.9, 175.4, 110.5, 193, 'bug', '물풀 정원'],
+    ['gym', '김포공항', '김포공항', 'flying', 36.0, 158.3, 36, 179, 'flying', ''],
+    ['gym', '상암', '상암 월드컵경기장', 'fighting', 136.7, 147.9, 136.5, 169, 'fighting', ''],
+    ['news', '방송국', '상암 방송국', '', 103.1, 131.5, 78.5, 135, 'ghost', '밤에 하는 무서운 방송'],
+    ['gym', '북한산', '북한산', 'ground', 137.4, 75.5, 137.5, 61, 'ground', ''],
+    ['quiz', '광화문', '광화문 세종대왕', '', 178.8, 122.0, 154.5, 125, 'dragon', '임금님을 지키는 용'],
+    ['again', '시청', '시청역', '', 179.8, 156.3, 200.5, 159, 'ice', '서울광장 스케이트장'],
+    ['gym', '용산', '용산 전자상가', 'electric', 176.4, 194.3, 176.5, 215, 'electric', ''],
+    ['luck', '남산', '남산 N서울타워', '', 209.0, 175.4, 209.5, 193, 'fairy', '보름달 = 달님 요정'],
+    ['gym', '광장\n시장', '광장시장', 'fire', 212.8, 138.0, 212.5, 113, 'fire', ''],
+    ['cost', '건대', '건대 맛집거리', '', 254.3, 182.0, 254.5, 200, 'fire', '매운 떡볶이'],
+    ['rest', '어린이\n대공원', '어린이대공원', '', 261.2, 148.1, 261.5, 126, 'normal', '동물원 친구들'],
+    ['gym', '정수센터', '암사 정수센터', 'water', 290.8, 171.3, 291, 192, 'water', ''],
   ];
   const KIND_ICON = { home: '🏠', wild: '🌳', div: '💰', cost: '💸', bank: '🏦', luck: '🎁', again: '🚇', news: '📺', quiz: '❓', rest: '🦁' };
   const KIND_NAME = { home: '우리 집', wild: '풀숲', gym: '회사 체육관', div: '배당금', cost: '쓰는 돈', bank: '은행 이자', luck: '행운 카드', again: '환승', news: '방송국 속보', quiz: '경제 퀴즈', rest: '쉼터' };
   const KIND_DESC = {
     home: '지날 때마다 용돈 +1,000원, 딱 멈추면 1,000원 더',
-    wild: '야생 포켓몬과 배틀 · 이기면 +400원, 30% 확률로 잡기',
-    div: '가진 주식 1주마다 30원씩 배당금',
+    wild: '늘 야생 포켓몬이 나와요 · 이기면 +400원, 볼을 던져 잡을 수도 있어요',
+    div: '가진 주식 1주마다 ' + DIV_PER_SHARE + '원씩 배당금',
     cost: '꼭 써야 하는 돈을 내요',
     bank: '현금의 5%를 이자로 받아요 (최대 500원)',
     luck: '행운 카드를 뽑아요',
     again: '환승! 공짜 주사위 한 번 더',
     news: '내일 크게 움직일 회사 속보',
     quiz: '경제 퀴즈 · 정답이면 +500원',
-    rest: '쉼터 · 내 말 포켓몬 레벨 업',
+    rest: '쉼터 · 내 포켓몬 모두 경험치 +' + REST_XP,
   };
   const PLACES = PLACE_ROWS.map((r, i) => ({
     i, kind: r[0], label: r[1], short: r[1].replace('\n', ''), name: r[2], cid: r[3], x: r[4], y: r[5], lx: r[6], ly: r[7],
     big: r[0] === 'home' || r[0] === 'gym',
     icon: r[3] ? COMP[r[3]].icon : KIND_ICON[r[0]],
+    type: r[8], why: r[9],
   }));
   const NP = PLACES.length;
+  // 남산 N서울타워 위에 뜬 보름달 (아이가 제일 좋아하는 곳) · 남산 칸은 늘 페어리(달님 요정) 칸이에요
+  const NAMSAN = PLACES.findIndex((p) => p.short === '남산');
   const GYM_AT = {};
   PLACES.forEach((p) => { if (p.cid) GYM_AT[p.cid] = p.i; });
   const GYM_ORDER = PLACES.filter((p) => p.kind === 'gym').map((p) => p.cid);
@@ -1684,13 +1994,14 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   ];
   const NUM_MARK = ['①', '②', '③'];
 
-  // 행운 카드: [제목, 돈(숫자) 또는 'lv', 설명]
+  // 행운 카드: [제목, 돈(숫자) 또는 'xp' · 'ball', 설명]
   const LUCK = [
     ['길에서 500원을 주웠어요!', 500, '주인을 찾아 줬더니 고맙다며 그대로 주셨대요.'],
     ['할머니가 용돈을 주셨어요!', 700, '저금통에 넣을까요, 주식을 살까요?'],
     ['친구 생일 선물을 샀어요', -300, '소중한 친구를 위해 쓴 돈이에요.'],
     ['우산을 잃어버려서 새로 샀어요', -200, '물건을 잘 챙기면 돈을 아낄 수 있어요.'],
-    ['포켓몬 간식을 먹었어요!', 'lv', '내 말 포켓몬이 레벨 업 했어요.'],
+    ['포켓몬 간식을 먹었어요!', 'xp', '내 말 포켓몬이 냠냠 먹고 힘이 났어요.'],
+    ['몬스터볼 2개를 주웠어요!', 'ball', '풀숲 옆에 떨어져 있었대요. 야생 포켓몬을 만나면 던져 봐요!'],
   ];
 
   const PLAYER_COLORS = ['blue', 'orange', 'green', 'purple'];
@@ -1770,11 +2081,12 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       pid: 'p' + st.pidSeq,
       name: (name || PLAYER_NAMES[idx] || '친구 ' + (idx + 1)).slice(0, 10),
       color: PLAYER_COLORS[(st.pidSeq - 1) % PLAYER_COLORS.length],
-      cash: START_CASH, sh: {}, cost: {}, earned: 0,
+      cash: START_CASH, sh: {}, cost: {}, earned: 0, divs: 0, peak: 0,
       mons: {}, partner: null, dex: {}, won: {}, champ: false,
       tier: 1, tierSeen: 1, certs: {},
-      pos: 0, laps: 0, dice: { date: '', left: 0 }, quizN: 0, coupons: [],
-      stats: { wins: 0, losses: 0, draws: 0, trades: 0 },
+      pos: 0, laps: 0, dice: { t: 0, left: st.settings.dice }, quizN: 0, coupons: [],
+      balls: { poke: START_BALLS, great: 0, ultra: 0 },
+      stats: { wins: 0, losses: 0, draws: 0, trades: 0, caught: 0 },
       starter: false, lastDraw: null, hist: [START_CASH],
     };
     st.players.push(p);
@@ -1789,17 +2101,46 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   function newGame(names) {
     const st = {
       v: VERSION, savedAt: 0, rev: 0, createdAt: Date.now(),
-      settings: { dice: 10, counter: 2 },
+      settings: { dice: 10, counter: 2, diff: 1 },
       day: 1, turn: 0, players: [], pidSeq: 0,
       market: { price: {}, prev: {}, boost: {} },
       news: [], night: null, meeting: null, pending: null, lastMove: null,
       log: [], seq: 0, importedOld: false,
+      map: newMap(0), wilds: [], wseq: 0,
     };
     COMPANIES.forEach((c) => { st.market.price[c.id] = c.start; st.market.prev[c.id] = c.start; });
     const list = names && names.length ? names : [PLAYER_NAMES[0]];
     list.slice(0, MAX_PLAYERS).forEach((n) => newPlayer(st, n));
     st.news = [makeNews(null, 'daily')];
+    // 처음부터 말판에 야생 포켓몬 두 마리가 놀고 있어요
+    spawnWild(st, st.players[0]);
+    spawnWild(st, st.players[0]);
     return st;
+  }
+  // 칸 속성 지도: 첫 바퀴는 장소에 어울리는 속성, 그다음부터는 계절에 따라 섞여요
+  function newMap(lap) {
+    return { lap: lap || 0, season: 0, n: 0, types: PLACES.map((pl) => (pl.kind === 'home' ? '' : pl.cid || pl.type || 'normal')) };
+  }
+  function placeType(st, i) {
+    const pl = PLACES[i];
+    if (!pl || pl.kind === 'home') return '';
+    if (pl.cid) return pl.cid;
+    if (i === NAMSAN) return 'fairy';
+    const t = st.map && st.map.types[i];
+    return TYPES[t] ? t : pl.type || 'normal';
+  }
+  function shuffleMap(st) {
+    const m = st.map;
+    m.season = (m.season + 1) % SEASONS.length;
+    m.n += 1;
+    const S = SEASONS[m.season];
+    const all = Object.keys(TYPES);
+    const spots = PLACES.filter((pl) => pl.kind !== 'home' && !pl.cid && pl.i !== NAMSAN).map((pl) => pl.i);
+    // 계절 타입은 한 번씩 꼭 나오고, 나머지는 70%는 계절 타입 · 30%는 아무 타입
+    const deck = S.types.slice();
+    while (deck.length < spots.length) deck.push(Math.random() < 0.7 ? pick(S.types) : pick(all));
+    for (let i = deck.length - 1; i > 0; i--) { const j = rnd(i + 1); const t = deck[i]; deck[i] = deck[j]; deck[j] = t; }
+    spots.forEach((i, k) => { m.types[i] = deck[k]; });
   }
 
   // ── 계산 ──
@@ -1811,10 +2152,25 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     RING.forEach((c) => { n += p.sh[c] || 0; });
     return n;
   }
+  // 한 번에 가장 많이 모았던 주식 수: 단계 조건은 이걸로 봐요 (팔아도 줄지 않아요)
+  const peakOf = (p) => Math.max(p.peak || 0, sharesOf(p));
   function stockValue(st, p) {
     let v = 0;
     RING.forEach((c) => { v += (p.sh[c] || 0) * st.market.price[c]; });
     return v;
+  }
+  // 내 주식 성적: 산 값 · 지금 값 · 지금 팔면 이익 · 수익률
+  function portfolio(st, p) {
+    const cost = Math.round(RING.reduce((s, c) => s + (p.cost[c] || 0), 0));
+    const value = stockValue(st, p);
+    const gain = value - cost;
+    return { cost, value, gain, rate: cost > 0 ? gain / cost : 0, n: sharesOf(p) };
+  }
+  // 다음 뽑기 단계까지 남은 것 (최고 단계면 null)
+  function nextTierNeed(p) {
+    if (p.tier >= 4) return null;
+    const N = TIERS[p.tier + 1];
+    return { t: N, shares: Math.max(0, N.shares - peakOf(p)), earned: Math.max(0, N.earned - p.earned) };
   }
   function totalShares(st) {
     const t = {};
@@ -1824,24 +2180,61 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   }
   const badgeCount = (p) => GYM_ORDER.filter((c) => p.won[c]).length;
   const partnerMon = (p) => (p.partner && p.mons[p.partner] ? p.mons[p.partner] : null);
-  const powerOf = (m) => SP[m.sp].power + (m.lv - 1) * LV_POWER + m.stars * STAR_POWER;
+  // ── 능력치 · 경험치 ──
+  const atkOf = (sp, lv, stars) => SP[sp].power + (lv - 1) * LV_ATK + (stars || 0) * STAR_POWER;
+  const hpMaxOf = (sp, lv, stars) => HP_BASE + Math.round(SP[sp].power * HP_PER_POW) + (lv - 1) * LV_HP + (stars || 0) * STAR_HP;
+  const powerOf = (m) => atkOf(m.sp, m.lv, m.stars);
+  const hpOf = (m) => hpMaxOf(m.sp, m.lv, m.stars);
+  // 다음 레벨까지 필요한 경험치: Lv.1 → 16, Lv.10 → 82, Lv.20 → 180, Lv.40 → 450
+  const xpNeed = (lv) => 10 + lv * 6 + Math.floor((lv * lv) / 8);
+  function gainXp(m, n) {
+    if (!m || !(n > 0) || m.lv >= MAX_LV) return 0;
+    let up = 0;
+    m.xp = (m.xp || 0) + Math.round(n);
+    while (m.lv < MAX_LV && m.xp >= xpNeed(m.lv)) { m.xp -= xpNeed(m.lv); m.lv += 1; up += 1; }
+    if (m.lv >= MAX_LV) m.xp = 0;
+    return up;
+  }
+  // 3.3까지의 레벨(최고 10, 레벨마다 공격 +5)을 새 레벨로 바꿔요. 공격력은 그대로예요
+  const oldLv = (lv) => clamp(1 + Math.round((lv - 1) * 2.5), 1, MAX_LV);
   function eff(att, def) {
     if ((STRONG[att] || []).indexOf(def) >= 0) return 1.5;
     if ((WEAK[att] || []).indexOf(def) >= 0) return 0.7;
     return 1;
   }
+  // 배틀 난이도 (기본 보통)
+  const diffOf = (st) => DIFFS[clamp(st && st.settings && typeof st.settings.diff === 'number' ? st.settings.diff : 1, 0, DIFFS.length - 1)];
+  // 관장님 대표 포켓몬의 공격력: 배지가 늘수록 세져요 (배지 0개 ⚡25 → 7개 ⚡130, 난이도만큼 더)
   const gymPower = (p) => GYM_BASE + GYM_STEP * Math.min(7, badgeCount(p));
-  // 체육관 관장님이 내보내는 포켓몬: 그 회사 타입 중에서 관장 힘과 가장 비슷한 포켓몬 (챔피언은 뮤츠)
-  const CHAMP_MON = 'mewtwo';
-  function bossMon(cid, power) {
+  // 체육관 관장님이 내보내는 포켓몬: 그 회사 타입 중에서 힘이 가장 비슷한 포켓몬 (전설은 빼고)
+  function bossMon(cid, power, used) {
     let best = null;
     let bestD = 1e9;
     SPECIES_KEYS.forEach((k) => {
-      if (SP[k].type !== cid) return;
+      if (SP[k].type !== cid || (used && used[k]) || SP[k].pool === 4) return;
       const d = Math.abs(SP[k].power - power);
       if (d < bestD) { best = k; bestD = d; }
     });
-    return best || CHAMP_MON;
+    return best || (used ? bossMon(cid, power) : 'mewtwo');
+  }
+  // 관장님 팀: 배지 0~2개 → 1마리, 3~5개 → 2마리, 6~7개 → 3마리 · 챔피언은 3마리
+  // 포켓몬 종류는 힘의 절반쯤, 나머지는 레벨로 채워서 공격력을 맞춰요
+  function gymTeam(st, p, cid, champ) {
+    const D = diffOf(st);
+    const floor = teamAtk(p) * D.floor;
+    // 챔피언: 잠만보 · 망나뇽 · 뮤츠 (내 팀이 아주 세면 같이 세져요)
+    if (champ) return CHAMP_TEAM.map((r) => ({ sp: r[0], lv: clamp(Math.max(r[1] + D.champ, 1 + Math.round((floor - SP[r[0]].power) / LV_ATK)), 1, MAX_LV), hpx: D.gymHp }));
+    const b = Math.min(7, badgeCount(p));
+    const n = Math.min(3, D.gymN[0] + Math.floor(b / D.gymN[1]));
+    // 배지 수로 정한 힘, 그리고 내 팀이 너무 세면 그만큼 (너무 쉽게 이기지 않게)
+    const A = Math.max(gymPower(p) * D.gym, floor);
+    const atks = n === 1 ? [A] : n === 2 ? [A * 0.85, A] : [A * 0.75, A * 0.9, A];
+    const used = {};
+    return atks.map((a) => {
+      const sp = bossMon(cid, a * 0.55, used);
+      used[sp] = true;
+      return { sp, lv: clamp(1 + Math.round((a - SP[sp].power) / LV_ATK), 1, MAX_LV), hpx: D.gymHp };
+    });
   }
   const gymPrize = (p) => 1000 + 500 * Math.min(7, badgeCount(p));
   const isChampSpot = (p, cid) => cid === 'rock' && badgeCount(p) >= 8 && !p.champ;
@@ -1859,38 +2252,38 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     out.rainbow = ball ? rainbowCaps(ball) : 2;
     return out;
   }
-  // 승리 확률: 양쪽 공격력에 0.6~1.4배 운이 곱해져요 (실제 배틀과 같은 규칙)
-  function winChance(a, b) {
-    if (a <= 0) return 0;
-    const N = 40;
-    let win = 0;
-    for (let i = 0; i < N; i++) {
-      const x = a * (0.6 + (0.8 * (i + 0.5)) / N);
-      for (let j = 0; j < N; j++) {
-        if (x >= b * (0.6 + (0.8 * (j + 0.5)) / N)) win++;
-      }
-    }
-    return win / (N * N);
+  // ── 주사위: 1시간에 N번 (처음 굴린 때부터 1시간이 지나면 다시 채워져요) · 0이면 제한 없음 ──
+  const diceUnlimited = (st) => !st.settings.dice;
+  function diceExpired(p, now) {
+    return !p.dice.t || (now || Date.now()) - p.dice.t >= DICE_HOUR;
   }
-  function ensureDice(st, p) {
-    const t = todayStr();
-    if (p.dice.date !== t) p.dice = { date: t, left: st.settings.dice };
+  function ensureDice(st, p, now) {
+    const N = st.settings.dice;
+    if (!N) return;
+    if (diceExpired(p, now)) p.dice = { t: 0, left: Math.max(N, Math.min(p.dice.left, N + 5)) };
+  }
+  // 화면에 보여 줄 남은 주사위 (상태는 바꾸지 않아요)
+  function diceLeft(st, p, now) {
+    const N = st.settings.dice;
+    if (!N) return Infinity;
+    return diceExpired(p, now) ? Math.max(N, Math.min(p.dice.left, N + 5)) : p.dice.left;
+  }
+  // 다시 채워질 때까지 남은 분 (0 = 지금 굴릴 수 있어요)
+  function diceWaitMin(st, p, now) {
+    if (diceLeft(st, p, now) > 0) return 0;
+    return Math.max(1, Math.ceil((p.dice.t + DICE_HOUR - (now || Date.now())) / 60000));
   }
   function addLog(st, p, text) {
     st.log.unshift({ d: st.day, pid: p ? p.pid : '', t: text });
     if (st.log.length > 40) st.log.length = 40;
   }
   function checkTier(p) {
-    const n = sharesOf(p);
+    const n = peakOf(p);
+    p.peak = n;
     let t = p.tier;
     while (t < 4 && n >= TIERS[t + 1].shares && p.earned >= TIERS[t + 1].earned) t++;
     if (t > p.tier) { p.tier = t; return t; }
     return 0;
-  }
-  function levelUp(m) {
-    if (!m || m.lv >= MAX_LV) return false;
-    m.lv += 1;
-    return true;
   }
   function eeveeForm(p) {
     let best = null;
@@ -1901,17 +2294,19 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     });
     return best ? EEVEE_FORMS[best] : 'sylveon';
   }
-  // 포켓몬이 들어오면: 새 친구 / 합체 / 진화 / 별 강화
-  function addMon(st, p, sp) {
+  // 포켓몬이 들어오면: 새 친구 / 합체 / 진화 / 별 강화 (잡은 포켓몬은 그 레벨 그대로 와요)
+  function addMon(st, p, sp, lv) {
     const f = FAM_OF[sp];
     const s = STAGE_OF[sp];
+    const L = clamp(Math.floor(num(lv, 1)), 1, MAX_LV);
     p.dex[sp] = true;
     let m = p.mons[f];
     if (!m) {
-      m = p.mons[f] = { sp, stage: s, gauge: 1, stars: 0, lv: 1 };
+      m = p.mons[f] = { sp, stage: s, gauge: 1, stars: 0, lv: L, xp: 0 };
       if (!p.partner && Object.keys(p.mons).length === 1) p.partner = f;
       return { type: 'new', fam: f, sp };
     }
+    if (L > m.lv) { m.lv = L; m.xp = 0; }
     if (s > m.stage) {
       const from = m.sp;
       m.sp = sp;
@@ -1939,19 +2334,94 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     }
     return { type: 'merge', fam: f, sp: m.sp, got: sp, gauge: m.gauge };
   }
-  function wildPick(p) {
-    const t = p.tier;
-    const pools = t <= 1 ? [1, 1, 1, 2] : t === 2 ? [1, 2, 2] : [2, 3, 3];
-    const pool = pick(pools);
-    const keys = SPECIES_KEYS.filter((k) => SP[k].pool === pool);
-    return pick(keys);
+  // ── 야생 포켓몬 ──
+  // 내 팀 힘: 공격이 센 3마리 평균 (포켓몬이 없으면 ⚡15)
+  function teamAtk(p) {
+    const a = Object.keys(p.mons).map((f) => powerOf(p.mons[f])).sort((x, y) => y - x).slice(0, TEAM_MAX);
+    return a.length ? a.reduce((s, x) => s + x, 0) / a.length : 15;
   }
+  // 칸 속성 타입이 잘 나와요 (65%). 볼 단계는 그 사람의 뽑기 단계를 따라가고, 너무 센 친구는 다시 골라요
+  const WILD_POOLS = { 1: [1, 1, 1, 2], 2: [1, 2, 2], 3: [2, 3, 3], 4: [2, 3, 3] };
+  function wildSpecies(p, type) {
+    const tier = clamp(p.tier, 1, 4);
+    const cap = teamAtk(p) * 1.15;
+    // 3단계부터는 아주 가끔(2%) 그 타입의 전설 포켓몬이 나타나요
+    if (tier >= 3 && TYPES[type] && Math.random() < 0.02) {
+      const leg = SPECIES_KEYS.filter((k) => SP[k].pool === 4 && SP[k].type === type);
+      if (leg.length) return pick(leg);
+    }
+    let sp = null;
+    for (let i = 0; i < 6; i++) {
+      const pool = pick(WILD_POOLS[tier]);
+      let keys = [];
+      if (TYPES[type] && Math.random() < TYPE_BOOST) {
+        keys = SPECIES_KEYS.filter((k) => SP[k].type === type && SP[k].pool === pool);
+        if (!keys.length) keys = SPECIES_KEYS.filter((k) => SP[k].type === type && SP[k].pool >= 1 && SP[k].pool <= 3);
+      }
+      if (!keys.length) keys = SPECIES_KEYS.filter((k) => SP[k].pool === pool);
+      sp = pick(keys);
+      if (SP[sp].power <= cap) break;
+    }
+    return sp;
+  }
+  // 내 팀 레벨: 공격이 센 3마리의 평균 레벨 · 내 포켓몬 중 가장 높은 레벨
+  function teamLv(p) {
+    const ms = Object.keys(p.mons).map((f) => p.mons[f]).sort((a, b) => powerOf(b) - powerOf(a)).slice(0, TEAM_MAX);
+    return ms.length ? ms.reduce((s, m) => s + m.lv, 0) / ms.length : 1;
+  }
+  const maxMonLv = (p) => Object.keys(p.mons).reduce((mx, f) => Math.max(mx, p.mons[f].lv), 1);
+  // 야생 레벨은 만날 때 정해져요: 내 팀 공격력 × 난이도 범위 (포켓몬이 3마리보다 적으면 조금 약하게)
+  // 단, 내 팀 레벨보다 너무 높지는 않게 (약한 포켓몬은 그냥 약해요)
+  // 처음에는 살살: 내 팀 레벨 1 → 6 사이에 난이도가 올라가요
+  const ramp = (p) => clamp((teamLv(p) - 1) / 5, 0, 1);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  // 야생 포켓몬 체력 배수: 내 포켓몬이 많을수록 난이도만큼 튼튼해져요 (1마리면 그대로)
+  function wildHpx(st, p) {
+    const n = clamp(Object.keys(p.mons).length, 1, TEAM_MAX);
+    return 1 + (lerp(1, diffOf(st).hp, ramp(p)) - 1) * ((n - 1) / (TEAM_MAX - 1));
+  }
+  // 레벨이 모자라서 약해진 만큼은 체력으로 채워요 (꼬렛도 만만하지 않게, 최대 2.5배)
+  function wildFoe(st, p, sp) {
+    const D = diffOf(st);
+    const few = Object.keys(p.mons).length < TEAM_MAX;
+    const r = ramp(p);
+    const lo = lerp(Math.min(0.7, D.wild[0]), D.wild[0], r);
+    const hi = lerp(Math.min(1.0, D.wild[1]), D.wild[1], r);
+    const target = teamAtk(p) * (few ? rand(lo - 0.15, hi - 0.2) : rand(lo, hi));
+    const cap = Math.round(teamLv(p) * 1.15) + 2;
+    const lv = clamp(1 + Math.round((target - SP[sp].power) / LV_ATK) + rnd(3) - 1, 1, Math.min(MAX_LV, cap));
+    const weak = clamp(target / atkOf(sp, lv, 0), 1, 2.5);
+    return { sp, lv, hpx: Math.round(wildHpx(st, p) * (few ? 1 : weak) * 100) / 100 };
+  }
+  // 말판 빈칸에 야생 포켓몬이 나타나요 (집 · 체육관 · 사람이 서 있는 칸은 빼고)
+  function spawnWild(st, p) {
+    if (st.wilds.length >= MAX_WILDS) return null;
+    const taken = {};
+    st.wilds.forEach((w) => { taken[w.at] = true; });
+    st.players.forEach((q) => { taken[q.pos] = true; });
+    const spots = PLACES.filter((pl) => pl.kind !== 'home' && pl.kind !== 'gym' && !taken[pl.i]);
+    if (!spots.length) return null;
+    const pl = pick(spots);
+    const sp = wildSpecies(p || st.players[0], placeType(st, pl.i));
+    st.wseq = (st.wseq || 0) + 1;
+    const w = { id: 'w' + st.wseq, at: pl.i, sp, until: st.day + 4 + rnd(4) };
+    st.wilds.push(w);
+    return w;
+  }
+  const wildAt = (st, i) => st.wilds.find((w) => w.at === i) || null;
 
   // ── 칸에 도착 ──
   function land(st, p) {
     const pl = PLACES[p.pos];
     const pd = { pid: p.pid, at: pl.i, kind: pl.kind };
     let tu = 0;
+    // 말판에서 놀던 야생 포켓몬이 있는 칸에 딱 멈추면 배틀!
+    const w = wildAt(st, pl.i);
+    if (w) {
+      Object.assign(pd, { kind: 'wild', foe: wildFoe(st, p, w.sp), wid: w.id });
+      st.pending = pd;
+      return;
+    }
     switch (pl.kind) {
       case 'home':
         p.cash += HOME_PAY;
@@ -1962,8 +2432,8 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         pd.cid = pl.cid;
         break;
       case 'wild': {
-        const sp = wildPick(p);
-        pd.foe = { sp, power: SP[sp].power + rnd(11) };
+        const sp = wildSpecies(p, placeType(st, pl.i));
+        pd.foe = wildFoe(st, p, sp);
         break;
       }
       case 'quiz':
@@ -1983,11 +2453,16 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         // 남산 칸은 N서울타워 위 보름달님이 주는 행운이에요
         let title = (pl.short === '남산' ? '🌕 남산 달님의 행운! ' : '네잎클로버 행운! ') + x[0];
         let body = x[2];
-        if (x[1] === 'lv') {
+        if (x[1] === 'xp') {
           const m = partnerMon(p);
-          if (m && levelUp(m)) body = SP[m.sp].name + ' 레벨 업! Lv.' + m.lv + ' (⚡' + powerOf(m) + ')';
-          else if (m) body = SP[m.sp].name + eunneun(SP[m.sp].name) + ' 이미 최고 레벨이에요. 맛있게 먹었어요!';
+          if (m && m.lv < MAX_LV) {
+            const up = gainXp(m, SNACK_XP);
+            body = SP[m.sp].name + ' 경험치 +' + SNACK_XP + (up ? '\n⬆️ 레벨 업! Lv.' + m.lv + ' (⚡' + powerOf(m) + ' · ❤️' + hpOf(m) + ')' : ' (다음 레벨까지 ' + (xpNeed(m.lv) - m.xp) + ')');
+          } else if (m) body = SP[m.sp].name + eunneun(SP[m.sp].name) + ' 이미 최고 레벨이에요. 맛있게 먹었어요!';
           else body = '아직 포켓몬이 없어서 내가 맛있게 먹었어요.';
+        } else if (x[1] === 'ball') {
+          p.balls.poke = Math.min(MAX_BALLS, p.balls.poke + 2);
+          body += '\n🎒 내 몬스터볼 ' + p.balls.poke + '개';
         } else {
           const before = p.cash;
           p.cash = Math.max(0, p.cash + x[1]);
@@ -2003,11 +2478,12 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         const amt = n * DIV_PER_SHARE;
         p.cash += amt;
         p.earned += amt;
+        p.divs = (p.divs || 0) + amt;
         tu = checkTier(p);
         Object.assign(pd, {
           tone: 'div', icon: '💰',
           title: amt ? '배당금 받는 날! +' + fmt(amt) + '원' : '배당금 받는 날!',
-          body: amt ? '갖고 있는 주식 ' + n + '주 × 30원 = ' + fmt(amt) + '원\n회사가 번 돈을 주주에게 나눠 줘요. 이 돈은 "주식으로 번 돈"에 들어가요.' : '아직 주식이 없어서 받을 배당금이 없어요.\n주식을 가진 주주만 배당금을 받아요!',
+          body: amt ? '갖고 있는 주식 ' + n + '주 × ' + DIV_PER_SHARE + '원 = ' + fmt(amt) + '원\n회사가 번 돈을 주주에게 나눠 줘요. 이 돈은 "주식으로 번 돈"에 들어가요.' : '아직 주식이 없어서 받을 배당금이 없어요.\n주식을 가진 주주만 배당금을 받아요!',
         });
         if (amt) addLog(st, p, '💰 코엑스 배당금 +' + fmt(amt) + '원');
         break;
@@ -2029,16 +2505,18 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       }
       case 'again':
         ensureDice(st, p);
-        p.dice.left += 1;
-        Object.assign(pd, { tone: 'again', icon: '🚇', title: '환승! 주사위 한 번 더', body: '1호선에서 2호선으로 갈아타고 더 멀리 가요.\n공짜 주사위 1개를 받았어요!' });
+        if (!diceUnlimited(st)) p.dice.left += 1;
+        Object.assign(pd, { tone: 'again', icon: '🚇', title: '환승! 주사위 한 번 더', body: '1호선에서 2호선으로 갈아타고 더 멀리 가요.\n' + (diceUnlimited(st) ? '바로 한 번 더 굴려요!' : '공짜 주사위 1개를 받았어요!') });
         break;
       default: {
-        const m = partnerMon(p);
-        let body;
-        if (m && levelUp(m)) body = '동물 친구들과 놀고 나니 힘이 났어요.\n' + SP[m.sp].name + ' Lv.' + m.lv + ' (⚡' + powerOf(m) + ')';
-        else if (m) body = SP[m.sp].name + eunneun(SP[m.sp].name) + ' 이미 최고 레벨이에요. 푹 쉬었어요!';
-        else body = '동물 친구들을 구경했어요.\n포켓몬이 생기면 여기서 레벨이 올라요.';
-        Object.assign(pd, { tone: 'rest', icon: '🦁', title: m ? '푹 쉬었어요! ' + SP[m.sp].name + ' 레벨 업' : '어린이대공원에서 쉬었어요', body });
+        // 쉼터: 내 포켓몬 모두 경험치 +20
+        const fams = Object.keys(p.mons);
+        const ups = [];
+        fams.forEach((f) => { const m = p.mons[f]; if (gainXp(m, REST_XP)) ups.push(SP[m.sp].name + ' Lv.' + m.lv); });
+        const body = fams.length
+          ? '동물 친구들과 놀고 나니 힘이 났어요.\n🐾 내 포켓몬 ' + fams.length + '마리 모두 경험치 +' + REST_XP + (ups.length ? '\n⬆️ 레벨 업! ' + ups.slice(0, 4).join(' · ') + (ups.length > 4 ? ' …' : '') : '')
+          : '동물 친구들을 구경했어요.\n포켓몬이 생기면 여기서 경험치를 받아요.';
+        Object.assign(pd, { tone: 'rest', icon: '🦁', title: fams.length ? '푹 쉬었어요! 모두 경험치 +' + REST_XP : '어린이대공원에서 쉬었어요', body });
         addLog(st, p, '🦁 어린이대공원에서 푹 쉬었어요');
       }
     }
@@ -2050,98 +2528,268 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   function result(st, p, pd, o) {
     st.pending = Object.assign({ pid: p.pid, at: pd.at, kind: 'result', done: true }, o);
   }
-  function gymFight(st, p, pd) {
-    const m = partnerMon(p);
-    if (!m) return fail('포켓몬이 있어야 도전할 수 있어요. 🐾 말을 바꿔 보세요!');
-    const c = COMP[pd.cid];
-    const champ = isChampSpot(p, pd.cid);
-    const won = !!p.won[pd.cid];
-    const foe = champ ? CHAMP_POWER : gymPower(p);
-    const k = eff(SP[m.sp].type, champ ? 'normal' : pd.cid);
-    const my = Math.round(powerOf(m) * k);
-    const x = Math.round(my * (0.6 + 0.8 * Math.random()));
-    const y = Math.round(foe * (0.6 + 0.8 * Math.random()));
-    const win = x >= y;
-    const nm = SP[m.sp].name;
-    const foeSp = champ ? CHAMP_MON : bossMon(pd.cid, foe);
-    const vs = nm + ' ⚡' + x + ' vs ' + (champ ? '챔피언' : c.boss) + '의 ' + SP[foeSp].name + ' ⚡' + y;
-    const bt = { me: m.sp, lv: m.lv, mp: powerOf(m), eff: k, fp: foe, x, y, kind: champ ? 'champ' : 'gym' };
-    if (!win) {
-      p.stats.losses += 1;
-      result(st, p, pd, { tone: 'bad', icon: '😢', title: '아쉽게 졌어요…', body: vs + '\n지면 잃는 건 없어요. 상성이 좋은 포켓몬으로 말을 바꾸거나 레벨을 올려서 다시 도전해요!', battle: Object.assign({ win: false }, bt), cid: pd.cid, foeSp });
-      addLog(st, p, c.icon + ' ' + c.town + ': ' + (champ ? '챔피언' : c.boss) + '에게 졌어요');
-      return ok({ battle: true, win: false });
-    }
-    p.stats.wins += 1;
-    const up = levelUp(m);
-    const lvLine = up ? '\n⬆️ ' + nm + ' 레벨 업! Lv.' + m.lv + ' (⚡' + powerOf(m) + ')' : '';
-    if (champ) {
-      p.champ = true;
-      p.cash += CHAMP_PRIZE;
-      result(st, p, pd, { cid: pd.cid, tone: 'good', icon: '🏆', title: '서울 챔피언이 됐어요!', body: vs + '\n🏆 롯데월드타워 꼭대기에서 챔피언을 이겼어요!\n💰 상금 +' + fmt(CHAMP_PRIZE) + '원' + lvLine, battle: Object.assign({ win: true, big: true }, bt), foeSp });
-      addLog(st, p, '🏆 챔피언 결정전 승리! 서울 챔피언 탄생');
-      return ok({ battle: true, win: true, big: true });
-    }
-    if (won) {
-      p.cash += PRACTICE_PRIZE;
-      result(st, p, pd, { cid: pd.cid, tone: 'good', icon: '🎉', title: '연습 배틀 승리! +' + fmt(PRACTICE_PRIZE) + '원', body: vs + '\n' + c.boss + iga(c.boss) + ' 박수를 쳐 줬어요.' + lvLine, battle: Object.assign({ win: true, practice: true }, bt), foeSp });
-      addLog(st, p, c.icon + ' ' + c.town + ': 연습 배틀 승리 +' + fmt(PRACTICE_PRIZE) + '원');
-      return ok({ battle: true, win: true });
-    }
-    const prize = gymPrize(p);
-    p.won[pd.cid] = true;
-    p.cash += prize;
-    p.sh[pd.cid] = (p.sh[pd.cid] || 0) + 1;
-    p.cost[pd.cid] = (p.cost[pd.cid] || 0) + st.market.price[pd.cid];
-    const firstCert = !p.certs[pd.cid];
-    if (firstCert) p.certs[pd.cid] = st.day;
-    const tu = checkTier(p);
-    const nb = badgeCount(p);
-    result(st, p, pd, {
-      cid: pd.cid, tone: 'gym-' + pd.cid, icon: '🏅', title: c.icon + ' 배지 획득!',
-      body: vs + '\n' + nb + '번째 배지를 받았어요! 💰 상금 +' + fmt(prize) + '원\n📜 선물: ' + c.name + ' 주식 1주' + (firstCert ? ' (주주 증서 생김)' : '') + lvLine + '\n' +
-        (nb >= 8 ? '🏆 배지 8개! 잠실 롯데월드타워에 가면 챔피언 결정전이 열려요.' : '챔피언까지 배지 ' + (8 - nb) + '개 남았어요.'),
-      battle: Object.assign({ win: true, big: true }, bt), tierUp: tu || undefined, foeSp,
-    });
-    addLog(st, p, c.icon + ' ' + c.town + ': ' + c.boss + eulreul(c.boss) + ' 이기고 배지 획득!');
-    return ok({ battle: true, win: true, big: true, tierUp: tu });
+  // ── 배틀: 내 포켓몬 최대 3마리 팀 vs 야생 1마리 · 관장님 1~3마리 ──
+  // 차례: 내가 먼저 기술을 써요 → 상대가 살아 있으면 반격. 쓰러지면 다음 친구가 나와요.
+  // 야생 포켓몬은 볼을 던져서 잡을 수 있어요 (체력이 적게 남을수록 잘 잡혀요)
+  function fighter(sp, lv, stars, fam, hpx) {
+    const max = Math.round(hpMaxOf(sp, lv, stars) * (hpx > 1 ? hpx : 1));
+    const f = { sp, lv, stars: stars || 0, atk: atkOf(sp, lv, stars), hp: max, max };
+    if (fam) f.fam = fam;
+    return f;
   }
-  function wildFight(st, p, pd) {
-    const m = partnerMon(p);
-    if (!m) return fail('포켓몬이 있어야 배틀할 수 있어요');
-    const f = pd.foe;
-    const fn = SP[f.sp].name;
-    const k = eff(SP[m.sp].type, SP[f.sp].type);
-    const my = Math.round(powerOf(m) * k);
-    const x = Math.round(my * (0.6 + 0.8 * Math.random()));
-    const y = Math.round(f.power * (0.6 + 0.8 * Math.random()));
-    const vs = SP[m.sp].name + ' ⚡' + x + ' vs 야생 ' + fn + ' ⚡' + y;
-    const bt = { me: m.sp, lv: m.lv, mp: powerOf(m), eff: k, fp: f.power, x, y, kind: 'wild' };
-    if (x < y) {
-      p.stats.losses += 1;
-      result(st, p, pd, { tone: 'bad', icon: '😢', title: '아쉽게 졌어요…', body: vs + '\n괜찮아요! 상성이 좋은 포켓몬으로 바꾸거나 레벨을 올려요.', battle: Object.assign({ win: false }, bt), foeSp: f.sp });
-      addLog(st, p, '🌳 야생 ' + fn + '에게 졌어요');
-      return ok({ battle: true, win: false });
+  function hitOf(att, def) {
+    const k = eff(SP[att.sp].type, SP[def.sp].type);
+    const crit = Math.random() < CRIT_RATE;
+    const dmg = Math.max(1, Math.round(att.atk * k * DMG_K * rand(0.85, 1.15) * (crit ? 1.5 : 1)));
+    return { dmg, k, crit };
+  }
+  // 볼로 잡힐 확률: 체력이 가득이면 8%쯤, 조금 남으면 60%쯤. 좋은 볼 · 흔한 포켓몬일수록 잘 잡혀요
+  const RARE_K = { 0: 0.85, 1: 1, 2: 0.85, 3: 0.7, 4: 0.45 };
+  function catchChance(foe, ball) {
+    const b = BALLS[ball];
+    if (!b || !foe || foe.hp <= 0) return 0;
+    return clamp((0.08 + 0.62 * (1 - foe.hp / foe.max)) * b.k * (RARE_K[SP[foe.sp].pool] || 0.85), 0.03, 0.97);
+  }
+  // 추천 팀: 상대 타입에 센 순서로 3마리 (때리는 상성 + 맞는 상성 + 체력)
+  function teamScore(m, foeTypes) {
+    const n = Math.max(1, foeTypes.length);
+    let k = 0;
+    let d = 0;
+    foeTypes.forEach((t) => { k += eff(SP[m.sp].type, t); d += eff(t, SP[m.sp].type); });
+    return (powerOf(m) * (k / n)) / Math.sqrt(d / n) + hpOf(m) * 0.25;
+  }
+  function autoTeam(p, foeTypes) {
+    return Object.keys(p.mons).sort((a, b) => teamScore(p.mons[b], foeTypes) - teamScore(p.mons[a], foeTypes)).slice(0, TEAM_MAX);
+  }
+  function cleanTeam(p, fams) {
+    const out = [];
+    (Array.isArray(fams) ? fams : []).forEach((f) => { if (typeof f === 'string' && p.mons[f] && out.indexOf(f) < 0 && out.length < TEAM_MAX) out.push(f); });
+    return out;
+  }
+  // 이길 확률 어림: 공격만 한다고 치고 200판 돌려 봐요 (진짜 배틀과 같은 계산)
+  function battleOdds(p, fams, foes, n) {
+    const team0 = cleanTeam(p, fams).map((f) => { const m = p.mons[f]; return fighter(m.sp, m.lv, m.stars, f); });
+    if (!team0.length || !foes.length) return 0;
+    const foes0 = foes.map((f) => fighter(f.sp, f.lv, 0, null, f.hpx));
+    const N = n || 200;
+    let win = 0;
+    for (let k = 0; k < N; k++) {
+      const T = team0.map((x) => Object.assign({}, x));
+      const F = foes0.map((x) => Object.assign({}, x));
+      let mi = 0;
+      let fi = 0;
+      for (let g = 0; g < 400; g++) {
+        F[fi].hp -= hitOf(T[mi], F[fi]).dmg;
+        if (F[fi].hp <= 0) { fi += 1; if (fi >= F.length) { win += 1; break; } continue; }
+        T[mi].hp -= hitOf(F[fi], T[mi]).dmg;
+        if (T[mi].hp <= 0) { mi += 1; if (mi >= T.length) break; }
+      }
     }
-    p.stats.wins += 1;
-    p.cash += WILD_PRIZE;
-    const up = levelUp(m);
-    const caught = Math.random() < CATCH_RATE;
-    let catchLine;
-    let res = null;
-    if (caught) {
-      res = addMon(st, p, f.sp);
-      catchLine = '몬스터볼이 흔들흔들… 야생 ' + fn + eulreul(fn) + ' 잡았어요! ' + resLine(res);
+    return win / N;
+  }
+  // 만나는 상대 (야생 1마리 · 관장님 팀)
+  function foesOf(st, p, pd) {
+    if (pd.kind === 'wild') return [{ sp: pd.foe.sp, lv: pd.foe.lv, hpx: pd.foe.hpx || 1 }];
+    return gymTeam(st, p, pd.cid, isChampSpot(p, pd.cid));
+  }
+  function startBattle(st, p, pd, fams) {
+    if (!Object.keys(p.mons).length) return fail('포켓몬이 있어야 배틀할 수 있어요. 🏪 뽑기에서 친구를 만나요!');
+    const foes = foesOf(st, p, pd);
+    let team = cleanTeam(p, fams);
+    if (!team.length) team = autoTeam(p, foes.map((f) => SP[f.sp].type));
+    const champ = pd.kind === 'gym' && isChampSpot(p, pd.cid);
+    const bt = {
+      pid: p.pid, at: pd.at, kind: 'battle', done: false,
+      mode: pd.kind === 'wild' ? 'wild' : champ ? 'champ' : 'gym',
+      team: team.map((f) => { const m = p.mons[f]; return fighter(m.sp, m.lv, m.stars, f); }),
+      foes: foes.map((f) => fighter(f.sp, f.lv, 0, null, f.hpx)),
+      mi: 0, fi: 0, turn: 0, thrown: 0, ev: [{ t: 'start' }], evn: 1,
+    };
+    if (pd.kind === 'gym') {
+      bt.cid = pd.cid;
+      if (p.won[pd.cid] && !champ) bt.practice = true;
+    }
+    if (pd.wid) bt.wid = pd.wid;
+    st.pending = bt;
+    return ok({ bt: 'start' });
+  }
+  // 한 번 때리기 (side = 때리는 쪽). 쓰러뜨리면 true
+  function strike(pd, side) {
+    const A = side === 'me' ? pd.team[pd.mi] : pd.foes[pd.fi];
+    const D = side === 'me' ? pd.foes[pd.fi] : pd.team[pd.mi];
+    const h = hitOf(A, D);
+    D.hp = Math.max(0, D.hp - h.dmg);
+    pd.ev.push({ t: 'hit', side, dmg: h.dmg, k: h.k, crit: h.crit, hp: D.hp });
+    return D.hp <= 0;
+  }
+  function foeTurn(st, p, pd) {
+    if (!strike(pd, 'foe')) return null;
+    pd.ev.push({ t: 'faint', side: 'me', i: pd.mi });
+    const j = pd.team.findIndex((m) => m.hp > 0);
+    if (j < 0) return btEnd(st, p, pd, 'lose');
+    pd.mi = j;
+    pd.ev.push({ t: 'send', side: 'me', i: j });
+    return null;
+  }
+  function myAttack(st, p, pd) {
+    if (!strike(pd, 'me')) return foeTurn(st, p, pd);
+    pd.ev.push({ t: 'faint', side: 'foe', i: pd.fi });
+    const j = pd.foes.findIndex((m) => m.hp > 0);
+    if (j < 0) return btEnd(st, p, pd, pd.mode === 'wild' ? 'ko' : 'win');
+    pd.fi = j;
+    pd.ev.push({ t: 'send', side: 'foe', i: j });
+    return null;
+  }
+  function battleCmd(st, p, a) {
+    const pd = st.pending;
+    if (!pd || pd.kind !== 'battle' || pd.pid !== p.pid) return fail('지금은 배틀 중이 아니에요');
+    if (pd.done) return fail('');
+    const cmd = String(a.cmd || '');
+    let ball = '';
+    let swapTo = -1;
+    if (cmd === 'ball') {
+      if (pd.mode !== 'wild') return fail('관장님 포켓몬은 잡을 수 없어요!');
+      ball = BALLS[a.ball] ? a.ball : 'poke';
+      if (!(p.balls[ball] > 0)) return fail('🎒 ' + BALLS[ball].name + iga(BALLS[ball].name) + ' 없어요. 🏪 뽑기 가게에서 살 수 있어요');
+    } else if (cmd === 'swap') {
+      swapTo = Math.floor(num(a.i, -1));
+      if (swapTo < 0 || swapTo >= pd.team.length || swapTo === pd.mi || pd.team[swapTo].hp <= 0) return fail('');
+    } else if (['atk', 'run'].indexOf(cmd) < 0) {
+      return fail('');
+    }
+    pd.ev = [];
+    pd.turn += 1;
+    if (cmd === 'atk') {
+      myAttack(st, p, pd);
+    } else if (cmd === 'ball') {
+      p.balls[ball] -= 1;
+      pd.thrown += 1;
+      const foe = pd.foes[pd.fi];
+      const c = catchChance(foe, ball);
+      const got = Math.random() < c;
+      const shakes = got ? 3 : Math.random() < c + 0.25 ? 2 : Math.random() < 0.5 ? 1 : 0;
+      pd.ev.push({ t: 'ball', ball, ok: got, shakes, pct: Math.round(c * 100) });
+      pd.lastBall = ball;
+      if (got) btEnd(st, p, pd, 'catch');
+      else foeTurn(st, p, pd);
+    } else if (cmd === 'swap') {
+      pd.ev.push({ t: 'swap', side: 'me', from: pd.mi, i: swapTo });
+      pd.mi = swapTo;
+      foeTurn(st, p, pd);
     } else {
-      catchLine = '야생 ' + fn + eunneun(fn) + ' 도망갔어요. 다음엔 잡을 수 있을 거예요!';
+      btEnd(st, p, pd, pd.mode === 'wild' ? 'run' : 'quit');
     }
-    result(st, p, pd, {
-      tone: 'good', icon: '🎉', title: '이겼어요! +' + fmt(WILD_PRIZE) + '원',
-      body: vs + '\n' + catchLine + (up ? '\n⬆️ ' + SP[m.sp].name + ' 레벨 업! Lv.' + m.lv : ''),
-      battle: Object.assign({ win: true, caught }, bt), caught: caught ? f.sp : undefined, foeSp: f.sp,
+    pd.evn += 1;
+    return ok({ bt: pd.done ? 'end' : 'step', how: pd.how || '' });
+  }
+  // 배틀 끝: 경험치 · 돈 · 배지 · 잡기. 카드는 배틀 그대로 두고(done) 확인을 누르면 닫혀요
+  function btEnd(st, p, pd, how) {
+    const win = how === 'ko' || how === 'catch' || how === 'win';
+    const foe = pd.foes[pd.fi] || pd.foes[0];
+    const fn = SP[foe.sp].name;
+    // 경험치는 상대가 얼마나 셌는지로 정해요: 힘 = ⚡ × √(튼튼한 정도)
+    // 야생 4 + 힘 × 0.5 · 체육관 8 + 힘 × 0.7 (연습 배틀은 반) · 지면 40%
+    const foePow = Math.max.apply(null, pd.foes.map((f) => f.atk * Math.sqrt(f.max / hpMaxOf(f.sp, f.lv, 0))));
+    const base = Math.round((pd.mode === 'wild' ? 4 + foePow * 0.5 : 8 + foePow * 0.7) * (pd.practice ? 0.5 : 1));
+    const xp = how === 'run' || how === 'quit' ? 0 : win ? base : Math.round(base * 0.4);
+    let tone = win ? 'good' : 'bad';
+    let icon = win ? '🎉' : '😢';
+    let title = '';
+    const lines = [];
+    let tu = 0;
+    if (pd.mode === 'wild') {
+      if (how === 'catch') {
+        // 잡은 포켓몬은 그 레벨로 와요 (내 포켓몬 중 가장 높은 레벨까지만)
+        const res = addMon(st, p, foe.sp, Math.min(foe.lv, maxMonLv(p)));
+        p.stats.wins += 1;
+        p.stats.caught = (p.stats.caught || 0) + 1;
+        pd.caught = foe.sp;
+        pd.res = { type: res.type, fam: res.fam, sp: res.sp };
+        title = '잡았다! 야생 ' + fn + ' Lv.' + foe.lv;
+        lines.push(BALLS[pd.lastBall || 'poke'].icon + ' ' + BALLS[pd.lastBall || 'poke'].name + iga(BALLS[pd.lastBall || 'poke'].name) + ' 흔들흔들… 딸깍! ' + resLine(res));
+        addLog(st, p, '🎉 야생 ' + fn + eulreul(fn) + ' 잡았어요!');
+      } else if (how === 'ko') {
+        p.cash += WILD_PRIZE;
+        p.stats.wins += 1;
+        title = '이겼어요! +' + fmt(WILD_PRIZE) + '원';
+        lines.push('야생 ' + fn + eunneun(fn) + ' 기절했어요. 기절한 포켓몬은 잡을 수 없어요.\n💡 다음엔 체력이 조금 남았을 때 볼을 던져 봐요!');
+        addLog(st, p, '🌳 야생 ' + fn + eulreul(fn) + ' 이기고 +' + fmt(WILD_PRIZE) + '원');
+      } else if (how === 'run') {
+        tone = 'calm';
+        icon = '🏃';
+        title = '무사히 도망쳤어요!';
+        lines.push(pd.wid ? '야생 ' + fn + eunneun(fn) + ' 아직 ' + PLACES[pd.at].short + '에 있어요. 다음에 또 만나요!' : '야생 ' + fn + eunneun(fn) + ' 풀숲으로 돌아갔어요.');
+      } else {
+        p.stats.losses += 1;
+        title = '아쉽게 졌어요…';
+        lines.push('괜찮아요! 지면 잃는 건 없어요. 상성이 좋은 포켓몬을 데려가거나 레벨을 올려서 다시 만나요.');
+        addLog(st, p, '🌳 야생 ' + fn + '에게 졌어요');
+      }
+      // 말판에서 놀던 야생 포켓몬은 잡거나 쓰러뜨리면 사라져요
+      if (pd.wid && (how === 'catch' || how === 'ko')) st.wilds = st.wilds.filter((w) => w.id !== pd.wid);
+    } else {
+      const c = COMP[pd.cid] || COMP.rock;
+      const champ = pd.mode === 'champ';
+      const boss = champ ? '서울 챔피언' : c.boss;
+      if (how === 'win') {
+        p.stats.wins += 1;
+        if (champ) {
+          p.champ = true;
+          p.cash += CHAMP_PRIZE;
+          icon = '🏆';
+          title = '서울 챔피언이 됐어요!';
+          lines.push('🏆 롯데월드타워 꼭대기에서 챔피언을 이겼어요!\n💰 상금 +' + fmt(CHAMP_PRIZE) + '원');
+          addLog(st, p, '🏆 챔피언 결정전 승리! 서울 챔피언 탄생');
+        } else if (pd.practice) {
+          p.cash += PRACTICE_PRIZE;
+          title = '연습 배틀 승리! +' + fmt(PRACTICE_PRIZE) + '원';
+          lines.push(boss + iga(boss) + ' 박수를 쳐 줬어요.');
+          addLog(st, p, c.icon + ' ' + c.town + ': 연습 배틀 승리 +' + fmt(PRACTICE_PRIZE) + '원');
+        } else {
+          const prize = gymPrize(p);
+          p.won[pd.cid] = true;
+          p.cash += prize;
+          p.sh[pd.cid] = (p.sh[pd.cid] || 0) + 1;
+          p.cost[pd.cid] = (p.cost[pd.cid] || 0) + st.market.price[pd.cid];
+          const firstCert = !p.certs[pd.cid];
+          if (firstCert) p.certs[pd.cid] = st.day;
+          tu = checkTier(p);
+          const nb = badgeCount(p);
+          tone = 'gym-' + pd.cid;
+          icon = '🏅';
+          title = c.icon + ' 배지 획득!';
+          lines.push(nb + '번째 배지를 받았어요! 💰 상금 +' + fmt(prize) + '원\n📜 선물: ' + c.name + ' 주식 1주' + (firstCert ? ' (주주 증서 생김)' : '') + '\n' +
+            (nb >= 8 ? '🏆 배지 8개! 잠실 롯데월드타워에 가면 챔피언 결정전이 열려요.' : '챔피언까지 배지 ' + (8 - nb) + '개 남았어요.'));
+          addLog(st, p, c.icon + ' ' + c.town + ': ' + c.boss + eulreul(c.boss) + ' 이기고 배지 획득!');
+        }
+      } else if (how === 'lose') {
+        p.stats.losses += 1;
+        title = '아쉽게 졌어요…';
+        lines.push('지면 잃는 건 없어요. 상성이 좋은 포켓몬을 데려가거나 레벨을 올려서 다시 도전해요!');
+        addLog(st, p, c.icon + ' ' + c.town + ': ' + boss + '에게 졌어요');
+      } else {
+        tone = 'calm';
+        icon = '🏃';
+        title = '다음에 다시 도전해요';
+        lines.push(boss + iga(boss) + ' 기다리고 있을게요!');
+      }
+    }
+    // 같이 싸운 친구들 모두 경험치 (기절했어도 함께 싸웠으니까요) · 지면 40%
+    const gains = [];
+    pd.team.forEach((f) => {
+      const m = p.mons[f.fam];
+      if (!m) return;
+      const lv0 = m.lv;
+      if (xp) gainXp(m, xp);
+      gains.push({ fam: f.fam, sp: m.sp, lv0, lv: m.lv, x: m.xp || 0, need: xpNeed(m.lv) });
     });
-    addLog(st, p, '🌳 야생 ' + fn + eulreul(fn) + ' 이기고 +' + fmt(WILD_PRIZE) + '원' + (caught ? ' · 잡았다!' : ''));
-    return ok({ battle: true, win: true, caught, res });
+    if (xp) {
+      const ups = gains.filter((g) => g.lv > g.lv0).map((g) => SP[g.sp].name + ' Lv.' + g.lv0 + '→' + g.lv);
+      lines.push('⭐ 경험치 +' + xp + (gains.length > 1 ? ' (' + gains.length + '마리 모두)' : '') + (win ? '' : ' · 져도 조금 받아요') + (ups.length ? '\n⬆️ 레벨 업! ' + ups.join(' · ') : ''));
+    }
+    Object.assign(pd, { done: true, how, win, xp, gains, tone, icon, title, body: lines.join('\n') });
+    if (tu) pd.tierUp = tu;
+    return how;
   }
   // 합체 결과를 한 줄로
   function resLine(res) {
@@ -2268,7 +2916,15 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     RING.forEach((cid) => { changes[cid] = Math.round(chg(cid) * 1000) / 1000; });
     st.day += 1;
     st.news = [makeNews(null, 'daily')];
-    st.night = { day: st.day, lines: lines.slice(0, 8), delta, changes };
+    // 야생 포켓몬: 오래 논 친구는 떠나고, 새 친구가 나타나요
+    const wl = [];
+    st.wilds.filter((w) => st.day >= w.until).forEach((w) => wl.push({ cls: '', t: '🐾 ' + PLACES[w.at].short + '에서 놀던 야생 ' + SP[w.sp].name + iga(SP[w.sp].name) + ' 떠났어요' }));
+    st.wilds = st.wilds.filter((w) => st.day < w.until);
+    if (!st.wilds.length || Math.random() < WILD_SPAWN) {
+      const w = spawnWild(st, pick(st.players));
+      if (w) wl.unshift({ cls: 'l-good', t: '🐾 ' + PLACES[w.at].short + '에 야생 ' + SP[w.sp].name + iga(SP[w.sp].name) + ' 나타났어요! 딱 멈추면 배틀!' });
+    }
+    st.night = { day: st.day, lines: wl.concat(lines).slice(0, 8), delta, changes };
     if (st.meeting && st.meeting.result && st.day > st.meeting.day + 1) st.meeting = null;
     if (st.day % MEETING_EVERY === 0) openMeeting(st);
   }
@@ -2305,6 +2961,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         const amt = n * m.per;
         p.cash += amt;
         p.earned += amt;
+        p.divs = (p.divs || 0) + amt;
         m.paid[p.pid] = amt;
         checkTier(p);
       });
@@ -2322,9 +2979,13 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     roll(st, p) {
       if (st.pending) return fail(st.pending.pid === p.pid ? '먼저 카드를 확인해요!' : '다른 사람이 카드를 보고 있어요');
       if (isMulti(st) && currentPlayer(st).pid !== p.pid) return fail('지금은 ' + currentPlayer(st).name + ' 차례예요');
-      ensureDice(st, p);
-      if (p.dice.left <= 0) return fail('😴 오늘 주사위를 다 썼어요. 내일 또 만나요!');
-      p.dice.left -= 1;
+      const now = Date.now();
+      ensureDice(st, p, now);
+      if (!diceUnlimited(st)) {
+        if (p.dice.left <= 0) return fail('😴 주사위를 다 썼어요! ' + diceWaitMin(st, p, now) + '분 뒤에 ' + st.settings.dice + '개가 다시 채워져요.');
+        if (!p.dice.t) p.dice.t = now;
+        p.dice.left -= 1;
+      }
       const face = 1 + rnd(6);
       const from = p.pos;
       let passed = 0;
@@ -2334,19 +2995,29 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       }
       st.lastMove = { pid: p.pid, from, face, to: p.pos, n: (st.lastMove ? st.lastMove.n : 0) + 1 };
       if (passed && p.pos !== 0) addLog(st, p, '🏠 집을 지나며 용돈 +' + fmt(HOME_PAY) + '원');
+      // 누군가 처음으로 한 바퀴를 더 돌면 계절이 바뀌고 지도 칸 속성이 새로 섞여요
+      let mapChanged = false;
+      if (passed && p.laps > st.map.lap) {
+        st.map.lap = p.laps;
+        shuffleMap(st);
+        mapChanged = true;
+        const S = SEASONS[st.map.season];
+        addLog(st, p, S.icon + ' ' + S.name + '이 왔어요! 지도 칸 속성이 바뀌었어요');
+      }
       land(st, p);
-      return ok({ face, from, to: p.pos });
+      return ok({ face, from, to: p.pos, map: mapChanged });
     },
     choose(st, p, a) {
       const pd = st.pending;
       if (!pd || pd.pid !== p.pid) return fail('확인할 카드가 없어요');
       const key = String(a.key || '');
-      if (!pd.done && pd.kind === 'gym') {
-        if (key === 'fight') return gymFight(st, p, pd);
-        if (key === 'leave') return closePending(st, p);
-      } else if (!pd.done && pd.kind === 'wild') {
-        if (key === 'fight') return wildFight(st, p, pd);
-        if (key === 'flee') return closePending(st, p);
+      if (pd.kind === 'battle') {
+        if (pd.done && key === 'ok') return closePending(st, p);
+        return fail(pd.done ? '' : '배틀 중이에요!');
+      }
+      if (!pd.done && (pd.kind === 'gym' || pd.kind === 'wild')) {
+        if (key === 'fight') return startBattle(st, p, pd, a.team);
+        if (key === 'leave' || key === 'flee') return closePending(st, p);
       } else if (!pd.done && pd.kind === 'quiz') {
         if (/^q[0-2]$/.test(key)) return answerQuiz(st, p, pd, Number(key.charAt(1)));
       } else if (key === 'ok') {
@@ -2362,6 +3033,47 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       addLog(st, cur, '⏭️ ' + cur.name + ' 차례를 넘겼어요');
       endTurn(st, cur);
       return ok({ skipped: cur.pid });
+    },
+    // 배틀 중 명령: 공격 · 볼 던지기 · 교체 · 도망
+    bt(st, p, a) {
+      return battleCmd(st, p, a);
+    },
+    // 초안 시험용 버튼 (초안 빌드에서만)
+    dev(st, p, a) {
+      if (!DRAFT) return fail('');
+      const k = String(a.k || '');
+      if (k === 'cash') p.cash += 5000;
+      else if (k === 'balls') BALL_KEYS.forEach((b) => { p.balls[b] = Math.min(MAX_BALLS, p.balls[b] + 10); });
+      else if (k === 'mons') {
+        const keys = SPECIES_KEYS.filter((s) => SP[s].pool === clamp(p.tier, 1, 3));
+        for (let i = 0; i < 3; i++) addMon(st, p, pick(keys), 3 + rnd(6));
+        if (!p.starter) p.starter = true;
+      } else if (k === 'wild') {
+        const w = spawnWild(st, p);
+        if (!w) return fail('말판에 자리가 없어요 (야생 포켓몬은 3마리까지)');
+        return ok({ dev: k, wild: w.sp, at: w.at });
+      } else if (k === 'lap') {
+        st.map.lap += 1;
+        p.laps = Math.max(p.laps, st.map.lap);
+        shuffleMap(st);
+      } else if (k === 'hour') {
+        st.players.forEach((q) => { if (q.dice.t) q.dice.t -= DICE_HOUR; });
+      } else if (k === 'xp') {
+        Object.keys(p.mons).forEach((f) => gainXp(p.mons[f], 80));
+      } else return fail('');
+      return ok({ dev: k });
+    },
+    buyBall(st, p, a) {
+      const k = BALLS[a.ball] ? a.ball : '';
+      if (!k) return fail('');
+      const b = BALLS[k];
+      if (p.tier < b.tier) return fail('🔒 ' + b.name + eunneun(b.name) + ' ' + b.tier + '단계(' + TIERS[b.tier].ball + ' ' + TIERS[b.tier].name + ')부터 살 수 있어요');
+      const n = clamp(Math.floor(num(a.n, 1)), 1, 10);
+      if ((p.balls[k] || 0) + n > MAX_BALLS) return fail('🎒 가방이 꽉 찼어요 (' + MAX_BALLS + '개까지)');
+      if (p.cash < b.price * n) return fail('💸 ' + fmt(b.price * n - p.cash) + '원이 모자라요!');
+      p.cash -= b.price * n;
+      p.balls[k] = (p.balls[k] || 0) + n;
+      return ok({ ball: k, n });
     },
     buy(st, p, a) {
       const c = COMP[a.cid];
@@ -2466,12 +3178,17 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     },
     settings(st, p, a) {
       if (a.dice != null && DICE_CHOICES.indexOf(a.dice) >= 0 && a.dice !== st.settings.dice) {
-        const diff = a.dice - st.settings.dice;
+        const old = st.settings.dice;
         st.settings.dice = a.dice;
-        const t = todayStr();
-        st.players.forEach((q) => { if (q.dice.date === t) q.dice.left = clamp(q.dice.left + diff, 0, a.dice + 5); });
+        const now = Date.now();
+        st.players.forEach((q) => {
+          // 1시간 안에 쓰던 중이면 바뀐 만큼만 더하거나 빼고, 아니면 새 개수로 채워요
+          if (old && a.dice && q.dice.t && !diceExpired(q, now)) q.dice.left = clamp(q.dice.left + (a.dice - old), 0, a.dice + 5);
+          else q.dice = { t: 0, left: a.dice };
+        });
       }
       if (a.counter != null && a.counter >= 0 && a.counter <= 2) st.settings.counter = a.counter;
+      if (a.diff != null && a.diff >= 0 && a.diff < DIFFS.length) st.settings.diff = Math.floor(a.diff);
       return ok();
     },
     addPlayer(st, p, a) {
@@ -2520,8 +3237,9 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       mons: {}, partner: null, dex: {}, won: {}, champ: !!r.champ,
       tier: int(r.tier, 1, 1, 4), tierSeen: int(r.tierSeen, 1, 1, 4), certs: {},
       pos: int(r.pos, 0, 0, NP - 1), laps: int(r.laps, 0, 0, 99999),
-      dice: { date: '', left: 0 }, quizN: int(r.quizN, 0, 0, 1e9), coupons: [],
-      stats: { wins: 0, losses: 0, draws: 0, trades: 0 }, starter: !!r.starter, lastDraw: null, hist: [],
+      dice: { t: 0, left: 0 }, quizN: int(r.quizN, 0, 0, 1e9), coupons: [],
+      balls: { poke: START_BALLS, great: 0, ultra: 0 },
+      stats: { wins: 0, losses: 0, draws: 0, trades: 0, caught: 0 }, starter: !!r.starter, lastDraw: null, hist: [],
     };
     if (Array.isArray(r.hist)) p.hist = r.hist.filter((x) => typeof x === 'number' && isFinite(x)).slice(-30).map((x) => Math.max(0, Math.round(x)));
     if (!p.hist.length) p.hist = [START_CASH];
@@ -2535,19 +3253,26 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       Object.keys(r.mons).forEach((f) => {
         const m = r.mons[f];
         if (!isObj(m) || !SP[m.sp] || FAM_OF[m.sp] !== f) return;
-        p.mons[f] = { sp: m.sp, stage: STAGE_OF[m.sp], gauge: int(m.gauge, 1, 1, 2), stars: int(m.stars, 0, 0, MAX_STARS), lv: int(m.lv, 1, 1, MAX_LV) };
+        // 경험치(xp)가 없으면 3.3까지의 저장이에요: 레벨을 새 눈금으로 바꿔요 (공격력은 그대로)
+        const legacy = typeof m.xp !== 'number';
+        const lv = legacy ? oldLv(int(m.lv, 1, 1, 10)) : int(m.lv, 1, 1, MAX_LV);
+        p.mons[f] = { sp: m.sp, stage: STAGE_OF[m.sp], gauge: int(m.gauge, 1, 1, 2), stars: int(m.stars, 0, 0, MAX_STARS), lv, xp: legacy || lv >= MAX_LV ? 0 : int(m.xp, 0, 0, xpNeed(lv) - 1) };
       });
     }
     if (typeof r.partner === 'string' && p.mons[r.partner]) p.partner = r.partner;
     if (isObj(r.dex)) Object.keys(r.dex).forEach((k) => { if (SP[k]) p.dex[k] = true; });
     Object.keys(p.mons).forEach((f) => { p.dex[p.mons[f].sp] = true; });
     if (Object.keys(p.mons).length) p.starter = true;
-    if (isObj(r.dice) && typeof r.dice.date === 'string') p.dice = { date: r.dice.date.slice(0, 10), left: int(r.dice.left, 0, 0, 99) };
+    // 주사위: 예전(하루) 저장이면 새로 채워요
+    if (isObj(r.dice) && typeof r.dice.t === 'number') p.dice = { t: Math.max(0, Math.min(Math.floor(r.dice.t), Date.now() + 60000)), left: int(r.dice.left, 0, 0, 99) };
+    if (isObj(r.balls)) BALL_KEYS.forEach((k) => { p.balls[k] = int(r.balls[k], 0, 0, MAX_BALLS); });
     if (Array.isArray(r.coupons)) {
       p.coupons = r.coupons.filter((c) => isObj(c) && typeof c.id === 'string' && typeof c.name === 'string').slice(-50)
         .map((c) => ({ id: c.id.slice(0, 40), name: c.name.slice(0, 40), date: str(c.date, '', 10) }));
     }
-    if (isObj(r.stats)) ['wins', 'losses', 'draws', 'trades'].forEach((k) => { p.stats[k] = int(r.stats[k], 0, 0, 1e9); });
+    if (isObj(r.stats)) ['wins', 'losses', 'draws', 'trades', 'caught'].forEach((k) => { p.stats[k] = int(r.stats[k], 0, 0, 1e9); });
+    p.divs = Math.max(0, Math.round(num(r.divs, 0)));
+    p.peak = int(r.peak, 0, 0, 999);
     const ld = r.lastDraw;
     if (isObj(ld) && SP[ld.sp] && isObj(ld.res) && SP[ld.res.sp]) {
       p.lastDraw = {
@@ -2555,15 +3280,84 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         res: { type: str(ld.res.type, 'new', 8), fam: str(ld.res.fam, '', 20), sp: ld.res.sp, from: SP[ld.res.from] ? ld.res.from : undefined, got: SP[ld.res.got] ? ld.res.got : undefined, gauge: int(ld.res.gauge, 1, 1, 3), stars: int(ld.res.stars, 0, 0, 3) },
       };
     }
+    // 단계 조건이 낮아졌으면 바로 올라가요 (내려가지는 않아요)
+    checkTier(p);
     return p;
   }
-  const PENDING_KINDS = ['home', 'gym', 'wild', 'quiz', 'news', 'luck', 'div', 'cost', 'bank', 'again', 'rest', 'result'];
+  // 난이도 체력 배수의 끝 (어려움 2.95 × 약한 종 보정 2.5 ≈ 7.4)
+  const HPX_MAX = 8;
+  const PENDING_KINDS = ['home', 'gym', 'wild', 'quiz', 'news', 'luck', 'div', 'cost', 'bank', 'again', 'rest', 'result', 'battle'];
+  const HOWS = ['ko', 'catch', 'win', 'lose', 'run', 'quit'];
+  function sanFighter(f, mine, p) {
+    if (!isObj(f) || !SP[f.sp]) return null;
+    const lv = int(f.lv, 1, 1, MAX_LV);
+    const stars = int(f.stars, 0, 0, MAX_STARS);
+    const out = fighter(f.sp, lv, stars);
+    out.max = int(f.max, out.max, out.max, Math.round(out.max * HPX_MAX));
+    out.hp = int(f.hp, out.max, 0, out.max);
+    if (mine) {
+      if (typeof f.fam !== 'string' || !p.mons[f.fam]) return null;
+      out.fam = f.fam;
+    }
+    return out;
+  }
+  function sanEvents(list) {
+    if (!Array.isArray(list)) return [];
+    return list.slice(0, 24).filter((e) => isObj(e) && typeof e.t === 'string').map((e) => {
+      const o = { t: str(e.t, '', 8) };
+      if (e.side === 'me' || e.side === 'foe') o.side = e.side;
+      ['dmg', 'hp', 'i', 'from', 'shakes', 'pct'].forEach((k) => { if (typeof e[k] === 'number') o[k] = int(e[k], 0, 0, 99999); });
+      if (typeof e.k === 'number') o.k = [0.7, 1, 1.5].indexOf(e.k) >= 0 ? e.k : 1;
+      if (e.crit) o.crit = true;
+      if (e.ok) o.ok = true;
+      if (BALLS[e.ball]) o.ball = e.ball;
+      return o;
+    });
+  }
   function sanitizePending(r, st) {
     if (!isObj(r) || !playerById(st, r.pid) || PENDING_KINDS.indexOf(r.kind) < 0) return null;
+    const p = playerById(st, r.pid);
     const pd = { pid: r.pid, at: int(r.at, 0, 0, NP - 1), kind: r.kind };
     if (r.kind === 'gym') { if (!COMP[r.cid]) return null; pd.cid = r.cid; return pd; }
-    if (r.kind === 'wild') { if (!isObj(r.foe) || !SP[r.foe.sp]) return null; pd.foe = { sp: r.foe.sp, power: int(r.foe.power, 10, 1, 999) }; return pd; }
+    if (r.kind === 'wild') {
+      if (!isObj(r.foe) || !SP[r.foe.sp]) return null;
+      // 예전 저장(foe.power)이면 비슷한 레벨로
+      const lv = typeof r.foe.lv === 'number' ? int(r.foe.lv, 1, 1, MAX_LV) : clamp(1 + Math.round((num(r.foe.power, SP[r.foe.sp].power) - SP[r.foe.sp].power) / LV_ATK), 1, MAX_LV);
+      pd.foe = { sp: r.foe.sp, lv, hpx: Math.round(clamp(num(r.foe.hpx, 1), 1, HPX_MAX) * 100) / 100 };
+      if (typeof r.wid === 'string' && /^w\d{1,9}$/.test(r.wid)) pd.wid = r.wid;
+      return pd;
+    }
     if (r.kind === 'quiz') { pd.qi = int(r.qi, 0, 0, QUIZ.length - 1); return pd; }
+    if (r.kind === 'battle') {
+      if (['wild', 'gym', 'champ'].indexOf(r.mode) < 0 || !Array.isArray(r.team) || !Array.isArray(r.foes)) return null;
+      const team = r.team.slice(0, TEAM_MAX).map((f) => sanFighter(f, true, p));
+      const foes = r.foes.slice(0, 3).map((f) => sanFighter(f, false, p));
+      if (!team.length || !foes.length || team.some((f) => !f) || foes.some((f) => !f)) return null;
+      Object.assign(pd, {
+        mode: r.mode, done: !!r.done, team, foes,
+        mi: int(r.mi, 0, 0, team.length - 1), fi: int(r.fi, 0, 0, foes.length - 1),
+        turn: int(r.turn, 0, 0, 9999), thrown: int(r.thrown, 0, 0, 999), ev: sanEvents(r.ev), evn: int(r.evn, 0, 0, 1e9),
+      });
+      if (r.mode !== 'wild') { if (!COMP[r.cid]) return null; pd.cid = r.cid; }
+      if (r.practice) pd.practice = true;
+      if (typeof r.wid === 'string' && /^w\d{1,9}$/.test(r.wid)) pd.wid = r.wid;
+      if (BALLS[r.lastBall]) pd.lastBall = r.lastBall;
+      if (pd.done) {
+        pd.how = HOWS.indexOf(r.how) >= 0 ? r.how : 'lose';
+        pd.win = !!r.win;
+        pd.xp = int(r.xp, 0, 0, 9999);
+        pd.tone = str(r.tone, 'calm', 20);
+        pd.icon = str(r.icon, '🃏', 8);
+        pd.title = str(r.title, '', 160);
+        pd.body = str(r.body, '', 800);
+        if (r.tierUp) pd.tierUp = int(r.tierUp, 0, 0, 4);
+        if (SP[r.caught]) pd.caught = r.caught;
+        pd.gains = (Array.isArray(r.gains) ? r.gains : []).slice(0, TEAM_MAX).filter((g) => isObj(g) && SP[g.sp]).map((g) => ({
+          fam: str(g.fam, '', 20), sp: g.sp, lv0: int(g.lv0, 1, 1, MAX_LV), lv: int(g.lv, 1, 1, MAX_LV), x: int(g.x, 0, 0, 9999), need: int(g.need, 1, 1, 9999),
+        }));
+      }
+      return pd;
+    }
     pd.done = r.kind === 'result' ? true : !!r.done;
     pd.tone = str(r.tone, 'calm', 20);
     pd.icon = str(r.icon, '🃏', 8);
@@ -2571,23 +3365,9 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     pd.body = str(r.body, '', 600);
     if (COMP[r.cid]) pd.cid = r.cid;
     if (r.tierUp) pd.tierUp = int(r.tierUp, 0, 0, 4);
-    if (isObj(r.battle)) {
-      const b = r.battle;
-      pd.battle = { win: !!b.win, big: !!b.big };
-      if (b.practice) pd.battle.practice = true;
-      if (b.caught) pd.battle.caught = true;
-      // 배틀 장면용 숫자 (없으면 장면 없이 결과만 보여요)
-      if (SP[b.me] && typeof b.x === 'number' && typeof b.y === 'number') {
-        Object.assign(pd.battle, {
-          me: b.me, lv: int(b.lv, 1, 1, MAX_LV), mp: int(b.mp, 1, 1, 9999), fp: int(b.fp, 1, 1, 9999),
-          x: int(b.x, 0, 0, 99999), y: int(b.y, 0, 0, 99999), eff: [0.7, 1, 1.5].indexOf(b.eff) >= 0 ? b.eff : 1,
-          kind: ['wild', 'gym', 'champ'].indexOf(b.kind) >= 0 ? b.kind : 'gym',
-        });
-      }
-    }
+    if (isObj(r.battle)) pd.battle = { win: !!r.battle.win, big: !!r.battle.big };
     if (isObj(r.quiz)) pd.quiz = { right: !!r.quiz.right };
     if (SP[r.caught]) pd.caught = r.caught;
-    if (SP[r.foeSp]) pd.foeSp = r.foeSp;
     return pd;
   }
   function sanitize(raw) {
@@ -2604,6 +3384,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     if (isObj(raw.settings)) {
       st.settings.dice = DICE_CHOICES.indexOf(raw.settings.dice) >= 0 ? raw.settings.dice : 10;
       st.settings.counter = int(raw.settings.counter, 2, 0, 2);
+      st.settings.diff = int(raw.settings.diff, 1, 0, DIFFS.length - 1);
     }
     st.day = int(raw.day, 1, 1, 1e7);
     st.turn = int(raw.turn, 0, 0, st.players.length - 1);
@@ -2645,6 +3426,28 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       if (isObj(mt.paid)) Object.keys(mt.paid).forEach((pid) => { m.paid[pid] = int(mt.paid[pid], 0, 0, 1e7); });
       st.meeting = m;
     }
+    // 칸 속성 지도 · 계절 (예전 저장이면 첫 바퀴 지도로 시작해요)
+    const maxLap = Math.max.apply(null, st.players.map((p) => p.laps));
+    const mp = raw.map;
+    if (isObj(mp) && Array.isArray(mp.types)) {
+      st.map = {
+        lap: int(mp.lap, maxLap, 0, 99999), season: int(mp.season, 0, 0, SEASONS.length - 1), n: int(mp.n, 0, 0, 1e9),
+        types: PLACES.map((pl, i) => (pl.kind === 'home' ? '' : pl.cid || (TYPES[mp.types[i]] ? mp.types[i] : pl.type || 'normal'))),
+      };
+    } else {
+      st.map = newMap(maxLap);
+    }
+    // 말판에서 노는 야생 포켓몬
+    st.wilds = [];
+    const wAt = {};
+    (Array.isArray(raw.wilds) ? raw.wilds : []).slice(0, MAX_WILDS).forEach((w) => {
+      if (!isObj(w) || !SP[w.sp] || typeof w.id !== 'string' || !/^w\d{1,9}$/.test(w.id)) return;
+      const at = int(w.at, -1, -1, NP - 1);
+      if (at < 0 || wAt[at] || PLACES[at].kind === 'home' || PLACES[at].kind === 'gym') return;
+      wAt[at] = true;
+      st.wilds.push({ id: w.id, at, sp: w.sp, until: int(w.until, st.day + 3, 1, 1e7) });
+    });
+    st.wseq = Math.max(int(raw.wseq, 0, 0, 1e9), 0, ...st.wilds.map((w) => Number(w.id.slice(1))));
     st.pending = sanitizePending(raw.pending, st);
     const lm = raw.lastMove;
     if (isObj(lm) && playerById(st, lm.pid)) st.lastMove = { pid: lm.pid, from: int(lm.from, 0, 0, NP - 1), face: int(lm.face, 1, 1, 6), to: int(lm.to, 0, 0, NP - 1), n: int(lm.n, 0, 0, 1e9) };
@@ -2667,7 +3470,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     if (isObj(raw.pokemon)) {
       Object.keys(raw.pokemon).forEach((name) => {
         const sp = SP_BY_NAME[name];
-        const lv = int(raw.pokemon[name] && raw.pokemon[name].lv, 1, 1, MAX_LV);
+        const lv = oldLv(int(raw.pokemon[name] && raw.pokemon[name].lv, 1, 1, 10));
         if (!sp) { extra += 300; return; }
         addMon(st, p, sp);
         const m = p.mons[FAM_OF[sp]];
@@ -3366,6 +4169,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   const ui = {
     tab: 'board', busy: false, sheets: [], anim: null, seenMove: -1, suspense: 0, battle: false,
     drawAnim: null, reveal: null, ball: 0, open: {}, pickPlace: -1, meetingSeen: {}, panel: null, lastHandoff: '', peek: false, rooms: null, rolling: false,
+    team: null, odds: null,
   };
   document.body.classList.add('on-board');
   const TYPE_C = { water: '#3b82f6', fire: '#f97316', grass: '#22c55e', electric: '#facc15', rock: '#a8a29e', ground: '#d97706', flying: '#38bdf8', fighting: '#f43f5e', normal: '#94a3b8', psychic: '#a855f7', fairy: '#ec4899', poison: '#c026d3', bug: '#84cc16', ghost: '#6366f1', ice: '#22d3ee', dragon: '#7c3aed' };
@@ -3551,6 +4355,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     renderStockTab();
     renderShopTab();
     renderDexTab();
+    if (!ui.busy) syncBattle();
     renderSheet();
     renderTierUp();
     renderDots();
@@ -3563,6 +4368,14 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     setNum('cash-val', v.cash);
     setNum('stock-val', stockValue(st, v));
     $('badge-val').textContent = badgeCount(v);
+    // 📊 주식 수익률 · 💰 주식으로 번 돈 (언제나 보여요)
+    const pf = portfolio(st, v);
+    const sign = (x) => (x > 0 ? '+' : x < 0 ? '−' : '±');
+    setWs('ret-val', pf.cost ? pctText(pf.rate) : '—', 'ws-val' + (pf.cost ? (pf.gain > 0 ? ' up' : pf.gain < 0 ? ' down' : '') : ''));
+    setWs('ret-sub', pf.cost ? '지금 팔면 ' + sign(pf.gain) + fmt(Math.abs(pf.gain)) + '원' : '주식을 사면 보여요');
+    setWs('earn-val', (v.earned < 0 ? '−' : '') + fmt(Math.abs(v.earned)) + '원', 'ws-val earn' + (v.earned < 0 ? ' down' : ''));
+    const nx = nextTierNeed(v);
+    setWs('earn-sub', !nx ? '🟣 마스터볼까지 다 열었어요!' : nx.earned > 0 ? nx.t.ball + ' ' + nx.t.name + '까지 ' + fmt(nx.earned) + '원 더' : nx.shares > 0 ? nx.t.ball + ' ' + nx.t.name + ': 주식 ' + nx.shares + '주만 더!' : nx.t.ball + ' ' + nx.t.name + ' 곧 열려요!');
     const who = $('who-chip');
     if (isMulti(st)) {
       who.hidden = false;
@@ -3571,6 +4384,21 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     } else {
       who.hidden = true;
     }
+  }
+  // 글자가 바뀌면 살짝 통통 (지갑 띠 아래 줄)
+  function setWs(id, txt, cls) {
+    const el = $(id);
+    if (!el) return;
+    if (cls != null && el.className !== cls) el.className = cls;
+    if (el.textContent === txt) return;
+    const first = el.textContent === '' || el.dataset.ready !== '1';
+    el.textContent = txt;
+    el.dataset.ready = '1';
+    if (first || reduceMotion || !el.classList.contains('ws-val')) return;
+    const box = el.closest('.ws-box');
+    box.classList.remove('bump');
+    void box.offsetWidth;
+    box.classList.add('bump');
   }
   function renderDots() {
     const st = store.st;
@@ -3617,6 +4445,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const st = store.st;
     if (!res.ok) {
       if (res.msg) toast(res.msg, 3000);
+      if (type === 'bt') showMenu();
       render();
       return;
     }
@@ -3627,23 +4456,22 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         startMoveAnim(st.lastMove, false);
         break;
       case 'choose':
-        if (res.battle) {
-          // 배틀 장면이 끝나면 결과 카드가 나와요 (장면 재료가 없거나 움직임을 줄인 폰이면 바로 결과)
-          const o = reduceMotion ? null : battleFromPending(st.pending);
-          if (o) {
-            ui.battle = true;
-            hideBubble();
-            playBattle(o).then(() => {
-              ui.battle = false;
-              render();
-              if (res.win) fx.burst(res.big ? 200 : 110);
-            });
-          } else if (res.win) {
-            setTimeout(() => fx.burst(res.big ? 200 : 110), 60);
-          }
-        }
+        // 배틀 시작: 배틀 화면이 열리고, 끝나면 확인을 눌러 닫아요
+        if (res.bt === 'start' && st.pending && st.pending.kind === 'battle') { ui.team = null; openBattle(st.pending, false); }
         if (res.quiz) { if (res.right) fx.burst(90); }
-        if (res.closed || res.skipped) pushHandoff();
+        if (res.closed || res.skipped) { if (bt.on) closeBattle(); pushHandoff(); }
+        break;
+      case 'bt':
+        playStep();
+        break;
+      case 'buyBall': {
+        const B = BALLS[res.ball];
+        toast('🎒 ' + B.name + ' ' + res.n + '개를 샀어요! (−' + fmt(B.price * res.n) + '원) 이제 ' + v.balls[res.ball] + '개');
+        break;
+      }
+      case 'dev':
+        toast('🧪 ' + ({ cash: '돈 +5,000원', balls: '볼을 10개씩 넣었어요', mons: '포켓몬 3마리가 왔어요', wild: '말판에 야생 포켓몬이 나타났어요', lap: '한 바퀴 돈 것처럼 계절을 바꿨어요', hour: '1시간이 지난 것처럼 주사위를 채웠어요', xp: '모든 포켓몬 경험치 +80' }[res.dev] || '시험용'));
+        board.tokensKey = '';
         break;
       case 'skip':
         pushHandoff();
@@ -3655,9 +4483,10 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         break;
       }
       case 'sell': {
-        if (res.gain > 0) { toast('💰 ' + res.n + '주 팔았어요! ' + fmt(res.gain) + '원 이득! 지갑 속 돈이 늘었어요'); fx.burst(60); }
-        else if (res.gain < 0) toast('😢 ' + res.n + '주 팔았어요. ' + fmt(-res.gain) + '원 손해예요. 다음엔 오를 때 팔아 봐요!');
-        else toast(res.n + '주 팔았어요. 산 값 그대로, 본전이에요!');
+        const tot = ' · 주식으로 번 돈 ' + (v.earned < 0 ? '−' : '') + fmt(Math.abs(v.earned)) + '원';
+        if (res.gain > 0) { toast('💰 ' + res.n + '주 팔았어요! ' + fmt(res.gain) + '원 이득!' + tot, 3400); fx.burst(60); }
+        else if (res.gain < 0) toast('😢 ' + res.n + '주 팔았어요. ' + fmt(-res.gain) + '원 손해예요. 다음엔 오를 때 팔아 봐요!' + tot, 3400);
+        else toast(res.n + '주 팔았어요. 산 값 그대로, 본전이에요!' + tot, 3000);
         break;
       }
       case 'draw':
@@ -3737,14 +4566,17 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   const board = {
     built: false, tokensKey: '', s: 1, vx: 0, vy: 0, W: 0, H: 0, mapW: 0, zoom: 'big',
     free: false, auto: false, autoT: 0, touching: false, bubbleT: 0, sizeKey: '', moonDay: 0, nightT: 0, nightBack: 0,
+    mapN: -1, typesKey: '', wildSeen: null,
   };
   const VB_W = 370;
   const VB_H = 309;
   const PIPS = { 1: ['c'], 2: ['tl', 'br'], 3: ['tl', 'c', 'br'], 4: ['tl', 'tr', 'bl', 'br'], 5: ['tl', 'tr', 'c', 'bl', 'br'], 6: ['tl', 'tr', 'ml', 'mr', 'bl', 'br'] };
   const PIP_AT = { tl: [17, 17], tr: [55, 17], ml: [17, 36], mr: [55, 36], bl: [17, 55], br: [55, 55], c: [36, 36] };
   // 남산 N서울타워 위에 뜬 보름달 (아이가 제일 좋아하는 곳)
-  const NAMSAN = PLACES.findIndex((p) => p.short === '남산');
   const MOON = { x: 222, y: 160 };
+  // 계절 꾸미기: 한 바퀴마다 봄 🌸 → 여름 🌻 → 가을 🍁 → 겨울 ❄️
+  const SEASON_DECO = ['🌸', '🌻', '🍁', '❄️'];
+  const DECO_AT = [[58, 96], [96, 212], [152, 104], [118, 268], [236, 96], [300, 118], [338, 214], [268, 276], [196, 244], [244, 150], [60, 200], [176, 60]];
   // 밤이 되면 지도 위에 반짝이는 별
   const STARS = [[46, 52], [92, 34], [150, 22], [196, 48], [248, 30], [300, 58], [338, 96], [70, 110], [118, 92], [236, 104], [286, 124], [30, 210], [96, 262], [190, 286], [272, 264], [340, 236]];
 
@@ -3753,7 +4585,8 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       const c = COMP[pl.cid];
       return c.icon + ' ' + pl.name + ' · ' + c.name + ' 체육관 (' + c.boss + ')';
     }
-    return pl.icon + ' ' + pl.name + ' · ' + KIND_DESC[pl.kind] + (pl.i === NAMSAN ? ' · 🌕 남산에 달이 떴어요' : '');
+    const t = placeType(store.st, pl.i);
+    return pl.icon + ' ' + pl.name + ' · ' + KIND_DESC[pl.kind] + (t ? ' · ' + TYPES[t].name + ' 속성 칸' : '') + (pl.i === NAMSAN ? ' · 🌕 남산에 달이 떴어요' : '');
   }
   function namsanScene() {
     return '<circle cx="-6.5" cy="-6" r="0.6" fill="#ffffff"></circle><circle cx="6.2" cy="-8.2" r="0.5" fill="#ffffff"></circle>' +
@@ -3793,9 +4626,11 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const nodes = '<g>' + PLACES.map((p) => {
       const aria = ' role="button" tabindex="0" aria-label="' + esc((p.i + 1) + '번 칸 ' + placeDesc(p)) + '"';
       const at = ' id="nd-' + p.i + '" data-act="place" data-i="' + p.i + '" transform="translate(' + p.x + ' ' + p.y + ')"';
+      // 칸 속성 동그라미 (집 · 체육관은 빼고)
+      const tb = (r) => (p.kind === 'home' || p.cid ? '' : '<g class="nt" id="nt-' + p.i + '" transform="translate(' + (r * 0.78).toFixed(1) + ' ' + (-r * 0.78).toFixed(1) + ')"><g class="nt-in"><circle r="4.6"></circle><text y="0.35"></text></g></g>');
       if (p.i === NAMSAN) {
         return '<g class="nd big namsan"' + at + aria + '><circle class="hl" r="15.5"></circle><circle class="nb" r="12"></circle>' +
-          '<g clip-path="url(#ns-clip)" pointer-events="none">' + namsanScene() + '</g></g>';
+          '<g clip-path="url(#ns-clip)" pointer-events="none">' + namsanScene() + '</g>' + tb(12) + '</g>';
       }
       const r = p.big ? 12 : 9;
       const cls = 'nd ' + (p.big ? 'big ' : '') + (p.cid ? 'g-' + p.cid : 'k-' + p.kind);
@@ -3803,14 +4638,45 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         '<circle class="hl" r="' + (r + 3.5) + '"></circle>' +
         '<circle class="nb" r="' + r + '"></circle>' +
         (p.cid ? '<circle class="won" r="' + (r + 2.2) + '" style="display: none"></circle>' : '') +
-        '<text y="0.5">' + p.icon + '</text></g>';
+        '<text y="0.5">' + p.icon + '</text>' + tb(r) + '</g>';
     }).join('') + '</g>';
+    const deco = '<g class="season-deco" aria-hidden="true" pointer-events="none">' + DECO_AT.map((q, i) => '<text class="sd" x="' + q[0] + '" y="' + q[1] + '" style="animation-delay: ' + (i % 4) * 0.6 + 's"></text>').join('') + '</g>';
     const night = '<g aria-hidden="true" pointer-events="none"><rect class="ns-night" x="-600" y="-600" width="1600" height="1600"></rect>' +
       STARS.map((q, i) => '<circle class="ns-star" cx="' + q[0] + '" cy="' + q[1] + '" r="' + (i % 3 ? 1 : 1.5) + '" style="animation-delay: ' + (i % 5) * 0.23 + 's"></circle>').join('') + '</g>';
-    svg.innerHTML = defs + map + labels + nodes + night + moon;
+    svg.innerHTML = defs + map + deco + labels + nodes + night + moon;
     board.built = true;
     board.tokensKey = '';
     board.sizeKey = '';
+    board.typesKey = '';
+  }
+  // 칸 속성 · 계절 그리기 (지도가 바뀌면 동그라미가 빙글 돌며 바뀌어요)
+  function renderMapTypes() {
+    const st = store.st;
+    const key = st.map.n + ':' + st.map.types.join(',');
+    if (board.typesKey === key) return;
+    const flip = board.typesKey !== '';
+    board.typesKey = key;
+    PLACES.forEach((pl) => {
+      const g = $('nt-' + pl.i);
+      if (!g) return;
+      const t = placeType(st, pl.i);
+      g.querySelector('circle').style.fill = TYPE_C[t] || '#94a3b8';
+      g.querySelector('text').textContent = t ? TYPES[t].icon : '';
+      g.setAttribute('data-t', t);
+      if (flip && !reduceMotion) { g.classList.remove('flip'); void g.getBBox(); g.classList.add('flip'); g.querySelector('.nt-in').style.animationDelay = (pl.i % 6) * 0.08 + 's'; }
+    });
+    const wrap = $('stage-wrap');
+    [0, 1, 2, 3].forEach((k) => wrap.classList.toggle('season-' + k, st.map.season === k));
+    document.querySelectorAll('#board-svg .sd').forEach((el) => { el.textContent = SEASON_DECO[st.map.season] || ''; });
+  }
+  function mapCheck() {
+    const st = store.st;
+    if (board.mapN >= 0 && st.map.n !== board.mapN && !reduceMotion) {
+      const S = SEASONS[st.map.season];
+      const sample = PLACES.filter((pl) => pl.kind !== 'home' && !pl.cid && pl.i !== NAMSAN).slice(0, 4).map((pl) => { const t = placeType(st, pl.i); return esc(pl.short) + ' ' + TYPES[t].icon; }).join(' · ');
+      setTimeout(() => showBubble('<div class="hb-title">' + S.icon + ' ' + S.name + '이 왔어요! 지도가 바뀌었어요</div><div class="hb-text">한 바퀴를 돌아서 칸 속성이 새로 섞였어요. ' + sample + ' …<br>칸 모서리 동그라미가 그 칸에서 잘 나오는 포켓몬 타입이에요.</div>', 5200), ui.anim ? 900 : 200);
+    }
+    board.mapN = st.map.n;
   }
 
   // ── 지도 크기: 위 칩 줄과 아래 굴리기 막대 사이에 서울이 꽉 차게 ──
@@ -3893,6 +4759,16 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     return '<div class="tk2" id="tk-' + p.pid + '" style="--pc: ' + (P_COLOR[p.color] || P_COLOR.blue) + '"><div class="tk2-in"><span class="tk2-ring"></span>' + body + '</div>' +
       (multi ? '<span class="tk2-name">' + esc(p.name) + '</span>' : '') + '</div>';
   }
+  // 말판에서 노는 야생 포켓몬 (딱 멈추면 배틀!)
+  function wildTokHTML(w) {
+    const s = SP[w.sp];
+    const a = animOf(s.dex, false);
+    const url = a ? a.src : imgUrl(s.dex);
+    const body = url
+      ? '<img class="wd-mon' + (a ? '' : ' still') + '" src="' + url + '" data-dex="' + s.dex + '" data-sp="' + w.sp + '"' + (a ? ' data-anim="' + a.key + '"' : '') + ' alt="" draggable="false">'
+      : '<span class="tk2-emb">' + TYPES[s.type].icon + '</span>';
+    return '<div class="wd' + (s.pool === 4 ? ' legend' : '') + '" id="wd-' + w.id + '" style="--tc: ' + TYPE_C[s.type] + '; --th: ' + TYPE_HI[s.type] + '"><div class="wd-in"><span class="wd-grass"></span>' + body + '</div><span class="wd-mark">!</span></div>';
+  }
   function renderTokens(hopPid) {
     const st = store.st;
     const layer = $('tk-layer');
@@ -3902,11 +4778,25 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       const sp = partnerSp(p);
       const a = sp ? animOf(SP[sp].dex, false) : null;
       return p.pid + ':' + p.color + ':' + (sp || '-') + ':' + (a ? a.key : sp && imgUrl(SP[sp].dex) ? 'i' : 'e') + ':' + (multi ? esc(p.name) : '');
-    }).join('|');
+    }).join('|') + '#' + st.wilds.map((w) => w.id + ':' + w.sp + ':' + (animOf(SP[w.sp].dex, false) ? 'a' : 'i')).join('|');
     if (board.tokensKey !== key) {
-      layer.innerHTML = st.players.map((p) => tokenHTML(p, multi)).join('');
+      layer.innerHTML = st.wilds.map(wildTokHTML).join('') + st.players.map((p) => tokenHTML(p, multi)).join('');
       board.tokensKey = key;
+      // 새로 나타난 야생 포켓몬은 뿅!
+      const first = !board.wildSeen;
+      if (first) board.wildSeen = {};
+      st.wilds.forEach((w) => {
+        if (!first && !board.wildSeen[w.id] && !reduceMotion) { const el = $('wd-' + w.id); if (el) el.classList.add('pop'); }
+        board.wildSeen[w.id] = true;
+      });
     }
+    st.wilds.forEach((w) => {
+      const el = $('wd-' + w.id);
+      if (!el) return;
+      const xy = nodePx(w.at);
+      el.style.transform = 'translate(' + (xy[0] + 9 * board.s).toFixed(1) + 'px, ' + (xy[1] + 1 * board.s).toFixed(1) + 'px)';
+      el.style.zIndex = String(Math.round(xy[1]));
+    });
     const at = {};
     st.players.forEach((p) => { const pos = animPos(p); (at[pos] = at[pos] || []).push(p); });
     const cur = multi ? currentPlayer(st) : null;
@@ -3975,6 +4865,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const pl = PLACES[i];
     ui.pickPlace = i;
     renderNodes();
+    const st = store.st;
     let extra = '';
     if (pl.kind === 'gym') {
       const c = COMP[pl.cid];
@@ -3982,7 +4873,15 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     } else {
       extra = KIND_DESC[pl.kind];
     }
-    showBubble('<div class="hb-title">' + esc((pl.i + 1) + '번 칸 · ' + pl.icon + ' ' + pl.name) + '</div><div class="hb-text">' + esc(extra) + '</div>', 3600);
+    const t = placeType(st, i);
+    let more = '';
+    if (t && !pl.cid) {
+      const first = st.map.n === 0 && st.map.types[i] === pl.type && pl.why;
+      more += '<div class="hb-type"><span class="hb-tc" style="background: ' + TYPE_C[t] + '">' + TYPES[t].icon + '</span>' + TYPES[t].name + ' 칸 · ' + TYPES[t].name + ' 타입 포켓몬이 잘 나와요' + (first ? ' (' + esc(pl.why) + ')' : i === NAMSAN ? ' (달님 요정)' : '') + '</div>';
+    }
+    const w = wildAt(st, i);
+    if (w) more += '<div class="hb-wild">🐾 야생 ' + esc(SP[w.sp].name) + iga(SP[w.sp].name) + ' 놀고 있어요! 딱 멈추면 배틀</div>';
+    showBubble('<div class="hb-title">' + esc((pl.i + 1) + '번 칸 · ' + pl.icon + ' ' + pl.name) + '</div><div class="hb-text">' + esc(extra) + '</div>' + more, 4200);
   }
   function moonWish() {
     const m = $('ns-moon');
@@ -4110,9 +5009,10 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const v = viewer();
     const pend = st.pending && st.pending.pid === cur.pid;
     const waiting = store.mode === 'online' && cur.pid !== v.pid;
-    const noDice = cur.dice.date === todayStr() && cur.dice.left <= 0 && !pend;
+    const noDice = diceLeft(st, cur) <= 0 && !pend;
     const canSkip = waiting || noDice;
-    const title = waiting ? '⏳ ' + esc(cur.name) + ' 차례' + (pend ? ' · 카드 보는 중' : '') : '🎲 ' + (store.mode === 'online' ? '내' : esc(cur.name)) + ' 차례!';
+    const busy = pend ? (st.pending.kind === 'battle' && !st.pending.done ? ' · ⚔️ 배틀 중' : ' · 카드 보는 중') : '';
+    const title = waiting ? '⏳ ' + esc(cur.name) + ' 차례' + busy : '🎲 ' + (store.mode === 'online' ? '내' : esc(cur.name)) + ' 차례!';
     box.innerHTML = '<b>' + title + '</b>' + st.players.map((p) =>
       '<span class="ts-p' + (p.pid === cur.pid ? ' on' : '') + '" style="--pc: ' + (P_COLOR[p.color] || P_COLOR.blue) + '"><i></i>' + esc(p.name) + (store.mode === 'online' && p.pid === store.me ? ' (나)' : '') + '</span>').join('') +
       (canSkip ? '<button class="ts-skip" type="button" data-act="skip">⏭️ 넘기기</button>' : '');
@@ -4143,10 +5043,13 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const v = viewer();
     const g = nextGymInfo(v);
     const dm = MEETING_EVERY - (st.day % MEETING_EVERY);
+    const S = SEASONS[st.map.season];
     const chips = [
       g ? '<span class="chip">' + (isChampSpot(v, g.pl.cid) ? '🏆 챔피언까지 ' : '⚔️ 다음 체육관 ') + g.d + '칸 · ' + g.pl.icon + ' ' + esc(g.pl.short) + '</span>' : '<span class="chip chip-gold">🏆 서울 챔피언!</span>',
+      '<span class="chip">' + S.icon + ' ' + S.name + ' · ' + (v.laps + 1) + '바퀴째</span>',
+      '<span class="chip">🎒 ' + BALL_KEYS.filter((b) => b === 'poke' || v.balls[b]).map((b) => '<i class="bb-ico b-' + b + '" aria-hidden="true"></i>' + v.balls[b]).join(' ') + '</span>',
+      st.wilds.length ? '<span class="chip">🐾 야생 ' + st.wilds.length + '마리</span>' : '',
       '<span class="chip">🏛️ 주주 총회 ' + (dm === MEETING_EVERY ? '오늘' : dm + '일 뒤') + '</span>',
-      '<span class="chip">🔄 서울 ' + (v.laps + 1) + '바퀴째</span>',
     ];
     setHTML('status-row', chips.join(''));
   }
@@ -4179,14 +5082,14 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const a = ui.anim;
     const cur = isMulti(st) ? currentPlayer(st) : v;
     const myTurn = !isMulti(st) || cur.pid === v.pid;
-    const left = v.dice.date === todayStr() ? v.dice.left : st.settings.dice;
+    const left = diceLeft(st, v);
     const myPend = st.pending && st.pending.pid === v.pid;
     let label = '🎲 굴리기';
     let hint = '';
     if (a) { label = a.rolling ? '데굴데굴…' : '콩콩 ' + a.face + '칸!'; }
-    else if (myPend) { label = '🃏 카드 보기'; hint = '도착한 곳의 사건을 확인해요'; }
+    else if (myPend) { label = myPend && st.pending.kind === 'battle' && !st.pending.done ? '⚔️ 배틀 중' : '🃏 카드 보기'; hint = '도착한 곳의 사건을 확인해요'; }
     else if (!myTurn) { label = '⏳ ' + cur.name + ' 차례'; hint = store.mode === 'online' ? '기다리는 동안 주식과 뽑기를 할 수 있어요' : cur.name + iga(cur.name) + ' 굴리고 나면 내 차례가 와요'; }
-    else if (left <= 0) { label = '😴 오늘 끝'; hint = '주사위는 자정에 다시 채워져요. 주식과 뽑기는 계속할 수 있어요!'; }
+    else if (left <= 0) { label = '😴 쉬는 시간'; hint = '⏳ ' + diceWaitMin(st, v) + '분 뒤에 다시 ' + st.settings.dice + '개! 그동안 주식 · 뽑기를 해요'; }
     else if (st.pending) { label = '⏳ 기다리는 중'; }
     return { label, hint, left, disabled: !!(a || ui.busy || ui.battle || st.pending || !myTurn || left <= 0), cur };
   }
@@ -4197,13 +5100,13 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const pos = animPos(r.cur);
     $('here-name').textContent = PLACES[pos].icon + ' ' + PLACES[pos].name + (isMulti(st) ? ' (' + r.cur.name + ')' : '');
     const m = partnerMon(v);
-    const sub = r.hint || (m ? '🐾 ' + SP[m.sp].name + ' Lv.' + m.lv + ' · ⚡' + powerOf(m) + (m.stars ? ' ' + '⭐'.repeat(m.stars) : '') : '🐾 기본 말 · 포켓몬이 있어야 배틀해요');
+    const sub = r.hint || (m ? '🐾 ' + SP[m.sp].name + ' Lv.' + m.lv + ' · ⚡' + powerOf(m) + ' · ❤️' + hpOf(m) + (m.stars ? ' ' + '⭐'.repeat(m.stars) : '') : '🐾 기본 말 · 포켓몬이 있어야 배틀해요');
     const hEl = $('roll-hint');
     if (hEl.textContent !== sub) hEl.textContent = sub;
     hEl.classList.toggle('is-hint', !!r.hint);
     const btn = $('roll-btn');
     if (btn.firstChild.nodeValue !== r.label) btn.firstChild.nodeValue = r.label;
-    const lt = '주사위 ' + r.left + '/' + st.settings.dice;
+    const lt = st.settings.dice ? '주사위 ' + r.left + '/' + st.settings.dice + ' · 1시간' : '주사위 무제한';
     const lEl = $('roll-left');
     if (lEl.textContent !== lt) lEl.textContent = lt;
     btn.disabled = r.disabled;
@@ -4269,8 +5172,10 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     renderPartnerBar();
     renderRoll();
     renderNodes();
+    renderMapTypes();
     sizeStage();
     renderTokens();
+    mapCheck();
     renderNews();
     renderNight();
     renderMeetingMini();
@@ -4279,9 +5184,8 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   }
 
   /* =========================================================
-     7-2. 화면 — 배틀 장면
-     이기고 지는 건 엔진이 먼저 정해요 (공격력 × 상성 × 운).
-     장면은 그 결과에 맞춰 보여 줘요: 등장 → 기술 주고받기 → HP → 잡기 · 배지.
+     7-2. 화면 — 배틀 (내 포켓몬 최대 3마리 · 직접 고르는 기술 · 볼 던지기)
+     엔진이 한 차례씩 정해 주면(때리기 · 쓰러짐 · 교체 · 볼), 화면은 그 순서대로 보여 줘요.
      ========================================================= */
   const MOVES = {
     normal: ['몸통박치기', '파괴광선'], fire: ['불꽃세례', '화염방사'], water: ['물대포', '하이드로펌프'], grass: ['덩굴채찍', '솔라빔'],
@@ -4289,14 +5193,17 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     ground: ['머드숏', '지진'], flying: ['쪼기', '날개치기'], psychic: ['염동력', '사이코키네시스'], bug: ['벌레먹음', '시저크로스'],
     rock: ['돌떨구기', '스톤샤워'], ghost: ['핥기', '섀도볼'], dragon: ['용의숨결', '역린'], fairy: ['요정의바람', '문포스'],
   };
-  const moveOf = (sp, fin, lv) => MOVES[SP[sp].type][SP[sp].power >= 30 || lv >= 5 || fin ? 1 : 0];
+  // 기술: 힘이 세거나 레벨 12부터는 큰 기술을 써요
+  const moveOf = (sp, lv) => MOVES[SP[sp].type][SP[sp].power >= 30 || lv >= 12 ? 1 : 0];
   const BT_SKIP = { skip: true };
-  const bt = { on: false, skip: false, tap: null, waiters: [], len: 'normal' };
-  // 배틀 길이: 짧게 · 보통 · 길게 (이 폰에 기억해요). a = 움직임 빠르기, t = 글 읽는 시간
-  const LENS = { short: { a: 0.6, t: 0.75, name: '⚡ 짧게', sec: 5 }, normal: { a: 1, t: 1, name: '🙂 보통', sec: 12 }, long: { a: 1.15, t: 1.25, name: '🐢 길게', sec: 20 } };
+  const bt = { on: false, playing: false, skip: false, tap: null, waiters: [], len: 'normal', auto: false, evn: 0, menu: 'main', pd: null, vm: null, xp0: {}, autoT: 0 };
+  // 배틀 속도: 빠르게 · 보통 · 천천히 (이 폰에 기억해요). a = 움직임 빠르기, t = 글 읽는 시간
+  const LENS = { short: { a: 0.6, t: 0.7, name: '⚡ 빠르게' }, normal: { a: 1, t: 1, name: '🙂 보통' }, long: { a: 1.15, t: 1.3, name: '🐢 천천히' } };
   const LEN_ORDER = ['short', 'normal', 'long'];
   const LEN_KEY = 'pokemon-shareholders-battle-len';
+  const AUTO_KEY = 'pokemon-shareholders-battle-auto';
   try { const v = localStorage.getItem(LEN_KEY); if (LENS[v]) bt.len = v; } catch (e) { /* 기억 못 해도 괜찮아요 */ }
+  try { bt.auto = localStorage.getItem(AUTO_KEY) === '1'; } catch (e) { /* 기억 못 해도 괜찮아요 */ }
   function setBattleLen(k) {
     if (!LENS[k]) return;
     bt.len = k;
@@ -4322,7 +5229,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       bt.waiters.push(fin);
     });
   }
-  // 움직임이 끝나기를 기다리되, ⏩ 넘기기를 누르면 바로 멈춰요
+  // 움직임이 끝나기를 기다리되, ⏩ 빨리를 누르면 바로 멈춰요
   function btStep(a) {
     if (bt.skip) return Promise.reject(BT_SKIP);
     return new Promise((res, rej) => {
@@ -4342,7 +5249,8 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   // 포켓몬 몸 가운데 (기술이 날아가는 곳)
   function bodyCenter(side) {
     const f = fieldBox();
-    const r = $('bt-' + side).querySelector('.bt-img').getBoundingClientRect();
+    const im = $('bt-' + side).querySelector('.bt-img');
+    const r = im ? im.getBoundingClientRect() : $('bt-' + side).getBoundingClientRect();
     return { x: r.left - f.left + r.width / 2, y: r.top - f.top + r.height * 0.55, w: r.width, h: r.height };
   }
   function feet(side) {
@@ -4368,7 +5276,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   }
   const gone = (a, el) => Promise.resolve(a.finished).then(() => el.remove(), () => el.remove());
 
-  // 배틀 그림: 움직이는 그림(뒷모습) → 멈춘 그림(내 쪽은 좌우 뒤집기) → 타입 아이콘
+  // 배틀 그림: 움직이는 그림(내 쪽은 뒷모습) → 멈춘 그림(내 쪽은 좌우 뒤집기) → 타입 아이콘
   function battleImg(sp, side) {
     const s = SP[sp];
     const a = animOf(s.dex, side === 'me');
@@ -4391,15 +5299,48 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       img.style.height = Math.round(h) + 'px';
     });
   }
-  function infoHTML(side, sp, sub) {
-    return '<div class="bt-info ' + side + ' hide" id="bi-' + side + '"><div class="bt-name"><span>' + esc(SP[sp].name) + '</span><small>' + esc(sub) + '</small></div>' +
-      '<div class="bt-hp"><b>HP</b><div class="bar"><i id="hp-' + side + '"></i></div></div></div>';
+  // 이름 · 레벨 · HP · 팀 동그라미(남은 친구) · 경험치(내 쪽)
+  function infoInner(side) {
+    const vm = bt.vm;
+    const list = side === 'me' ? vm.team : vm.foes;
+    const cur = side === 'me' ? vm.mi : vm.fi;
+    const f = list[cur];
+    const s = SP[f.sp];
+    const dots = list.length > 1 ? '<span class="bt-dots" aria-label="남은 포켓몬">' + list.map((x, i) => '<i class="' + (x.hp <= 0 ? 'out' : i === cur ? 'cur' : '') + '"></i>').join('') + '</span>' : '<span></span>';
+    let xp = '';
+    if (side === 'me') {
+      const m = viewer().mons[f.fam];
+      const r = m && m.lv < MAX_LV ? clamp((bt.xp0[f.fam] != null ? bt.xp0[f.fam] : m.xp || 0) / xpNeed(f.lv), 0, 1) : 1;
+      xp = '<div class="bt-xp" aria-hidden="true"><i id="xp-me" style="width: ' + Math.round(r * 100) + '%"></i></div>';
+    }
+    return '<div class="bt-name"><span>' + esc(s.name) + '</span><small>' + TYPES[s.type].icon + ' Lv.' + f.lv + '</small></div>' +
+      '<div class="bt-hp"><b>HP</b><div class="bar"><i id="hp-' + side + '"></i></div></div>' +
+      '<div class="bt-sub">' + dots + '<span class="bt-hpn" id="hpn-' + side + '">' + f.hp + ' / ' + f.max + '</span></div>' + xp;
   }
-  function setHP(side, pct) {
+  function setHP(side, f) {
     const i = $('hp-' + side);
-    const v = clamp(pct, 0, 100);
+    if (!i) return;
+    const v = clamp((f.hp / f.max) * 100, 0, 100);
     i.style.width = v + '%';
     i.className = v <= 20 ? 'low' : v <= 50 ? 'mid' : '';
+    const n = $('hpn-' + side);
+    if (n) n.textContent = Math.max(0, f.hp) + ' / ' + f.max;
+  }
+  // 한쪽 포켓몬 그림 · 정보를 지금 상태로 다시 그려요
+  function drawSide(side, hidden) {
+    const vm = bt.vm;
+    const f = side === 'me' ? vm.team[vm.mi] : vm.foes[vm.fi];
+    const body = bodyOf(side);
+    if (body.dataset.sp !== f.sp) {
+      body.innerHTML = battleImg(f.sp, side);
+      body.dataset.sp = f.sp;
+      sizeMons();
+    }
+    body.getAnimations && body.getAnimations().forEach((a) => a.cancel());
+    body.style.opacity = hidden || f.hp <= 0 ? '0' : '';
+    const info = $('bi-' + side);
+    info.innerHTML = infoInner(side);
+    setHP(side, f);
   }
 
   // ── 기술 효과 ──
@@ -4495,9 +5436,9 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       default: await pop(D, '💥', 44); ring(D, '#ffffff', 60); break;
     }
   }
-  async function attack(side, sp, fin, lv) {
+  async function attack(side, sp, lv) {
     const other = side === 'me' ? 'foe' : 'me';
-    await say(SP[sp].name + '의 ' + moveOf(sp, fin, lv) + '!');
+    await say(SP[sp].name + '의 ' + moveOf(sp, lv) + '!');
     const A = bodyCenter(side);
     const D = bodyCenter(other);
     const physical = ['normal', 'fighting', 'bug', 'flying'].indexOf(SP[sp].type) >= 0;
@@ -4510,6 +5451,13 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     // 맞은 쪽: 깜빡깜빡 + 흔들
     anim(bodyOf(other), [{ opacity: 1, transform: 'translate(0, 0)' }, { opacity: 0.15, transform: 'translate(-6px, 0)' }, { opacity: 1, transform: 'translate(6px, 0)' }, { opacity: 0.15, transform: 'translate(-4px, 0)' }, { opacity: 1, transform: 'translate(0, 0)' }], { duration: 420, fill: 'none' });
   }
+  // 맞은 숫자가 톡 튀어 올라요
+  function floatDmg(side, dmg, crit) {
+    const C = bodyCenter(side);
+    const el = addFx('bt-dmg' + (crit ? ' crit' : ''), '', '−' + dmg);
+    const t = 'translate(' + C.x + 'px, ' + (C.y - C.h * 0.35) + 'px) translate(-50%, -50%)';
+    gone(anim(el, [{ transform: t + ' scale(0.6)', opacity: 0 }, { transform: t + ' translateY(-10px) scale(1.15)', opacity: 1, offset: 0.25 }, { transform: t + ' translateY(-34px) scale(1)', opacity: 0 }], { duration: 900, easing: 'ease-out' }), el);
+  }
   async function sendOut(side) {
     const P = feet(side);
     const f = fieldBox();
@@ -4517,18 +5465,23 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const end = { x: P.x, y: P.y - 26 };
     const ball = addFx('bt-ball');
     const mid = { x: (start.x + end.x) / 2, y: Math.min(start.y, end.y) - 60 };
-    await btStep(anim(ball, [
-      { transform: 'translate(' + start.x + 'px, ' + start.y + 'px) rotate(0deg)' },
-      { transform: 'translate(' + mid.x + 'px, ' + mid.y + 'px) rotate(360deg)', offset: 0.5 },
-      { transform: 'translate(' + end.x + 'px, ' + end.y + 'px) rotate(720deg)' },
-    ], { duration: 520, easing: 'ease-in-out' }));
-    ball.remove();
+    try {
+      await btStep(anim(ball, [
+        { transform: 'translate(' + start.x + 'px, ' + start.y + 'px) rotate(0deg)' },
+        { transform: 'translate(' + mid.x + 'px, ' + mid.y + 'px) rotate(360deg)', offset: 0.5 },
+        { transform: 'translate(' + end.x + 'px, ' + end.y + 'px) rotate(720deg)' },
+      ], { duration: 520, easing: 'ease-in-out' }));
+    } finally { ball.remove(); }
     const pf = addFx('bt-poof', 'width: 90px; height: 90px; margin: -45px 0 0 -45px;');
     gone(anim(pf, [{ transform: 'translate(' + end.x + 'px, ' + end.y + 'px) scale(0.2)', opacity: 1 }, { transform: 'translate(' + end.x + 'px, ' + end.y + 'px) scale(1.5)', opacity: 0 }], { duration: 420, easing: 'ease-out' }), pf);
     const body = bodyOf(side);
     body.style.opacity = '';
-    await btStep(anim(body, [{ transform: 'scale(0)', filter: 'brightness(4)', opacity: 1 }, { transform: 'scale(1.1)', filter: 'brightness(2)', opacity: 1, offset: 0.6 }, { transform: 'scale(1)', filter: 'brightness(1)', opacity: 1 }], { duration: 380, easing: 'ease-out' }));
     $('bi-' + side).classList.remove('hide');
+    await btStep(anim(body, [{ transform: 'scale(0)', filter: 'brightness(4)', opacity: 1 }, { transform: 'scale(1.1)', filter: 'brightness(2)', opacity: 1, offset: 0.6 }, { transform: 'scale(1)', filter: 'brightness(1)', opacity: 1 }], { duration: 380, easing: 'ease-out', fill: 'none' }));
+  }
+  // 몬스터볼 속으로 돌아오기 (교체할 때)
+  function recall(side) {
+    return btStep(anim(bodyOf(side), [{ transform: 'scale(1)', filter: 'brightness(1)', opacity: 1 }, { transform: 'scale(0.05)', filter: 'brightness(4)', opacity: 0 }], { duration: 360, easing: 'ease-in' }));
   }
   function faint(side) {
     return btStep(anim(bodyOf(side), [{ transform: 'translateY(0)', opacity: 1, filter: 'grayscale(0)' }, { transform: 'translateY(40px)', opacity: 0, filter: 'grayscale(1)' }], { duration: 620, easing: 'ease-in' }));
@@ -4536,45 +5489,43 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   function cheer(side) {
     return btStep(anim(bodyOf(side), [{ transform: 'translateY(0)' }, { transform: 'translateY(-16px)', offset: 0.25 }, { transform: 'translateY(0)', offset: 0.5 }, { transform: 'translateY(-16px)', offset: 0.75 }, { transform: 'translateY(0)' }], { duration: 700, easing: 'ease-out', fill: 'none' }));
   }
-  // 몬스터볼을 던져서 잡기 (흔들 · 흔들 · 흔들 → 딸깍!)
-  async function catchSeq(ok2) {
+  // 볼을 던져서 잡기 (흔들 · 흔들 · 흔들 → 딸깍!) · 놓치면 흔든 만큼 흔들다가 튀어나와요
+  async function catchSeq(ok2, shakes, ball) {
     const f = fieldBox();
     const C = bodyCenter('foe');
     const P = feet('foe');
-    const ball = addFx('bt-ball');
+    const el = addFx('bt-ball b-' + (BALLS[ball] ? ball : 'poke'));
     const start = { x: -24, y: f.height * 0.7 };
     const top = { x: C.x, y: C.y - 8 };
-    await btStep(anim(ball, [
+    await btStep(anim(el, [
       { transform: 'translate(' + start.x + 'px, ' + start.y + 'px) rotate(0deg)' },
       { transform: 'translate(' + (start.x + top.x) / 2 + 'px, ' + (Math.min(start.y, top.y) - 70) + 'px) rotate(360deg)', offset: 0.55 },
       { transform: 'translate(' + top.x + 'px, ' + top.y + 'px) rotate(720deg)' },
     ], { duration: 560, easing: 'ease-in-out' }));
     await btStep(anim(bodyOf('foe'), [{ transform: 'scale(1)', filter: 'brightness(1)', opacity: 1 }, { transform: 'scale(0.05) translateY(-40px)', filter: 'brightness(4)', opacity: 0 }], { duration: 360, easing: 'ease-in' }));
     const g = { x: P.x, y: P.y - 13 };
-    await btStep(anim(ball, [
+    await btStep(anim(el, [
       { transform: 'translate(' + top.x + 'px, ' + top.y + 'px)' },
       { transform: 'translate(' + g.x + 'px, ' + g.y + 'px)', offset: 0.6 },
       { transform: 'translate(' + g.x + 'px, ' + (g.y - 12) + 'px)', offset: 0.8 },
       { transform: 'translate(' + g.x + 'px, ' + g.y + 'px)' },
     ], { duration: 520, easing: 'ease-in' }));
     const at = 'translate(' + g.x + 'px, ' + g.y + 'px)';
-    for (let i = 0; i < (ok2 ? 3 : 2); i++) {
+    for (let i = 0; i < (ok2 ? 3 : shakes); i++) {
       await btWait(330);
-      await btStep(anim(ball, [{ transform: at + ' rotate(0deg)' }, { transform: at + ' rotate(-24deg)', offset: 0.3 }, { transform: at + ' rotate(20deg)', offset: 0.65 }, { transform: at + ' rotate(0deg)' }], { duration: 420, easing: 'ease-in-out' }));
+      await btStep(anim(el, [{ transform: at + ' rotate(0deg)' }, { transform: at + ' rotate(-24deg)', offset: 0.3 }, { transform: at + ' rotate(20deg)', offset: 0.65 }, { transform: at + ' rotate(0deg)' }], { duration: 420, easing: 'ease-in-out' }));
     }
     await btWait(250);
     if (ok2) {
-      anim(ball, [{ transform: at, filter: 'brightness(1)' }, { transform: at, filter: 'brightness(0.75)' }], { duration: 200 });
+      anim(el, [{ transform: at, filter: 'brightness(1)' }, { transform: at, filter: 'brightness(0.75)' }], { duration: 200 });
       pop({ x: g.x - 26, y: g.y - 20 }, '✨', 26);
       pop({ x: g.x + 26, y: g.y - 24 }, '⭐', 24);
       await btStep(pop({ x: g.x, y: g.y - 36 }, '✨', 30));
       return true;
     }
-    ball.remove();
+    el.remove();
     ring({ x: g.x, y: g.y }, '#ffffff', 80);
-    await btStep(anim(bodyOf('foe'), [{ transform: 'scale(0.05)', filter: 'brightness(4)', opacity: 0 }, { transform: 'scale(1)', filter: 'brightness(1)', opacity: 1 }], { duration: 320, easing: 'ease-out' }));
-    await btWait(250);
-    await btStep(anim(bodyOf('foe'), [{ transform: 'translateX(0)', opacity: 1 }, { transform: 'translateX(-14px)', opacity: 1, offset: 0.2 }, { transform: 'translateX(220px)', opacity: 0 }], { duration: 700, easing: 'ease-in' }));
+    await btStep(anim(bodyOf('foe'), [{ transform: 'scale(0.05)', filter: 'brightness(4)', opacity: 0 }, { transform: 'scale(1)', filter: 'brightness(1)', opacity: 1 }], { duration: 320, easing: 'ease-out', fill: 'none' }));
     return false;
   }
   async function badgeFly(cid) {
@@ -4586,169 +5537,371 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     ring({ x: f.width / 2, y: f.height * 0.36 }, TYPE_C[cid] || '#facc15', 120, 600);
   }
 
-  // 이긴 쪽이 2~3번(짧게 1번, 길게 3~4번), 진 쪽은 그보다 한 번 덜(또는 같게) 공격해요. HP는 결과 숫자에 맞춰 줄어요
-  function makePlan(o) {
-    const hi = Math.max(o.x, o.y, 1);
-    const lo = Math.max(1, Math.min(o.x, o.y));
-    const r = hi / lo;
-    const hits = bt.len === 'short' ? 1 : bt.len === 'long' ? (r >= 1.6 ? 3 : 4) : (r >= 1.6 ? 2 : 3);
-    const meHits = hits;
-    const foeHits = o.win ? hits - 1 : hits;
-    const loserTotal = o.win && o.kind === 'wild' ? 93 : 100;
-    const winnerTotal = clamp(Math.round(100 * (lo / hi) * 0.82), 12, 86);
-    const split = (total, n) => {
-      if (n <= 0) return [];
-      const w = [];
-      for (let i = 0; i < n; i++) w.push(0.8 + Math.random() * 0.5);
-      const sum = w.reduce((a, b) => a + b, 0);
-      let acc = 0;
-      return w.map((v, i) => { if (i === n - 1) return total - acc; const d = Math.round((total * v) / sum); acc += d; return d; });
-    };
-    const meD = split(o.win ? loserTotal : winnerTotal, meHits);
-    const foeD = split(o.win ? winnerTotal : loserTotal, foeHits);
-    const seq = [];
-    for (let i = 0; i < hits; i++) {
-      if (i < meHits) seq.push({ who: 'me', dmg: meD[i] });
-      if (i < foeHits) seq.push({ who: 'foe', dmg: foeD[i] });
-    }
-    seq.forEach((h, i) => { h.fin = i === seq.length - 1; });
-    return seq;
+  // ── 배틀 진행 ──
+  const bossOf = (pd) => (pd.mode === 'champ' ? '서울 챔피언' : (COMP[pd.cid] || COMP.rock).boss);
+  const vmOf = (pd) => ({ team: pd.team.map((f) => Object.assign({}, f)), foes: pd.foes.map((f) => Object.assign({}, f)), mi: pd.mi, fi: pd.fi, mode: pd.mode });
+  function myBattle() {
+    const pd = myPending();
+    return pd && pd.kind === 'battle' ? pd : null;
   }
-
-  async function battleScript(o) {
-    const meName = SP[o.me.sp].name;
-    const foeName = SP[o.foe.sp].name;
+  async function intro(pd) {
+    const vm = bt.vm;
+    const foe = vm.foes[vm.fi];
+    const me = vm.team[vm.mi];
+    const fn = SP[foe.sp].name;
     bodyOf('me').style.opacity = '0';
     bodyOf('foe').style.opacity = '0';
+    $('bi-me').classList.add('hide');
+    $('bi-foe').classList.add('hide');
     anim($('bt-field'), [{ filter: 'brightness(3)' }, { filter: 'brightness(1)' }], { duration: 380, fill: 'none' });
-    if (o.kind === 'wild') {
+    if (pd.mode === 'wild') {
       await say('');
       const body = bodyOf('foe');
       body.style.opacity = '';
-      await btStep(anim(body, [{ transform: 'translateX(180px)', opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }], { duration: 480, easing: 'ease-out' }));
+      await btStep(anim(body, [{ transform: 'translateX(180px)', opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }], { duration: 480, easing: 'ease-out', fill: 'none' }));
       $('bi-foe').classList.remove('hide');
-      await say('앗! 야생 ' + foeName + iga(foeName) + ' 튀어나왔다!', 950);
+      await say('앗! 야생 ' + fn + iga(fn) + ' 튀어나왔다! (Lv.' + foe.lv + ')', 950);
     } else {
+      const boss = bossOf(pd);
       const bn = $('bt-banner');
-      bn.textContent = o.kind === 'champ' ? '🏆 챔피언 결정전' : COMP[o.cid].icon + ' ' + COMP[o.cid].name + (o.practice ? ' · 연습 배틀' : ' 체육관');
+      bn.textContent = pd.mode === 'champ' ? '🏆 챔피언 결정전' : COMP[pd.cid].icon + ' ' + COMP[pd.cid].name + (pd.practice ? ' · 연습 배틀' : ' 체육관');
       bn.hidden = false;
-      if (bt.len === 'short') await btWait(450);
-      else await say(o.boss + iga(o.boss) + (o.practice ? ' 연습 상대가 돼 준대!' : ' 승부를 걸어왔다!'), 1000);
+      await say(boss + iga(boss) + (pd.practice ? ' 연습 상대가 돼 준대!' : ' 승부를 걸어왔다!') + (vm.foes.length > 1 ? ' (포켓몬 ' + vm.foes.length + '마리)' : ''), 1000);
       bn.hidden = true;
       await sendOut('foe');
-      await say(o.boss + eunneun(o.boss) + ' ' + foeName + eulreul(foeName) + ' 내보냈다!', 850);
+      await say(boss + eunneun(boss) + ' ' + fn + eulreul(fn) + ' 내보냈다!', 800);
     }
-    await say('가라! ' + meName + '!');
+    await say('가라! ' + SP[me.sp].name + '!');
     await sendOut('me');
-    await btWait(250);
-    const hp = { me: 100, foe: 100 };
-    let told = false;
-    for (const h of makePlan(o)) {
-      const sp = h.who === 'me' ? o.me.sp : o.foe.sp;
-      const target = h.who === 'me' ? 'foe' : 'me';
-      await attack(h.who, sp, h.fin, h.who === 'me' ? o.me.lv : 1);
-      hp[target] = Math.max(0, hp[target] - h.dmg);
-      setHP(target, hp[target]);
-      await btWait(480);
-      // 상성 한마디: 길게는 매번, 짧게 · 보통은 처음 한 번만
-      if (h.who === 'me' && o.eff !== 1 && (bt.len === 'long' || !told)) {
-        told = true;
-        await say(o.eff > 1 ? '효과가 굉장했다!' : '효과가 별로인 것 같다…', 800);
-      }
+    await btWait(200);
+  }
+  async function playEvent(e, pd) {
+    const vm = bt.vm;
+    if (e.t === 'start') { await intro(pd); return; }
+    if (e.t === 'hit') {
+      const other = e.side === 'me' ? 'foe' : 'me';
+      const A = e.side === 'me' ? vm.team[vm.mi] : vm.foes[vm.fi];
+      const D = e.side === 'me' ? vm.foes[vm.fi] : vm.team[vm.mi];
+      await attack(e.side, A.sp, A.lv);
+      D.hp = e.hp;
+      setHP(other, D);
+      floatDmg(other, e.dmg, e.crit);
+      await btWait(430);
+      if (e.crit) await say('급소에 맞았다!', 650);
+      if (e.k > 1) await say('효과가 굉장했다!', 700);
+      else if (e.k < 1) await say('효과가 별로인 것 같다…', 700);
+      return;
     }
-    if (o.win) {
-      if (o.kind === 'wild') {
-        await say('야생 ' + foeName + eunneun(foeName) + ' 힘이 다 빠졌다! 지금이야!', 800);
-        await say('가랏, 몬스터볼!');
-        const got = await catchSeq(o.caught);
-        if (got) {
-          fx.burst(120);
-          await say('신난다! 야생 ' + foeName + eulreul(foeName) + ' 잡았다!', 1300);
-        } else {
-          await say('앗! ' + foeName + eunneun(foeName) + ' 볼에서 나와 도망쳤다…', 1200);
-          await say('그래도 배틀은 이겼다! 💰 +' + fmt(WILD_PRIZE) + '원', 1000);
-        }
-      } else {
-        await say(foeName + eunneun(foeName) + ' 쓰러졌다!');
-        await faint('foe');
-        await btWait(250);
-        cheer('me');
-        if (o.kind === 'champ') {
-          fx.burst(220);
-          await say('🏆 서울 챔피언을 이겼다!', 1400);
-        } else if (o.practice) {
-          await say('연습 배틀 승리! ' + o.boss + iga(o.boss) + ' 박수를 쳐 줬다 👏', 1300);
-        } else {
-          await badgeFly(o.cid);
-          fx.burst(140);
-          await say(o.boss + '에게 이겼다! 🏅 배지를 받았다!', 1400);
-        }
-      }
-    } else {
-      await say(meName + eunneun(meName) + ' 쓰러졌다…');
-      await faint('me');
+    if (e.t === 'faint') {
+      const list = e.side === 'me' ? vm.team : vm.foes;
+      const f = list[e.side === 'me' ? vm.mi : vm.fi];
+      f.hp = 0;
+      const n = SP[f.sp].name;
+      await say((e.side === 'foe' && pd.mode === 'wild' ? '야생 ' : '') + n + eunneun(n) + ' 쓰러졌다!');
+      await faint(e.side);
+      $('bi-' + e.side).innerHTML = infoInner(e.side);
+      setHP(e.side, f);
       await btWait(300);
-      await say('괜찮아! 상성이 좋은 포켓몬으로 다시 도전하자!', 1300);
+      return;
+    }
+    if (e.t === 'send') {
+      if (e.side === 'me') vm.mi = e.i; else vm.fi = e.i;
+      drawSide(e.side, true);
+      $('bi-' + e.side).classList.add('hide');
+      const f = e.side === 'me' ? vm.team[vm.mi] : vm.foes[vm.fi];
+      const n = SP[f.sp].name;
+      if (e.side === 'me') await say('부탁해, ' + n + '!');
+      else { const boss = bossOf(pd); await say(boss + eunneun(boss) + ' 다음으로 ' + n + eulreul(n) + ' 내보냈다!'); }
+      await sendOut(e.side);
+      await btWait(200);
+      return;
+    }
+    if (e.t === 'swap') {
+      const a = SP[vm.team[vm.mi].sp].name;
+      await say('돌아와, ' + a + '!');
+      await recall('me');
+      vm.mi = e.i;
+      drawSide('me', true);
+      const b = SP[vm.team[vm.mi].sp].name;
+      await say('가라! ' + b + '!');
+      await sendOut('me');
+      await btWait(150);
+      return;
+    }
+    if (e.t === 'ball') {
+      const B = BALLS[e.ball] || BALLS.poke;
+      await say('가랏, ' + B.name + '! (잡힐 확률 ' + e.pct + '%)');
+      const got = await catchSeq(!!e.ok, e.shakes || 0, e.ball);
+      if (!got) await say(['앗! 바로 튀어나왔다!', '아깝다! 조금만 더…', '으앗! 거의 잡았는데!'][clamp(e.shakes || 0, 0, 2)], 900);
     }
   }
-
-  // 엔진이 남긴 결과(pending)로 배틀 장면 재료를 만들어요. 재료가 모자라면 null (장면 없이 결과 카드만)
-  function battleFromPending(pd) {
-    const b = pd && pd.battle;
-    if (!b || !SP[b.me] || !SP[pd.foeSp] || typeof b.x !== 'number') return null;
-    const o = {
-      kind: b.kind || 'gym', place: PLACES[pd.at].name, practice: !!b.practice,
-      me: { sp: b.me, lv: b.lv || 1, pow: b.mp || SP[b.me].power }, foe: { sp: pd.foeSp, pow: b.fp || SP[pd.foeSp].power },
-      eff: b.eff || 1, x: b.x, y: b.y, win: !!b.win, caught: !!b.caught,
-    };
-    if (o.kind !== 'wild') {
-      const c = COMP[pd.cid] || COMP.rock;
-      o.cid = c.id;
-      o.boss = o.kind === 'champ' ? '서울 챔피언' : c.boss;
+  // 경험치 막대가 차오르고, 레벨이 오르면 반짝!
+  async function xpFill(g) {
+    const bar = $('xp-me');
+    if (!bar) return;
+    const n = SP[g.sp].name;
+    if (g.lv > g.lv0) {
+      await btStep(anim(bar, [{ width: bar.style.width || '0%' }, { width: '100%' }], { duration: 520, easing: 'ease-out' }));
+      ring(bodyCenter('me'), '#facc15', 110, 520);
+      pop({ x: bodyCenter('me').x, y: bodyCenter('me').y - 40 }, '⬆️', 34);
+      const lv = $('bi-me').querySelector('.bt-name small');
+      if (lv) lv.textContent = TYPES[SP[g.sp].type].icon + ' Lv.' + g.lv;
+      await say(n + ' 레벨 업! Lv.' + g.lv0 + ' → Lv.' + g.lv + ' ✨', 1000);
     }
-    return o;
+    const r = g.lv >= MAX_LV ? 1 : clamp(g.x / g.need, 0, 1);
+    await btStep(anim(bar, [{ width: g.lv > g.lv0 ? '0%' : bar.style.width || '0%' }, { width: Math.round(r * 100) + '%' }], { duration: 480, easing: 'ease-out' }));
+    bar.style.width = Math.round(r * 100) + '%';
   }
-  function playBattle(o) {
-    if (bt.on) return Promise.resolve();
+  async function playEnd(pd) {
+    const vm = bt.vm;
+    const foe = vm.foes[vm.fi] || vm.foes[0];
+    const fn = SP[foe.sp].name;
+    const how = pd.how;
+    if (how === 'catch') {
+      fx.burst(130);
+      await say('신난다! 야생 ' + fn + eulreul(fn) + ' 잡았다!', 1300);
+    } else if (how === 'ko') {
+      cheer('me');
+      await say('야생 ' + fn + eulreul(fn) + ' 쓰러뜨렸다! 💰 +' + fmt(WILD_PRIZE) + '원', 1100);
+    } else if (how === 'win') {
+      cheer('me');
+      if (pd.mode === 'champ') { fx.burst(220); await say('🏆 서울 챔피언을 이겼다!', 1400); }
+      else if (pd.practice) await say('연습 배틀 승리! ' + bossOf(pd) + iga(bossOf(pd)) + ' 박수를 쳐 줬다 👏', 1200);
+      else { await badgeFly(pd.cid); fx.burst(140); await say(bossOf(pd) + '에게 이겼다! 🏅 배지를 받았다!', 1400); }
+    } else if (how === 'lose') {
+      await say('모두 지쳐 버렸다… 다음엔 꼭 이기자!', 1300);
+    } else if (how === 'run') {
+      await say('무사히 도망쳤다! 🏃', 900);
+    } else {
+      await say('다음에 다시 도전하자!', 900);
+    }
+    // 지금 나와 있는 친구의 경험치 막대 (다른 친구들은 끝 화면에서 보여요)
+    const cur = vm.team[vm.mi];
+    const g = (pd.gains || []).find((x) => x.fam === cur.fam);
+    if (pd.xp && g && cur.hp > 0) {
+      await say(SP[g.sp].name + ' 경험치 +' + pd.xp + '!', 700);
+      await xpFill(g);
+    }
+  }
+  // 끝 화면: 결과 · 팀 경험치 · 확인
+  function endHTML(pd) {
+    const gains = (pd.gains || []).map((g) => {
+      const r = g.lv >= MAX_LV ? 100 : Math.round(clamp(g.x / g.need, 0, 1) * 100);
+      return '<div class="be-mon">' + miniEm(g.sp, '', true) + '<div class="be-mid"><b>' + esc(SP[g.sp].name) + ' <small>Lv.' + (g.lv > g.lv0 ? g.lv0 + ' → ' + g.lv + ' ⬆️' : g.lv) + '</small></b>' +
+        '<div class="be-xp"><i style="width: ' + r + '%"></i></div></div>' + (pd.xp ? '<span class="be-plus">+' + pd.xp + '</span>' : '') + '</div>';
+    }).join('');
+    const pic = pd.caught ? '<div class="be-caught">' + visHTML(pd.caught, 'sm', true) + '</div>' : '';
+    return '<div class="bt-end"><div class="be-title">' + esc(pd.icon || '') + ' ' + esc(pd.title || '') + '</div>' + pic +
+      '<div class="be-body">' + esc(pd.body || '') + '</div>' +
+      (gains ? '<div class="be-gains">' + gains + '</div>' : '') +
+      '<button class="btn-primary be-ok" type="button" data-act="bt-done">' + (pd.win ? '신난다! 확인' : '확인') + '</button></div>';
+  }
+  function showEnd(pd) {
+    const box = $('bt-cmd');
+    if (!box) return;
+    box.innerHTML = endHTML(pd);
+    box.hidden = false;
+    $('bt-text').classList.add('end');
+    setTimeout(() => { const b = box.querySelector('.be-ok'); if (b) { try { b.focus({ preventScroll: true }); } catch (e) { /* 무시 */ } } }, 60);
+  }
+  // 명령 고르기 (공격 · 볼 · 교체 · 도망)
+  function menuHTML(pd) {
+    const vm = bt.vm;
+    const me = vm.team[vm.mi];
+    const foe = vm.foes[vm.fi];
+    const v = viewer();
+    if (bt.menu === 'swap') {
+      const rows = vm.team.map((f, i) => {
+        const dead = f.hp <= 0;
+        const k = eff(SP[f.sp].type, SP[foe.sp].type);
+        return '<button class="bc-mon' + (i === vm.mi ? ' cur' : '') + '" type="button" data-act="bt-cmd" data-cmd="swap" data-i="' + i + '"' + (dead || i === vm.mi ? ' disabled' : '') + '>' + miniEm(f.sp, '', true) +
+          '<span><b>' + esc(SP[f.sp].name) + ' <small>Lv.' + f.lv + '</small></b><small>' + (dead ? '😵 기절' : i === vm.mi ? '지금 싸우는 중' : '❤️ ' + f.hp + '/' + f.max + (k > 1 ? ' · 💪 유리!' : k < 1 ? ' · 😥 불리' : '')) + '</small></span></button>';
+      }).join('');
+      return '<div class="bc-title">누구로 바꿀까요? <small>바꾸면 상대가 한 번 공격해요</small></div><div class="bc-list">' + rows + '</div>' +
+        '<button class="btn bc-back" type="button" data-act="bt-menu" data-menu="main">↩️ 돌아가기</button>';
+    }
+    const k = eff(SP[me.sp].type, SP[foe.sp].type);
+    const others = vm.team.some((f, i) => i !== vm.mi && f.hp > 0);
+    let balls = '';
+    let hint = '';
+    if (pd.mode === 'wild') {
+      balls = '<div class="bc-balls">' + BALL_KEYS.filter((b) => b === 'poke' || v.balls[b] > 0).map((b) => {
+        const B = BALLS[b];
+        const n = v.balls[b] || 0;
+        return '<button class="bc-ball b-' + b + '" type="button" data-act="bt-cmd" data-cmd="ball" data-ball="' + b + '"' + (n ? '' : ' disabled') + '><span class="bb-ico" aria-hidden="true"></span><span><b>' + B.name + ' ×' + n + '</b><small>' + (n ? '잡힐 확률 ' + Math.round(catchChance(foe, b) * 100) + '%' : '가게에서 사요') + '</small></span></button>';
+      }).join('') + '</div>';
+      if (foe.hp / foe.max < 0.35) hint = '<div class="bc-hint">💡 체력이 조금 남았어요! 지금 볼을 던지면 잘 잡혀요</div>';
+      else if (foe.hp === foe.max) hint = '<div class="bc-hint soft">💡 먼저 공격해서 체력을 줄이면 더 잘 잡혀요. 너무 세게 때리면 기절해서 못 잡아요!</div>';
+    }
+    return hint +
+      '<button class="bc-atk t-' + SP[me.sp].type + '" type="button" data-act="bt-cmd" data-cmd="atk"><span class="ba-ico" aria-hidden="true">' + TYPES[SP[me.sp].type].icon + '</span><span><b>' + moveOf(me.sp, me.lv) + '</b><small>⚡' + me.atk + ' · ' + (k > 1 ? '💪 효과가 굉장해요!' : k < 1 ? '😥 효과가 별로예요' : '상성 보통') + '</small></span></button>' +
+      balls +
+      '<div class="bc-row"><button class="btn" type="button" data-act="bt-menu" data-menu="swap"' + (others ? '' : ' disabled') + '>🔁 교체</button>' +
+      '<button class="btn btn-muted" type="button" data-act="bt-cmd" data-cmd="run">' + (pd.mode === 'wild' ? '🏃 도망' : '🏳️ 다음에') + '</button></div>';
+  }
+  function showMenu() {
+    const pd = myBattle();
+    const box = $('bt-cmd');
+    if (!pd || pd.done || !box) return;
+    const n = SP[bt.vm.team[bt.vm.mi].sp].name;
+    say(bt.menu === 'swap' ? '바꿀 친구를 골라요' : n + eunneun(n) + ' 무엇을 할까?');
+    box.innerHTML = menuHTML(pd);
+    box.hidden = false;
+    $('bt-text').classList.add('ask');
+    if (bt.auto && bt.menu === 'main') {
+      clearTimeout(bt.autoT);
+      bt.autoT = setTimeout(autoPick, 420);
+    }
+  }
+  function hideMenu() {
+    clearTimeout(bt.autoT);
+    const box = $('bt-cmd');
+    if (box) { box.hidden = true; box.innerHTML = ''; }
+    const tx = $('bt-text');
+    if (tx) tx.classList.remove('ask');
+  }
+  // 🤖 자동: 야생은 체력이 적으면 볼(몬스터볼부터), 아니면 공격
+  function autoPick() {
+    const pd = myBattle();
+    if (!bt.on || bt.playing || !pd || pd.done || !bt.auto || bt.menu !== 'main') return;
+    const v = viewer();
+    const foe = bt.vm.foes[bt.vm.fi];
+    if (pd.mode === 'wild' && foe.hp / foe.max < 0.35) {
+      const b = BALL_KEYS.find((k) => v.balls[k] > 0);
+      if (b) { btSend({ cmd: 'ball', ball: b }); return; }
+    }
+    btSend({ cmd: 'atk' });
+  }
+  function btSend(a) {
+    if (!bt.on || bt.playing || ui.busy) return;
+    hideMenu();
+    bt.menu = 'main';
+    say('…');
+    dispatch('bt', a);
+  }
+  function setMenu(m) {
+    if (bt.playing) return;
+    bt.menu = m === 'swap' ? 'swap' : 'main';
+    showMenu();
+  }
+  // 엔진이 한 차례를 정하면 그 순서대로 보여 줘요
+  async function playStep() {
+    const pd = myBattle();
+    if (!pd) { closeBattle(); return; }
+    if (!bt.on) { openBattle(pd, true); return; }
+    if (pd.evn === bt.evn) { if (!bt.playing) { if (pd.done) showEnd(pd); else showMenu(); } return; }
+    bt.evn = pd.evn;
+    bt.playing = true;
+    bt.skip = false;
+    hideMenu();
+    try {
+      for (const e of pd.ev) await playEvent(e, pd);
+      if (pd.done) await playEnd(pd);
+    } catch (e) {
+      if (e !== BT_SKIP) { try { console.warn('battle', e); } catch (e2) { /* 무시 */ } }
+    }
+    bt.skip = false;
+    bt.waiters = [];
+    syncView(pd);
+    bt.playing = false;
+    if (!bt.on) return;
+    if (pd.done) showEnd(pd); else showMenu();
+  }
+  // 넘기기를 눌렀거나 엇갈렸을 때: 화면을 엔진 상태와 똑같이 맞춰요
+  function syncView(pd) {
+    if (!bt.on) return;
+    bt.vm = vmOf(pd);
+    $('bt-fx').innerHTML = '';
+    $('bt-banner').hidden = true;
+    ['me', 'foe'].forEach((side) => {
+      drawSide(side, false);
+      $('bi-' + side).classList.remove('hide');
+    });
+    if (pd.done) {
+      const cur = bt.vm.team[bt.vm.mi];
+      const g = (pd.gains || []).find((x) => x.fam === cur.fam);
+      const bar = $('xp-me');
+      if (g && bar) bar.style.width = (g.lv >= MAX_LV ? 100 : Math.round(clamp(g.x / g.need, 0, 1) * 100)) + '%';
+      if (g) { const lv = $('bi-me').querySelector('.bt-name small'); if (lv) lv.textContent = TYPES[SP[g.sp].type].icon + ' Lv.' + g.lv; }
+      if (pd.how === 'catch') bodyOf('foe').style.opacity = '0';
+    }
+  }
+  function battleBg(pd) {
+    if (pd.mode === 'champ') return { cls: 'champ', css: '' };
+    if (pd.mode === 'gym') return { cls: 'gym-' + pd.cid, css: '' };
+    // 야생: 칸 속성 색 땅
+    const t = placeType(store.st, pd.at) || 'grass';
+    return { cls: 'wild', css: t === 'grass' ? '' : '--gnd1: ' + TYPE_HI[t] + '; --gnd2: ' + TYPE_C[t] + ';' };
+  }
+  function openBattle(pd, resume) {
+    if (bt.on) return;
     bt.on = true;
+    ui.battle = true;
+    bt.playing = false;
     bt.skip = false;
     bt.tap = null;
     bt.waiters = [];
+    bt.menu = 'main';
+    bt.pd = pd;
+    bt.vm = vmOf(pd);
+    bt.evn = resume ? pd.evn : 0;
+    bt.xp0 = {};
+    const v = viewer();
+    pd.team.forEach((f) => { const m = v.mons[f.fam]; if (m) bt.xp0[f.fam] = m.xp || 0; });
+    hideBubble();
     const box = $('battle');
-    const bg = o.kind === 'wild' ? 'wild' : o.kind === 'champ' ? 'champ' : 'gym-' + o.cid;
-    const meSub = 'Lv.' + o.me.lv + ' ⚡' + Math.round(o.me.pow * o.eff);
-    const foeSub = (o.kind === 'wild' ? '야생 ' : '') + '⚡' + o.foe.pow;
+    const bg = battleBg(pd);
     box.innerHTML = '<div class="bt-wrap"><div class="bt-top">' +
-        '<button class="bt-speed" type="button" data-act="bt-speed" aria-label="배틀 길이 바꾸기">' + LENS[bt.len].name + '</button>' +
-        '<button class="bt-skip" type="button" data-act="bt-skip">⏩ 넘기기</button></div>' +
-      '<div class="bt-screen"><div class="bt-field bg-' + bg + '" id="bt-field"><div class="bt-deco"></div>' +
+        '<button class="bt-speed" type="button" data-act="bt-speed" aria-label="배틀 속도 바꾸기">' + LENS[bt.len].name + '</button>' +
+        '<button class="bt-auto' + (bt.auto ? ' on' : '') + '" type="button" data-act="bt-auto" aria-pressed="' + bt.auto + '">🤖 자동</button>' +
+        '<button class="bt-skip" type="button" data-act="bt-skip">⏩ 빨리</button></div>' +
+      '<div class="bt-screen"><div class="bt-field bg-' + bg.cls + '" id="bt-field" style="' + bg.css + '"><div class="bt-deco"></div>' +
         '<div class="bt-plat foe"></div><div class="bt-plat me"></div>' +
-        '<div class="bt-mon foe" id="bt-foe"><div class="bt-body">' + battleImg(o.foe.sp, 'foe') + '</div></div>' +
-        '<div class="bt-mon me" id="bt-me"><div class="bt-body">' + battleImg(o.me.sp, 'me') + '</div></div>' +
-        infoHTML('foe', o.foe.sp, foeSub) + infoHTML('me', o.me.sp, meSub) +
+        '<div class="bt-mon foe" id="bt-foe"><div class="bt-body"></div></div>' +
+        '<div class="bt-mon me" id="bt-me"><div class="bt-body"></div></div>' +
+        '<div class="bt-info foe" id="bi-foe"></div><div class="bt-info me" id="bi-me"></div>' +
         '<div class="bt-fx" id="bt-fx"></div><div class="bt-banner" id="bt-banner" hidden></div></div>' +
-      '<div class="bt-text" id="bt-text" aria-live="polite"><p>두근두근…</p><span class="bt-next" aria-hidden="true">▼</span></div></div></div>';
+      '<div class="bt-text" id="bt-text" aria-live="polite"><p>두근두근…</p><span class="bt-next" aria-hidden="true">▼</span></div>' +
+      '<div class="bt-cmd" id="bt-cmd" hidden></div></div></div>';
     box.hidden = false;
     document.body.classList.add('locked');
-    sizeMons();
-    // 움직이는 그림을 다 불러온 뒤에 시작해요 (오래 걸리면 5초 뒤 그냥 시작)
+    drawSide('me', !resume);
+    drawSide('foe', !resume);
+    // 움직이는 그림을 다 불러온 뒤에 시작해요 (오래 걸리면 4초 뒤 그냥 시작)
     const imgs = Array.from(box.querySelectorAll('img.bt-img'));
     const ready = Promise.all(imgs.map((im) => (im.decode ? im.decode().catch(() => {}) : Promise.resolve())));
-    return Promise.race([ready, sleep(5000)])
-      .then(() => { if (!bt.skip) sizeMons(); return battleScript(o); })
-      .catch((e) => { if (e !== BT_SKIP) { try { console.warn('battle', e); } catch (e2) { /* 무시 */ } } })
-      .then(() => {
-        bt.on = false;
-        bt.waiters = [];
-        box.hidden = true;
-        box.innerHTML = '';
-        if ($('sheet').hidden && !ui.panel) document.body.classList.remove('locked');
-      });
+    Promise.race([ready, sleep(4000)]).then(() => {
+      if (!bt.on) return;
+      sizeMons();
+      if (resume) { if (pd.done) showEnd(pd); else showMenu(); return; }
+      playStep();
+    });
+  }
+  function closeBattle() {
+    clearTimeout(bt.autoT);
+    bt.skip = true;
+    const ws = bt.waiters;
+    bt.waiters = [];
+    ws.forEach((f) => f());
+    bt.on = false;
+    bt.playing = false;
+    ui.battle = false;
+    const box = $('battle');
+    box.hidden = true;
+    box.innerHTML = '';
+    if ($('sheet').hidden && !ui.panel) document.body.classList.remove('locked');
+  }
+  // 화면과 엔진 상태 맞추기 (다시 열었을 때 · 다른 폰이 차례를 넘겼을 때)
+  function syncBattle() {
+    const pd = myBattle();
+    if (pd && !pd.done && !bt.on) openBattle(pd, true);
+    else if (!pd && bt.on) closeBattle();
   }
   function battleTap() {
     if (bt.tap) bt.tap();
   }
   function battleSkip() {
+    if (!bt.playing) return;
     bt.skip = true;
     const ws = bt.waiters;
     bt.waiters = [];
@@ -4756,6 +5909,14 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   }
   function battleSpeed() {
     setBattleLen(LEN_ORDER[(LEN_ORDER.indexOf(bt.len) + 1) % LEN_ORDER.length]);
+  }
+  function battleAuto() {
+    bt.auto = !bt.auto;
+    try { localStorage.setItem(AUTO_KEY, bt.auto ? '1' : '0'); } catch (e) { /* 기억 못 해도 괜찮아요 */ }
+    const b = document.querySelector('#battle .bt-auto');
+    if (b) { b.classList.toggle('on', bt.auto); b.setAttribute('aria-pressed', String(bt.auto)); }
+    toast(bt.auto ? '🤖 자동 배틀: 알아서 공격하고, 체력이 적으면 볼을 던져요' : '🤖 자동 배틀을 껐어요. 직접 골라요!');
+    if (bt.auto && !bt.playing) autoPick();
   }
 
   /* =========================================================
@@ -4815,101 +5976,117 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   }
   const head = (tone, icon, text) => '<div class="sheet-head h-' + tone + '"><span class="ico" aria-hidden="true">' + icon + '</span><span>' + esc(text) + '</span></div>';
 
-  function fighterHTML(side, label, visInner, name, pow) {
-    return '<div class="fighter ' + side + '"><span class="fighter-label">' + esc(label) + '</span><div class="vis sm">' + visInner + '</div>' +
-      '<span class="fighter-name">' + esc(name) + '</span><span class="fighter-pow">' + pow + '</span></div>';
-  }
   function spInner(sp) {
     const moving = animImg(sp, 'poke-img');
     if (moving) return moving;
     const url = imgUrl(SP[sp].dex);
     return url ? '<img class="poke-img" src="' + url + '" data-dex="' + SP[sp].dex + '" data-sp="' + sp + '" alt="' + esc(SP[sp].name) + '">' : emblemHTML(sp, SP[sp].name);
   }
-  function pawnInner() {
-    return '<span class="mini-em pawn-em" style="width: 48px; height: 48px" role="img" aria-label="기본 말"></span>';
-  }
-  function matchupHTML(m, defType) {
-    if (!m) return '<div class="matchup bad">🐾 포켓몬이 없어요. [말 바꾸기]에서 포켓몬을 골라요</div>';
-    const at = SP[m.sp].type;
-    const k = eff(at, defType);
-    const pair = TYPES[at].icon + ' ' + TYPES[at].name + ' → ' + TYPES[defType].icon + ' ' + TYPES[defType].name;
-    if (k > 1) return '<div class="matchup good">' + pair + ': 효과가 굉장해요! 공격력 ×1.5</div>';
-    if (k < 1) return '<div class="matchup bad">' + pair + ': 효과가 별로예요… 공격력 ×0.7</div>';
-    return '<div class="matchup even">' + pair + ': 상성 보통 · 공격력 그대로</div>';
-  }
   function oddsHTML(c) {
     const pct = Math.round(c * 100);
-    const mood = c >= 0.995 ? '😎 거의 확실해요!' : c >= 0.7 ? '😄 해볼 만해요!' : c >= 0.4 ? '😬 아슬아슬해요!' : c > 0 ? '😰 어려운 상대예요' : '😱 지금은 못 이겨요';
-    return '<div class="odds"><div class="odds-text"><span>승리 확률 약 ' + Math.max(c > 0 ? 1 : 0, pct) + '%</span><span>' + mood + '</span></div><div class="odds-bar"><div class="odds-fill" style="width: ' + pct + '%"></div></div></div>';
+    const mood = c >= 0.95 ? '😎 거의 확실해요!' : c >= 0.7 ? '😄 해볼 만해요!' : c >= 0.4 ? '😬 아슬아슬해요!' : c > 0.05 ? '😰 어려운 상대예요' : '😱 지금은 너무 강해요';
+    return '<div class="odds"><div class="odds-text"><span>이길 확률 약 ' + Math.max(c > 0 ? 1 : 0, pct) + '%</span><span>' + mood + '</span></div><div class="odds-bar"><div class="odds-fill" style="width: ' + pct + '%"></div></div></div>';
   }
-  function bestTipHTML(p, defType, now) {
-    let best = null;
-    let bestV = now;
-    Object.keys(p.mons).forEach((f) => {
-      if (f === p.partner) return;
-      const m = p.mons[f];
-      const v = Math.round(powerOf(m) * eff(SP[m.sp].type, defType));
-      if (v > bestV) { best = m; bestV = v; }
-    });
-    if (!best) return '';
-    const n = SP[best.sp].name;
-    return '<div class="banner banner-hint">💡 ' + esc(n) + euro(n) + ' 말을 바꾸면 ⚡' + bestV + '! (' + TYPES[SP[best.sp].type].icon + ' ' + TYPES[SP[best.sp].type].name + ' 타입)</div>';
-  }
+  const typeChip = (t) => '<span class="type-chip" style="--tc: ' + TYPE_C[t] + '; --th: ' + TYPE_HI[t] + '">' + TYPES[t].icon + ' ' + TYPES[t].name + '</span>';
+  const ballsLine = (p) => BALL_KEYS.map((b) => '<span class="bag-b"><i class="bb-ico b-' + b + '" aria-hidden="true"></i>' + BALLS[b].name + ' ' + (p.balls[b] || 0) + '</span>').join('');
 
+  // ── 배틀 전: 같이 싸울 팀 고르기 (최대 3마리, 1번부터 나가요) ──
+  function encounterFoes(p, pd) {
+    return pd.kind === 'wild' ? [{ sp: pd.foe.sp, lv: pd.foe.lv, hpx: pd.foe.hpx || 1 }] : gymTeam(store.st, p, pd.cid, isChampSpot(p, pd.cid));
+  }
+  function teamFor(p, pd, foes) {
+    const key = p.pid + ':' + pd.kind + ':' + pd.at + ':' + foes.map((f) => f.sp + f.lv).join(',') + ':' + (store.st.lastMove ? store.st.lastMove.n : 0);
+    if (!ui.team || ui.team.key !== key) ui.team = { key, fams: autoTeam(p, foes.map((f) => SP[f.sp].type)) };
+    ui.team.fams = ui.team.fams.filter((f) => p.mons[f]);
+    return ui.team.fams;
+  }
+  function teamOdds(p, fams, foes) {
+    const key = fams.map((f) => f + p.mons[f].lv + p.mons[f].sp).join(',') + '|' + foes.map((f) => f.sp + f.lv).join(',');
+    if (!ui.odds || ui.odds.key !== key) ui.odds = { key, v: battleOdds(p, fams, foes, 240) };
+    return ui.odds.v;
+  }
+  function teamPickHTML(p, pd, foes) {
+    const all0 = Object.keys(p.mons);
+    if (!all0.length) return '<div class="banner banner-warn">🐾 아직 포켓몬이 없어요.<small>🏪 뽑기에서 친구를 먼저 만나요! 포켓몬이 있어야 배틀하고 잡을 수 있어요.</small></div>';
+    const fams = teamFor(p, pd, foes);
+    const types = foes.map((f) => SP[f.sp].type);
+    const all = all0.sort((a, b) => teamScore(p.mons[b], types) - teamScore(p.mons[a], types));
+    const slots = [0, 1, 2].map((i) => {
+      const f = fams[i];
+      if (!f) return '<span class="tp-slot empty" aria-hidden="true">' + (i + 1) + '</span>';
+      const m = p.mons[f];
+      return '<button class="tp-slot" type="button" data-act="team-tog" data-fam="' + f + '" aria-label="' + (i + 1) + '번 ' + esc(SP[m.sp].name) + ' 빼기">' + miniEm(m.sp, '', true) + '<b>' + (i + 1) + '</b></button>';
+    }).join('');
+    const chips = all.map((f) => {
+      const m = p.mons[f];
+      const s = SP[m.sp];
+      // 상성: 내가 때릴 때 ÷ 내가 맞을 때 (둘 다 생각해요)
+      let k = 0;
+      let d = 0;
+      types.forEach((t) => { k += eff(s.type, t); d += eff(t, s.type); });
+      const r = k / d;
+      const order = fams.indexOf(f);
+      const tag = r > 1.05 ? '<span class="tp-tag good">💪 유리</span>' : r < 0.95 ? '<span class="tp-tag bad">😥 불리</span>' : '';
+      return '<button class="tp-mon' + (order >= 0 ? ' on' : '') + '" type="button" data-act="team-tog" data-fam="' + f + '" aria-pressed="' + (order >= 0) + '">' +
+        (order >= 0 ? '<span class="tp-no">' + (order + 1) + '</span>' : '') + miniEm(m.sp, '', true) +
+        '<span class="tp-txt"><b>' + esc(s.name) + '</b><small>' + TYPES[s.type].icon + ' Lv.' + m.lv + ' ' + tag + '</small><small>⚡' + powerOf(m) + ' ❤️' + hpOf(m) + '</small></span></button>';
+    }).join('');
+    return '<div class="team-pick"><div class="tp-head"><b>⚔️ 같이 싸울 포켓몬 ' + fams.length + '/' + TEAM_MAX + '</b><small>누르면 넣고 빼요 · 1번부터 나가요</small></div>' +
+      '<div class="tp-slots">' + slots + '<button class="btn btn-small tp-auto" type="button" data-act="team-auto">💡 추천 팀</button></div>' +
+      '<div class="tp-list">' + chips + '</div></div>' + (fams.length ? oddsHTML(teamOdds(p, fams, foes)) : '');
+  }
+  function foeCardHTML(f, label) {
+    const s = SP[f.sp];
+    return '<div class="foe-card"><div class="vis">' + spInner(f.sp) + '</div><div class="fc-txt"><span class="fc-label">' + esc(label) + '</span><b>' + esc(s.name) + '</b>' +
+      typeChip(s.type) + '<small>Lv.' + f.lv + ' · ⚡' + atkOf(f.sp, f.lv, 0) + ' · ❤️' + Math.round(hpMaxOf(f.sp, f.lv, 0) * (f.hpx > 1 ? f.hpx : 1)) + '</small></div></div>';
+  }
   function gymHTML(pd, p) {
     const st = store.st;
     const c = COMP[pd.cid];
-    const m = partnerMon(p);
     const champ = isChampSpot(p, pd.cid);
     const won = !!p.won[pd.cid];
-    const foe = champ ? CHAMP_POWER : gymPower(p);
-    const foeType = champ ? 'normal' : pd.cid;
-    const my = m ? Math.round(powerOf(m) * eff(SP[m.sp].type, foeType)) : 0;
+    const foes = encounterFoes(p, pd);
+    const has = Object.keys(p.mons).length > 0;
     const title = champ ? '🏆 챔피언 결정전이 열렸어요!' : won ? c.boss + iga(c.boss) + ' 연습 상대가 돼 준대요' : c.boss + iga(c.boss) + ' 승부를 걸어왔어요!';
     const reward = champ ? '🏆 이기면 서울 챔피언 + 💰 상금 ' + fmt(CHAMP_PRIZE) + '원'
       : won ? '🏅 이미 배지를 받은 곳이에요 · 연습 배틀에서 이기면 +' + fmt(PRACTICE_PRIZE) + '원'
         : '이기면 🏅 배지 + 💰 ' + fmt(gymPrize(p)) + '원 + 📜 ' + c.name + ' 주식 1주';
+    const boss = '<div class="boss-team"><div class="bt-who">' + (champ ? '🏆 서울 챔피언' : '🏢 ' + esc(c.boss)) + '의 포켓몬 ' + foes.length + '마리</div><div class="bt-row">' +
+      foes.map((f) => '<div class="bt-one">' + miniEm(f.sp, '', true) + '<b>' + esc(SP[f.sp].name) + '</b><small>' + TYPES[SP[f.sp].type].icon + ' Lv.' + f.lv + '</small></div>').join('') + '</div></div>';
     return head('gym-' + pd.cid, c.icon, c.name + ' 체육관 · ' + PLACES[pd.at].name) +
       '<div class="sheet-body">' +
       '<h2 class="sheet-title">' + esc(title) + '</h2>' +
       '<div class="caption">🏢 ' + esc(c.what) + ' · 내 주식 ' + (p.sh[c.id] || 0) + '주 · 주가 ' + fmt(st.market.price[c.id]) + '원</div>' +
-      '<div class="versus">' +
-        fighterHTML('me', '🐾 내 말', m ? spInner(m.sp) : pawnInner(), m ? SP[m.sp].name : '기본 말', m ? (my === powerOf(m) ? '⚡' + my : '⚡' + powerOf(m) + ' → ' + my) : '포켓몬 없음') +
-        '<div class="vs" aria-hidden="true">VS</div>' +
-        fighterHTML('foe', champ ? '🏆 서울 챔피언' : '🏢 ' + c.boss, spInner(champ ? CHAMP_MON : bossMon(pd.cid, foe)), SP[champ ? CHAMP_MON : bossMon(pd.cid, foe)].name + ' (' + TYPES[foeType].name + ')', '⚡' + foe) +
-      '</div>' +
-      matchupHTML(m, foeType) +
-      (m ? oddsHTML(winChance(my, foe)) : '') +
-      '<div class="banner banner-calm">' + esc(reward) + (champ ? '' : '<small>관장 힘은 내가 가진 배지 수에 맞춰져요 (지금 ⚡' + gymPower(p) + '). 져도 잃는 건 없어요.</small>') + '</div>' +
-      bestTipHTML(p, foeType, my) +
+      boss + teamPickHTML(p, pd, foes) +
+      '<div class="banner banner-calm">' + esc(reward) + (champ ? '' : '<small>관장님 포켓몬은 내 배지 수에 맞춰 세져요. 져도 잃는 건 없고, 경험치는 조금 받아요.</small>') + '</div>' +
       '<div class="sheet-btns">' +
-        '<button class="btn-primary" type="button" data-act="choose" data-key="fight"' + (m ? '' : ' disabled') + '>' + (champ ? '🏆 챔피언에게 도전!' : won ? '⚔️ 연습 배틀' : '⚔️ 도전하기!') + '</button>' +
-        '<div class="btn-row"><button class="btn" type="button" data-act="open-partner">🐾 말 바꾸기</button><button class="btn" type="button" data-act="open-company" data-cid="' + c.id + '">🏢 회사 둘러보기</button></div>' +
-        '<button class="btn btn-muted" type="button" data-act="choose" data-key="leave">🏃 다음에 할래요</button>' +
+        '<button class="btn-primary" type="button" data-act="choose" data-key="fight"' + (has ? '' : ' disabled') + '>' + (champ ? '🏆 챔피언에게 도전!' : won ? '⚔️ 연습 배틀' : '⚔️ 도전하기!') + '</button>' +
+        '<div class="btn-row"><button class="btn" type="button" data-act="open-company" data-cid="' + c.id + '">🏢 회사 둘러보기</button><button class="btn btn-muted" type="button" data-act="choose" data-key="leave">🏃 다음에 할래요</button></div>' +
       '</div></div>';
   }
   function wildHTML(pd, p) {
     const f = pd.foe;
     const s = SP[f.sp];
-    const m = partnerMon(p);
-    const my = m ? Math.round(powerOf(m) * eff(SP[m.sp].type, s.type)) : 0;
     const pl = PLACES[pd.at];
-    return head('wild', '🌳', pl.name + ' 풀숲') +
+    const t = placeType(store.st, pd.at);
+    const has = Object.keys(p.mons).length > 0;
+    const foes = encounterFoes(p, pd);
+    const legend = s.pool === 4;
+    const why = t && t === s.type ? '<div class="banner banner-info">' + TYPES[t].icon + ' ' + TYPES[t].name + ' 칸이라 ' + TYPES[t].name + ' 타입 포켓몬이 잘 나와요!</div>' : '';
+    return head('wild', pd.wid ? '🐾' : '🌳', pl.name + (pd.wid ? ' · 말판의 야생 포켓몬' : ' · 풀숲')) +
       '<div class="sheet-body">' +
-      '<h2 class="sheet-title">야생 ' + esc(s.name) + iga(s.name) + ' 나타났어요!</h2>' +
-      '<div class="versus">' +
-        fighterHTML('me', '🐾 내 말', m ? spInner(m.sp) : pawnInner(), m ? SP[m.sp].name : '기본 말', m ? (my === powerOf(m) ? '⚡' + my : '⚡' + powerOf(m) + ' → ' + my) : '포켓몬 없음') +
-        '<div class="vs" aria-hidden="true">VS</div>' +
-        fighterHTML('foe', '🌳 야생', spInner(f.sp), s.name, '⚡' + f.power) +
-      '</div>' +
-      matchupHTML(m, s.type) +
-      (m ? oddsHTML(winChance(my, f.power)) : '') +
-      '<div class="banner banner-calm">이기면 +' + fmt(WILD_PRIZE) + '원, 30% 확률로 잡을 수 있어요! 잡으면 내 포켓몬에 합쳐져요.</div>' +
-      bestTipHTML(p, s.type, my) +
+      '<h2 class="sheet-title">' + (legend ? '🌟 전설의 포켓몬! ' : '') + '야생 ' + esc(s.name) + iga(s.name) + ' 나타났어요!</h2>' +
+      foeCardHTML(foes[0], pd.wid ? '🐾 말판에서 놀던 야생' : '🌳 야생') + why +
+      teamPickHTML(p, pd, foes) +
+      '<div class="banner banner-calm">쓰러뜨리면 +' + fmt(WILD_PRIZE) + '원 · 배틀 중에 볼을 던지면 잡을 수 있어요 (체력이 적을수록 잘 잡혀요)<div class="bag mt8">🎒 ' + ballsLine(p) + '</div></div>' +
       '<div class="sheet-btns">' +
-        '<button class="btn-primary" type="button" data-act="choose" data-key="fight"' + (m ? '' : ' disabled') + '>⚔️ 배틀하기</button>' +
-        '<div class="btn-row"><button class="btn" type="button" data-act="open-partner">🐾 말 바꾸기</button><button class="btn btn-muted" type="button" data-act="choose" data-key="flee">🏃 도망가기</button></div>' +
+        '<button class="btn-primary" type="button" data-act="choose" data-key="fight"' + (has ? '' : ' disabled') + '>⚔️ 배틀 시작!</button>' +
+        '<button class="btn btn-muted" type="button" data-act="choose" data-key="flee">🏃 도망가기</button>' +
       '</div></div>';
+  }
+  // 다시 열었을 때 끝난 배틀 결과 (배틀 화면이 닫혀 있으면 카드로)
+  function battleResultHTML(pd) {
+    return head(pd.tone || 'calm', pd.icon || '⚔️', PLACES[pd.at].name + ' · 배틀 결과') + '<div class="sheet-body">' + endHTML(pd) + '</div>';
   }
   function quizHTML(pd) {
     const q = QUIZ[pd.qi % QUIZ.length];
@@ -4922,7 +6099,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       '<div class="sheet-btns">' + q.o.map((o, i) => '<button class="btn quiz-opt" type="button" data-act="choose" data-key="q' + i + '">' + NUM_MARK[i] + ' ' + esc(o) + '</button>').join('') + '</div></div>';
   }
   function eventHTML(pd) {
-    if (pd.kind === 'result' && pd.battle && (ui.battle || Date.now() < ui.suspense)) return '';
+    if (pd.kind === 'battle') return pd.done && !bt.on ? battleResultHTML(pd) : '';
     const p = viewer();
     if (pd.kind === 'gym' && !pd.done) return gymHTML(pd, p);
     if (pd.kind === 'wild' && !pd.done) return wildHTML(pd, p);
@@ -4964,7 +6141,8 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     if (n) {
       const avg = Math.round((v.cost[cid] || 0) / n);
       const pl = n * price - Math.round(v.cost[cid] || 0);
-      hold = '<div class="banner banner-info">내 주식 <b>' + n + '주</b> · 평균 ' + fmt(avg) + '원에 샀어요<small>지금 다 팔면 ' + (pl > 0 ? '+' + fmt(pl) + '원 이득 😀' : pl < 0 ? fmt(-pl) + '원 손해 😢' : '본전이에요 😐') + '</small></div>';
+      const rr = avg > 0 ? price / avg - 1 : 0;
+      hold = '<div class="banner banner-info">내 주식 <b>' + n + '주</b> · 평균 ' + fmt(avg) + '원에 샀어요 · 수익률 <b class="' + (rr > 0.0005 ? 'txt-up' : rr < -0.0005 ? 'txt-down' : '') + '">' + pctText(rr) + '</b><small>지금 다 팔면 ' + (pl > 0 ? '+' + fmt(pl) + '원 이득 😀 → 주식으로 번 돈에 들어가요' : pl < 0 ? fmt(-pl) + '원 손해 😢' : '본전이에요 😐') + '</small></div>';
     }
     const others = Math.max(0, tot - n);
     let pcs = '';
@@ -5019,13 +6197,13 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       const s = SP[m.sp];
       const on = v.partner === f;
       return '<button class="popt' + (on ? ' on' : '') + '" type="button" data-act="set-partner" data-fam="' + f + '">' + miniEm(m.sp) +
-        '<span style="min-width: 0"><b>' + esc(s.name) + (m.stars ? ' ' + '⭐'.repeat(m.stars) : '') + '</b><small>' + TYPES[s.type].icon + ' ' + TYPES[s.type].name + ' · Lv.' + m.lv + ' · ⚡' + powerOf(m) + '</small></span>' +
+        '<span style="min-width: 0"><b>' + esc(s.name) + (m.stars ? ' ' + '⭐'.repeat(m.stars) : '') + '</b><small>' + TYPES[s.type].icon + ' ' + TYPES[s.type].name + ' · Lv.' + m.lv + ' · ⚡' + powerOf(m) + ' · ❤️' + hpOf(m) + '</small></span>' +
         '<span class="pchk">' + (on ? '✓' : '') + '</span></button>';
     });
     rows.push('<button class="popt' + (!v.partner ? ' on' : '') + '" type="button" data-act="set-partner" data-fam="">' + miniEm(null) +
       '<span style="min-width: 0"><b>기본 말</b><small>포켓몬 없이 다니기 · 배틀은 못 해요</small></span><span class="pchk">' + (!v.partner ? '✓' : '') + '</span></button>');
     return head('calm', '🐾', '내 말 고르기') +
-      '<div class="sheet-body"><div class="caption">말판을 같이 다닐 포켓몬을 골라요. 배틀도 이 포켓몬이 해요. 체육관마다 상성이 좋은 포켓몬으로 바꿔 보세요!</div>' +
+      '<div class="sheet-body"><div class="caption">말판을 같이 다닐 포켓몬을 골라요. 배틀할 때는 이 친구를 포함해 최대 3마리를 데려가요.</div>' +
       '<div class="popt-list">' + rows.join('') + '</div>' +
       '<div class="caption">엄마·아빠 메뉴에서 그림을 넣은 포켓몬은 진짜 모습으로 말판을 다녀요.</div>' +
       '<button class="btn btn-muted" type="button" data-act="close-sheet">닫기</button></div>';
@@ -5217,7 +6395,12 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       : ch < 0 ? '<span class="delta delta-down">▼ ' + fmt(-ch) + ' (' + pctText(ch / prev) + ')</span>'
         : '<span class="delta delta-same">' + (st.day === 1 ? '첫날' : '그대로') + '</span>';
     const tags = [];
-    if (n) tags.push('<span class="chip chip-good">🍕 내 주식 ' + n + '주</span>');
+    if (n) {
+      tags.push('<span class="chip chip-good">🍕 내 주식 ' + n + '주</span>');
+      const avg = (v.cost[c.id] || 0) / n;
+      const r = avg > 0 ? price / avg - 1 : 0;
+      tags.push('<span class="chip ' + (r > 0.0005 ? 'chip-up' : r < -0.0005 ? 'chip-down' : '') + '">📊 ' + pctText(r) + '</span>');
+    }
     if (isMulti(st) && t > n) tags.push('<span class="chip">🤝 모두 ' + t + '주</span>');
     tags.push('<span class="chip">💪 → ' + prey.icon + '</span>');
     tags.push('<span class="chip">⚠️ 천적 ' + pred.icon + '</span>');
@@ -5265,6 +6448,62 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       '<div class="caption">처음 재산 ' + fmt(START_CASH) + '원에서 시작했어요. 점선이 처음 재산이고, 밤마다 한 점씩 늘어나요.</div>';
   }
 
+  // ── 📊 내 주식 성적표: 수익률 · 번 돈 · 회사마다 · 다음 단계 ──
+  const signOf = (x) => (x > 0 ? '+' : x < 0 ? '−' : '±');
+  const updn = (x) => (x > 0.0005 ? 'up' : x < -0.0005 ? 'down' : 'same');
+  // 오른 주식을 다 팔면 다음 단계 번 돈 조건을 채우는지 (안내 한 줄)
+  function sellHint(st, v) {
+    const nx = nextTierNeed(v);
+    const pf = portfolio(st, v);
+    if (!nx || nx.earned <= 0 || pf.gain <= 0) return '';
+    const after = v.earned + pf.gain;
+    return after >= nx.t.earned
+      ? '💡 오른 주식을 팔면 번 돈이 돼요. 지금 다 팔면 번 돈이 ' + fmt(after) + '원 → ' + nx.t.ball + ' ' + nx.t.name + ' 번 돈 조건 완성!'
+      : '💡 오른 주식을 팔면 번 돈이 돼요. 지금 다 팔면 번 돈 +' + fmt(pf.gain) + '원';
+  }
+  function reportHTML() {
+    const st = store.st;
+    const v = viewer();
+    const pf = portfolio(st, v);
+    const realized = v.earned - (v.divs || 0);
+    const rows = RING.filter((c) => (v.sh[c] || 0) > 0).map((c) => {
+      const n = v.sh[c];
+      const avg = (v.cost[c] || 0) / n;
+      const price = st.market.price[c];
+      const r = avg > 0 ? price / avg - 1 : 0;
+      const g = Math.round((price - avg) * n);
+      return '<button class="rp-row" type="button" data-act="open-company" data-cid="' + c + '"><span class="rp-co">' + COMP[c].icon + ' ' + esc(COMP[c].short) + ' <small>' + n + '주</small></span>' +
+        '<span class="rp-pr">' + fmt(avg) + ' → ' + fmt(price) + '원</span>' +
+        '<span class="rp-r ' + updn(r) + '"><b>' + pctText(r) + '</b><small>' + signOf(g) + fmt(Math.abs(g)) + '원</small></span></button>';
+    }).join('');
+    const nx = nextTierNeed(v);
+    let next;
+    if (nx) {
+      const N = nx.t;
+      const n = peakOf(v);
+      const hint = sellHint(st, v);
+      next = '<div class="rp-next"><div class="rp-next-t">' + N.ball + ' 다음 뽑기 단계 · ' + N.name + '까지</div>' +
+        '<div class="meter"><span>📈 주식 모으기</span><span>' + n + ' / ' + N.shares + '주' + (nx.shares ? '' : ' ✅') + '</span></div>' +
+        '<div class="gauge gold"><i style="width: ' + Math.round(clamp(n / N.shares, 0, 1) * 100) + '%"></i></div>' +
+        '<div class="meter"><span>💰 주식으로 번 돈</span><span>' + (v.earned < 0 ? '−' : '') + fmt(Math.abs(v.earned)) + ' / ' + fmt(N.earned) + '원' + (nx.earned ? '' : ' ✅') + '</span></div>' +
+        '<div class="gauge green"><i style="width: ' + Math.round(clamp(v.earned / N.earned, 0, 1) * 100) + '%"></i></div>' +
+        (hint ? '<div class="banner banner-hint">' + esc(hint) + '</div>' : '') + '</div>';
+    } else {
+      next = '<div class="banner banner-good">🟣 마스터볼까지 모두 열었어요! 이제 전설의 포켓몬을 만날 수 있어요.</div>';
+    }
+    return '<div class="row-between"><h2 class="card-title" style="margin: 0">📊 내 주식 성적표</h2>' + (pf.n ? '<span class="chip">🍕 ' + pf.n + '주</span>' : '') + '</div>' +
+      '<div class="rp-hero">' +
+        '<div class="rp-cell"><div class="rp-l">📊 수익률</div><div class="rp-big ' + (pf.cost ? updn(pf.rate) : 'same') + '">' + (pf.cost ? pctText(pf.rate) : '—') + '</div>' +
+          '<div class="rp-s">' + (pf.cost ? '지금 팔면 ' + signOf(pf.gain) + fmt(Math.abs(pf.gain)) + '원' : '주식을 사면 보여요') + '</div></div>' +
+        '<div class="rp-cell"><div class="rp-l">💰 주식으로 번 돈</div><div class="rp-big earn' + (v.earned < 0 ? ' down' : '') + '">' + (v.earned < 0 ? '−' : '') + fmt(Math.abs(v.earned)) + '<small>원</small></div>' +
+          '<div class="rp-s">판 이익 ' + signOf(realized) + fmt(Math.abs(realized)) + ' · 배당금 +' + fmt(v.divs || 0) + '</div></div>' +
+      '</div>' +
+      (pf.cost ? '<div class="rp-line">💸 산 값 <b>' + fmt(pf.cost) + '원</b> → 📈 지금 값 <b>' + fmt(pf.value) + '원</b></div>' : '') +
+      (rows ? '<div class="rp-list">' + rows + '</div>' : '<div class="caption">아직 가진 주식이 없어요. 아래 회사 목록에서 1주를 사 보세요!</div>') +
+      next +
+      '<div class="caption">수익률 = (지금 값 − 산 값) ÷ 산 값. 팔기 전에는 "지금 팔면" 받을 이익이고, 팔아야 진짜 번 돈이 돼요. 배당금도 번 돈이에요. 주식 모으기는 한 번에 가장 많이 가졌던 주식 수라서, 오른 주식을 팔아도 줄지 않아요.</div>';
+  }
+
   function meetingBoxHTML() {
     const st = store.st;
     if (st.meeting) return '<div class="card"><h2 class="card-title">🏛️ 주주 총회</h2>' + meetingMiniHTML() + '</div>';
@@ -5278,6 +6517,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const v = viewer();
     setHTML('ring-svg', ringHTML());
     setHTML('co-list', COMPANIES.map(coRowHTML).join(''));
+    setHTML('report-card', reportHTML());
     setHTML('wealth-card', wealthHTML());
     setHTML('meeting-box', meetingBoxHTML());
     const n = sharesOf(v);
@@ -5365,7 +6605,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     const rows = [1, 2, 3, 4].map((t) => {
       const T = TIERS[t];
       const cls = t < v.tier ? 'done' : t === v.tier ? 'now' : 'lock';
-      const req = t === 1 ? BALL_REQ[1] : '주식 ' + T.shares + '주 + 주식으로 번 돈 ' + fmt(T.earned) + '원 · ' + BALL_REQ[t];
+      const req = t === 1 ? BALL_REQ[1] : '주식 ' + T.shares + '주 모으기 + 주식으로 번 돈 ' + fmt(T.earned) + '원 · ' + BALL_REQ[t];
       return '<div class="tier-box ' + cls + '"><div class="tier-head"><div class="tb" aria-hidden="true">' + T.ball + '</div><div style="min-width: 0">' +
         '<div class="tn">' + t + '단계 · ' + T.name + (cls === 'done' ? ' ✅' : cls === 'now' ? ' · 지금' : ' 🔒') + '</div><div class="tc">' + req + '</div></div></div>' +
         keepDetails('tier' + t, poolSize(t) + '종 보기 · 도감에 ' + poolSeen(t, v) + '종', '<div class="mons">' + poolChips(t, v) + '</div>') + '</div>';
@@ -5373,16 +6613,17 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     let next = '';
     if (v.tier < 4) {
       const N = TIERS[v.tier + 1];
-      const n = sharesOf(v);
+      const n = peakOf(v);
       const e = Math.max(0, v.earned);
       const okS = n >= N.shares;
       const okE = v.earned >= N.earned;
       next = '<h3 class="sub-title">' + N.ball + ' ' + N.name + '까지</h3>' +
-        '<div class="meter"><span>📈 가진 주식</span><span>' + n + ' / ' + N.shares + '주' + (okS ? ' ✅' : '') + '</span></div>' +
+        '<div class="meter"><span>📈 주식 모으기</span><span>' + n + ' / ' + N.shares + '주' + (okS ? ' ✅' : '') + '</span></div>' +
         '<div class="gauge gold"><i style="width: ' + Math.min(100, Math.round((n / N.shares) * 100)) + '%"></i></div>' +
         '<div class="meter"><span>💰 주식으로 번 돈</span><span>' + (v.earned < 0 ? '−' : '') + fmt(Math.abs(v.earned)) + ' / ' + fmt(N.earned) + '원' + (okE ? ' ✅' : '') + '</span></div>' +
         '<div class="gauge green"><i style="width: ' + Math.min(100, Math.round((e / N.earned) * 100)) + '%"></i></div>' +
-        '<div class="caption">주식으로 번 돈 = 팔아서 남긴 돈 + 배당금 − 손해 본 돈. 한 번 오른 단계는 내려가지 않아요.</div>' +
+        (sellHint(store.st, v) ? '<div class="banner banner-hint">' + esc(sellHint(store.st, v)) + '</div>' : '') +
+        '<div class="caption">주식으로 번 돈 = 팔아서 남긴 돈 + 배당금 − 손해 본 돈. 주식 모으기는 한 번에 가장 많이 가졌던 주식 수예요 (팔아도 줄지 않아요). 한 번 오른 단계는 내려가지 않아요.</div>' +
         '<div class="banner banner-warn">💡 한 회사에 몰면 천적이 노려요. 여러 회사에 나눠서 주식을 모으는 게 안전해요!</div>';
     } else {
       next = '<div class="banner banner-good">🟣 마스터볼까지 모두 열었어요! 이제 전설의 포켓몬을 만날 수 있어요.</div>';
@@ -5463,9 +6704,26 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     return v.coupons.map((c) => '<button class="btn coupon-btn" type="button" data-act="use-coupon" data-id="' + esc(c.id) + '">🎟️ ' + esc(c.name) +
       '<small>' + (c.date ? esc(c.date.slice(5).replace('-', '월 ')) + '일에 샀어요 · ' : '') + '눌러서 사용 완료</small></button>').join('');
   }
+  // ── 잡기용 볼 가게 ──
+  function ballShopHTML(v) {
+    const rows = BALL_KEYS.map((k) => {
+      const B = BALLS[k];
+      const lock = v.tier < B.tier;
+      const ex = Math.round(catchChance({ sp: 'rattata', hp: 3, max: 10 }, k) * 100);
+      return '<div class="ball-row' + (lock ? ' lock' : '') + '"><span class="bb-big b-' + k + '" aria-hidden="true"></span>' +
+        '<div class="br-mid"><b>' + B.name + (lock ? ' 🔒' : '') + ' <small>가방에 ' + (v.balls[k] || 0) + '개</small></b><small>' + (lock ? B.tier + '단계(' + TIERS[B.tier].ball + ' ' + TIERS[B.tier].name + ')부터 살 수 있어요' : '잘 잡히는 힘 ×' + B.k + ' · 꼬렛 체력 30%일 때 ' + ex + '%') + '</small></div>' +
+        '<div class="br-btns"><button class="btn btn-small btn-buy" type="button" data-act="buy-ball" data-ball="' + k + '" data-n="1"' + (lock ? ' disabled' : '') + '>1개<small>' + fmt(B.price) + '원</small></button>' +
+        '<button class="btn btn-small btn-buy" type="button" data-act="buy-ball" data-ball="' + k + '" data-n="5"' + (lock ? ' disabled' : '') + '>5개<small>' + fmt(B.price * 5) + '원</small></button></div></div>';
+    }).join('');
+    return '<div class="row-between"><h2 class="card-title" style="margin: 0">🎒 잡기용 볼 가게</h2><span class="chip">' + BALL_KEYS.map((k) => '<i class="bb-ico b-' + k + '" aria-hidden="true"></i>' + (v.balls[k] || 0)).join(' ') + '</span></div>' +
+      '<div class="caption mt8">야생 포켓몬과 배틀할 때 볼을 던져서 잡아요. <b>체력이 적게 남을수록</b>, <b>좋은 볼일수록</b> 잘 잡혀요. 너무 세게 때려서 기절하면 잡을 수 없어요!</div>' +
+      '<div class="ball-list mt12">' + rows + '</div>' +
+      '<div class="caption mt8">💡 잡으면 돈 대신 포켓몬이 생기고, 쓰러뜨리면 +' + fmt(WILD_PRIZE) + '원을 받아요. 어느 쪽이 좋을지 골라 봐요!</div>';
+  }
   function renderShopTab() {
     const v = viewer();
     setHTML('draw-result', drawResultHTML(v));
+    setHTML('shop-balls', ballShopHTML(v));
     setHTML('shop-machine', machineHTML(v));
     setHTML('shop-capsules', capsulesHTML(v));
     setHTML('shop-tiers', tiersHTML(v));
@@ -5496,7 +6754,10 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       '<div class="mon-top"><span class="stage-b ' + tag[0] + '">' + tag[1] + '</span><span class="dexno">No.' + pad3(s.dex) + '</span></div>' +
       visHTML(m.sp, '', true) +
       '<div class="poke-name">' + esc(s.name) + '</div>' +
-      '<div class="mon-stat">' + TYPES[s.type].icon + ' ' + TYPES[s.type].name + ' · Lv.' + m.lv + ' · ⚡' + powerOf(m) + '</div>' +
+      '<div class="mon-stat">' + TYPES[s.type].icon + ' ' + TYPES[s.type].name + ' · Lv.' + m.lv + '</div>' +
+      '<div class="mon-stat2"><span>⚡ 공격 ' + powerOf(m) + '</span><span>❤️ 체력 ' + hpOf(m) + '</span></div>' +
+      '<div class="mon-xp" title="경험치"><i style="width: ' + (m.lv >= MAX_LV ? 100 : Math.round(clamp((m.xp || 0) / xpNeed(m.lv), 0, 1) * 100)) + '%"></i></div>' +
+      '<div class="mon-xp-t">' + (m.lv >= MAX_LV ? '최고 레벨!' : '경험치 ' + (m.xp || 0) + ' / ' + xpNeed(m.lv)) + '</div>' +
       grow +
       (on ? '<button class="btn" type="button" disabled>🐾 지금 내 말</button>' : '<button class="btn btn-buy" type="button" data-act="set-partner" data-fam="' + f + '">🐾 내 말로</button>') +
       '</div>';
@@ -5504,7 +6765,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
   function champHTML(v) {
     const nb = badgeCount(v);
     if (v.champ) return '<div class="banner banner-good mt12">🏆 서울 챔피언! 롯데월드타워 꼭대기에서 챔피언을 이겼어요.<small>체육관에서는 연습 배틀로 용돈을 벌 수 있어요.</small></div>';
-    if (nb >= 8) return '<div class="banner banner-hint mt12">🏆 배지 8개! 🪨 잠실 롯데월드타워에 가면 챔피언 결정전이 열려요 (챔피언 ⚡' + CHAMP_POWER + ').<small>상성이 좋은 포켓몬을 레벨 업해서 도전해요!</small></div>';
+    if (nb >= 8) return '<div class="banner banner-hint mt12">🏆 배지 8개! 🪨 잠실 롯데월드타워에 가면 챔피언 결정전이 열려요 (챔피언 포켓몬 3마리 · Lv.' + CHAMP_TEAM[0][1] + '~' + CHAMP_TEAM[2][1] + ').<small>상성이 좋은 포켓몬 3마리를 레벨 업해서 도전해요!</small></div>';
     const left = GYM_ORDER.filter((c) => !v.won[c]);
     let tip = '';
     const g = nextGymInfo(v);
@@ -5518,12 +6779,11 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       });
       const good = Object.keys(TYPES).filter((t) => eff(t, cid) > 1).map((t) => TYPES[t].icon + ' ' + TYPES[t].name);
       const bt = best ? TYPES[SP[best.sp].type] : null;
-      if (best && partnerMon(v) === best) tip = '💡 다음 체육관 ' + c.icon + ' ' + c.town + eunneun(c.town) + ' ' + bt.icon + ' ' + bt.name + ' 타입이 유리해요. 지금 내 말 ' + SP[best.sp].name + euro(SP[best.sp].name) + ' 딱 좋아요!';
-      else if (best) tip = '💡 다음 체육관 ' + c.icon + ' ' + c.town + eunneun(c.town) + ' ' + bt.icon + ' ' + bt.name + ' 타입이 유리해요. ' + SP[best.sp].name + euro(SP[best.sp].name) + ' 말을 바꿔서 가 보세요!';
+      if (best) tip = '💡 다음 체육관 ' + c.icon + ' ' + c.town + eunneun(c.town) + ' ' + bt.icon + ' ' + bt.name + ' 타입이 유리해요. ' + SP[best.sp].name + eulreul(SP[best.sp].name) + ' 팀에 꼭 데려가요!';
       else if (good.length) tip = '💡 다음 체육관 ' + c.icon + ' ' + c.town + eunneun(c.town) + ' ' + good.join(' · ') + ' 타입이 유리해요. 뽑기에서 찾아봐요!';
     }
     return '<div class="champ-box mt12"><div class="row-between"><b>🏆 챔피언까지</b><span>배지 ' + (8 - nb) + '개 남았어요</span></div>' +
-      '<div class="caption">다음 체육관 · 어디든 관장 힘 ⚡' + gymPower(v) + ' · 이기면 💰 ' + fmt(gymPrize(v)) + '원 + 📜 주식 1주</div>' +
+      '<div class="caption">다음 체육관 · 관장님 포켓몬 ' + (1 + Math.floor(Math.min(7, nb) / 3)) + '마리 (대표 ⚡' + gymPower(v) + ') · 이기면 💰 ' + fmt(gymPrize(v)) + '원 + 📜 주식 1주</div>' +
       '<div class="caption" style="font-weight: 800; color: var(--text-strong)">' + left.map((c) => COMP[c].icon + ' ' + esc(COMP[c].town)).join(' · ') + '</div>' +
       (tip ? '<div class="banner banner-hint">' + esc(tip) + '</div>' : '') + '</div>';
   }
@@ -5743,6 +7003,15 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       '<div class="caption mt8">받아 주신 그림 ' + Object.keys(EMBED).length + '종이 기본으로 들어 있어요. 여기서 직접 넣은 그림이 있으면 그 그림이 먼저 나와요 (지금 ' + customCount() + '종). 그림이 없는 포켓몬은 타입 아이콘으로 나와요.</div>' +
       '<div class="stack-8 mt8">' + body + '</div></div>';
   }
+  const diffIdx = (st) => (typeof st.settings.diff === 'number' ? st.settings.diff : 1);
+  // 초안 검사용 버튼 (초안 빌드에서만 보여요)
+  function draftToolsHTML() {
+    if (!DRAFT) return '';
+    const b = (k, t) => '<button class="btn btn-small" type="button" data-act="dev" data-k="' + k + '">' + t + '</button>';
+    return '<div class="card card-soft"><h2 class="card-title">🧪 초안 시험용 버튼</h2><div class="caption">새 규칙을 빨리 확인해 보는 버튼이에요. 정식 버전에는 없어요.</div>' +
+      '<div class="dev-btns mt8">' + b('mons', '🐾 포켓몬 3마리 받기') + b('balls', '🎒 볼 10개씩') + b('cash', '💰 돈 +5,000원') + b('wild', '🌿 야생 포켓몬 부르기') +
+      b('xp', '⭐ 모두 경험치 +80') + b('lap', '🍁 한 바퀴 돈 것처럼 (계절 바꾸기)') + b('hour', '⏰ 1시간 지난 것처럼') + '</div></div>';
+  }
   function parentHTML() {
     const st = store.st;
     const save = store.mode === 'online' ? '📱 같이 하는 방 ' + store.code + '에 저장돼요. 방은 모든 폰이 같이 봐요.'
@@ -5755,15 +7024,19 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       '<div class="card"><h2 class="card-title">💥 천적 반격 세기 · 쪽박 난이도</h2><div class="seg">' +
         [0, 1, 2].map((n) => '<button class="seg-btn' + (st.settings.counter === n ? ' on' : '') + '" type="button" data-act="set-counter" data-n="' + n + '">' + COUNTER_NAMES[n] + '<small>' + (n ? '반격 −' + Math.round(COUNTER_DMG[n] * 100) + '%' : '반격 없음') + '</small></button>').join('') +
         '</div><div class="caption mt8">한 회사에 주식을 몰았을 때 천적 회사가 반격하는 세기예요. 처음엔 약하게 두고, 익숙해지면 보통으로 바꿔도 좋아요.</div></div>' +
-      '<div class="card"><h2 class="card-title">🎲 하루 주사위 · 게임 시간 조절</h2><div class="seg">' +
-        DICE_CHOICES.map((n) => '<button class="seg-btn' + (st.settings.dice === n ? ' on' : '') + '" type="button" data-act="set-dice" data-n="' + n + '">' + n + '개<small>' + ({ 5: '짧게', 10: '보통', 20: '길게' }[n]) + '</small></button>').join('') +
-        '</div><div class="caption mt8">한 사람당 하루 개수예요. 주사위는 자정에 다시 채워져요. 주식 사고팔기와 뽑기는 주사위가 없어도 할 수 있어요.</div></div>' +
-      '<div class="card"><h2 class="card-title">⚔️ 배틀 길이 · 🎞️ 움직이는 포켓몬</h2><div class="seg">' +
-        LEN_ORDER.map((k) => '<button class="seg-btn' + (bt.len === k ? ' on' : '') + '" type="button" data-act="set-btlen" data-len="' + k + '">' + LENS[k].name + '<small>약 ' + LENS[k].sec + '초</small></button>').join('') +
-        '</div><div class="caption mt8">배틀 장면이 나오는 시간이에요. 배틀 중에도 화면 위 버튼으로 바꿀 수 있어요. ⏩ 넘기기를 누르면 바로 결과가 나와요.</div>' +
+      '<div class="card"><h2 class="card-title">🎲 주사위 · 게임 시간 조절</h2><div class="seg">' +
+        DICE_CHOICES.map((n) => '<button class="seg-btn' + (st.settings.dice === n ? ' on' : '') + '" type="button" data-act="set-dice" data-n="' + n + '">' + (n ? n + '개' : '제한 없음') + '<small>' + (n ? '1시간마다' : '마음껏') + '</small></button>').join('') +
+        '</div><div class="caption mt8">' + (st.settings.dice ? '한 사람당 1시간에 ' + st.settings.dice + '번 굴려요. 처음 굴린 때부터 1시간이 지나면 다시 채워져요.' : '주사위를 마음껏 굴려요. 주사위 수를 세지 않아요.') + ' 주식 사고팔기와 뽑기는 주사위가 없어도 할 수 있어요.</div></div>' +
+      '<div class="card"><h2 class="card-title">⚔️ 배틀 난이도</h2><div class="seg">' +
+        DIFFS.map((D, i) => '<button class="seg-btn' + (diffIdx(st) === i ? ' on' : '') + '" type="button" data-act="set-diff" data-n="' + i + '">' + D.icon + ' ' + D.name + '<small>' + D.desc.split(' · ')[0] + '</small></button>').join('') +
+        '</div><div class="caption mt8">' + esc(DIFFS[diffIdx(st)].desc) + '. 야생 포켓몬과 관장님의 힘이에요. 처음 몇 레벨은 살살 하다가 점점 세지고, 내 팀이 아주 세지면 관장님도 같이 세져요. 같이 하는 사람 모두에게 적용돼요.</div></div>' +
+      '<div class="card"><h2 class="card-title">⚔️ 배틀 속도 · 🎞️ 움직이는 포켓몬</h2><div class="seg">' +
+        LEN_ORDER.map((k) => '<button class="seg-btn' + (bt.len === k ? ' on' : '') + '" type="button" data-act="set-btlen" data-len="' + k + '">' + LENS[k].name + '<small>' + ({ short: '휙휙', normal: '기본', long: '느긋하게' }[k]) + '</small></button>').join('') +
+        '</div><div class="caption mt8">기술 · 글자가 나오는 빠르기예요. 배틀 중에도 화면 위 버튼으로 바꿀 수 있어요. 🤖 자동을 켜면 알아서 공격하고, 체력이 적으면 볼을 던져요.</div>' +
         '<div class="seg mt12"><button class="seg-btn' + (animPref ? ' on' : '') + '" type="button" data-act="set-anim" data-on="1">🎞️ 움직이게<small>배틀 · 말판 · 카드</small></button>' +
         '<button class="seg-btn' + (animPref ? '' : ' on') + '" type="button" data-act="set-anim" data-on="0">🖼️ 멈춘 그림<small>데이터 아끼기</small></button></div>' +
         '<div class="caption mt8">움직이는 그림은 작은 GIF를 AI로 4배 선명하게 다시 그린 거예요. 포켓몬마다 처음 한 번 약 0.3MB를 받고 그다음부터는 바로 나와요. 둘 다 이 폰에만 적용돼요.</div></div>' +
+      draftToolsHTML() +
       '<div class="card"><h2 class="card-title">🔄 처음부터</h2><div class="caption">돈 · 주식 · 포켓몬 · 배지가 모두 처음으로 돌아가요. 같이 하는 사람 이름과 넣은 그림은 그대로예요.</div>' +
         '<button class="btn btn-muted mt8" type="button" data-act="reset-game">🔄 처음부터 다시 하기</button></div>' +
       '<div class="card card-soft"><h2 class="card-title">💾 저장</h2><div class="caption">' + save + '</div></div>' +
@@ -6158,7 +7431,30 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     find: () => { board.free = false; follow(); setTimeout(updateFindBtn, 450); },
     'bt-skip': () => battleSkip(),
     'bt-speed': () => battleSpeed(),
-    'set-btlen': (el) => { setBattleLen(el.dataset.len); renderPanel(); toast('⚔️ 배틀 길이: ' + LENS[bt.len].name + ' (약 ' + LENS[bt.len].sec + '초)'); },
+    'bt-auto': () => battleAuto(),
+    'bt-cmd': (el) => btSend({ cmd: el.dataset.cmd, ball: el.dataset.ball, i: el.dataset.i != null ? Number(el.dataset.i) : undefined }),
+    'bt-menu': (el) => setMenu(el.dataset.menu),
+    'bt-done': () => dispatch('choose', { key: 'ok' }),
+    'team-tog': (el) => {
+      const f = el.dataset.fam;
+      if (!ui.team) return;
+      const i = ui.team.fams.indexOf(f);
+      if (i >= 0) ui.team.fams.splice(i, 1);
+      else if (ui.team.fams.length < TEAM_MAX) ui.team.fams.push(f);
+      else { toast('⚔️ 3마리까지 데려갈 수 있어요. 먼저 한 마리를 빼 주세요'); return; }
+      renderSheet();
+    },
+    'team-auto': () => {
+      const pd = myPending();
+      const v = viewer();
+      if (!pd || !ui.team) return;
+      ui.team.fams = autoTeam(v, encounterFoes(v, pd).map((f) => SP[f.sp].type));
+      renderSheet();
+      toast('💡 상대에게 센 친구들로 골랐어요');
+    },
+    'buy-ball': (el) => dispatch('buyBall', { ball: el.dataset.ball, n: Number(el.dataset.n) || 1 }),
+    dev: (el) => dispatch('dev', { k: el.dataset.k }),
+    'set-btlen': (el) => { setBattleLen(el.dataset.len); renderPanel(); toast('⚔️ 배틀 속도: ' + LENS[bt.len].name); },
     'set-anim': (el) => {
       setAnimPref(el.dataset.on === '1');
       board.tokensKey = '';
@@ -6178,7 +7474,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       confirmBox('📦 한꺼번에 팔기', c.icon + ' ' + esc(c.name) + ' <b>' + n + '주</b>를 모두 팔까요?<br>지금 값으로 ' + fmt(n * store.st.market.price[c.id]) + '원을 받아요.', '모두 팔기', () => dispatch('sell', { cid: c.id, all: true }));
     },
     'close-sheet': () => closeSheet(),
-    choose: (el) => dispatch('choose', { key: el.dataset.key }),
+    choose: (el) => dispatch('choose', { key: el.dataset.key, team: el.dataset.key === 'fight' && ui.team ? ui.team.fams.slice() : undefined }),
     'goto-stock': () => {
       ui.peek = true;
       renderSheet();
@@ -6213,10 +7509,23 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       if (p) confirmBox('🗑️ ' + esc(p.name) + ' 빼기', esc(p.name) + '의 돈 · 주식 · 포켓몬이 모두 사라져요.<br><b>정말 뺄까요?</b>', '빼기', () => dispatch('removePlayer', { pid: p.pid }));
     },
     bonus: (el) => dispatch('bonus', { pid: el.dataset.pid }),
-    'set-dice': (el) => dispatch('settings', { dice: Number(el.dataset.n) }),
+    'set-dice': (el) => { dispatch('settings', { dice: Number(el.dataset.n) }); renderPanel(); toast(Number(el.dataset.n) ? '🎲 1시간에 ' + el.dataset.n + '번 굴려요' : '🎲 주사위 제한 없음!'); },
     'set-counter': (el) => dispatch('settings', { counter: Number(el.dataset.n) }),
+    'set-diff': (el) => {
+      const n = Number(el.dataset.n);
+      dispatch('settings', { diff: n });
+      ui.odds = null;
+      if (DIFFS[n]) toast('⚔️ 배틀 난이도: ' + DIFFS[n].icon + ' ' + DIFFS[n].name + ' · ' + DIFFS[n].desc);
+    },
+    'goto-report': () => {
+      if (ui.panel) return;
+      ui.peek = !!myPending();
+      renderSheet();
+      switchTab('stock');
+      setTimeout(() => smoothScroll($('report-card'), 'start'), 60);
+    },
     'reset-game': () => resetGame(),
-    'open-parent': () => parentGate('엄마·아빠 메뉴', '같이 하는 사람 · 포켓몬 그림 넣기 · 주사위 수 · 처음부터를 바꿔요.', () => openPanel('parent')),
+    'open-parent': () => parentGate('엄마·아빠 메뉴', '같이 하는 사람 · 포켓몬 그림 넣기 · 주사위 · 배틀 속도 · 처음부터를 바꿔요.', () => openPanel('parent')),
     'close-panel': () => closePanel(),
     coupon: (el) => dispatch('coupon', { name: el.dataset.name, price: Number(el.dataset.price) }),
     'use-coupon': (el) => {
@@ -6235,7 +7544,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
       const v = viewer();
       if (n > v.tier) {
         const T = TIERS[n];
-        toast('🔒 ' + T.ball + ' ' + T.name + '는 ' + n + '단계에서 열려요 · 주식 ' + T.shares + '주 + 주식으로 번 돈 ' + fmt(T.earned) + '원', 3800);
+        toast('🔒 ' + T.ball + ' ' + T.name + '는 ' + n + '단계에서 열려요 · 주식 ' + T.shares + '주 모으기 + 주식으로 번 돈 ' + fmt(T.earned) + '원', 3800);
         return;
       }
       ui.ball = n;
@@ -6387,8 +7696,8 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         if (store.st) sizeStage(true);
       }, 160);
     });
-    // 자정이 지나면 주사위가 다시 채워져요
-    setInterval(() => { if (store.st && !document.hidden && !ui.anim && !ui.busy) { renderStatus(); renderRoll(); } }, 60000);
+    // 1시간이 지나면 주사위가 다시 채워져요 (남은 분도 1분마다 고쳐요)
+    setInterval(() => { if (store.st && !document.hidden && !ui.anim && !ui.busy) { renderStatus(); renderRoll(); renderTurnBox(); } }, 30000);
   }
 
   // ── 시작 ──
@@ -6451,6 +7760,7 @@ body.on-board .toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     if (!cloud.ref && !local.ok && store.mode === 'local') toast('⚠️ 이 화면에서는 저장이 안 돼요. 창을 닫으면 처음부터 시작해요.', 4200);
   }
   function init() {
+    if (DRAFT) { const t = document.querySelector('.wallet-title'); if (t) t.insertAdjacentHTML('afterbegin', '<span class="draft-chip">초안</span> '); }
     local.ok = local.test();
     deviceId();
     let st = sanitize(readJSON(SAVE_KEY));
