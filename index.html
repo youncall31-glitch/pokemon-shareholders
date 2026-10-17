@@ -100,6 +100,11 @@
   --t-normal: #94a3b8; --t-normal-hi: #f8fafc;
   --t-psychic: #a855f7; --t-psychic-hi: #f3e8ff;
   --t-fairy: #ec4899; --t-fairy-hi: #fce7f3;
+  --t-poison: #c026d3; --t-poison-hi: #fae8ff;
+  --t-bug: #84cc16; --t-bug-hi: #ecfccb;
+  --t-ghost: #6366f1; --t-ghost-hi: #e0e7ff;
+  --t-ice: #22d3ee; --t-ice-hi: #cffafe;
+  --t-dragon: #7c3aed; --t-dragon-hi: #ede9fe;
 
   /* 회사(체육관) 색 */
   --c-fighting: #e11d48; --c-rock: #78716c; --c-fire: #f97316; --c-grass: #16a34a;
@@ -466,6 +471,11 @@ b, strong { font-weight: 800; }
 .t-normal { --tc: var(--t-normal); --th: var(--t-normal-hi); }
 .t-psychic { --tc: var(--t-psychic); --th: var(--t-psychic-hi); }
 .t-fairy { --tc: var(--t-fairy); --th: var(--t-fairy-hi); }
+.t-poison { --tc: var(--t-poison); --th: var(--t-poison-hi); }
+.t-bug { --tc: var(--t-bug); --th: var(--t-bug-hi); }
+.t-ghost { --tc: var(--t-ghost); --th: var(--t-ghost-hi); }
+.t-ice { --tc: var(--t-ice); --th: var(--t-ice-hi); }
+.t-dragon { --tc: var(--t-dragon); --th: var(--t-dragon-hi); }
 
 /* ── 사건 카드(아래에서 올라오는 판) ── */
 .sheet {
@@ -862,6 +872,9 @@ details.more[open] > summary { margin-bottom: 10px; }
 .mon.m-electric { background: var(--c-electric-bg); border-color: var(--c-electric); }
 .mon.m-flying { background: var(--c-flying-bg); border-color: var(--c-flying); }
 .mon.m-rainbow { background: linear-gradient(90deg, var(--c-fighting-bg), var(--c-electric-bg), var(--c-grass-bg), var(--c-water-bg)); border-color: var(--evo-a); }
+.pool-sum { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
+.machine details.more, .tier-box details.more { width: 100%; text-align: left; }
+.tier-box details.more > summary { background: var(--surface); }
 .cap-mine { padding: 10px 12px; border-radius: 12px; background: var(--surface-2); font-size: 13px; font-weight: 800; line-height: 1.6; color: var(--muted-2); }
 .cap-from { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12.5px; font-weight: 800; color: var(--muted-2); }
 .cap-from .cp { width: 16px; height: 16px; margin: 0; }
@@ -1208,17 +1221,26 @@ details.more[open] > summary { margin-bottom: 10px; }
     normal: { name: '노말', icon: '⭐' },
     psychic: { name: '에스퍼', icon: '🔮' },
     fairy: { name: '페어리', icon: '🎀' },
+    poison: { name: '독', icon: '🧪' },
+    bug: { name: '벌레', icon: '🐛' },
+    ghost: { name: '고스트', icon: '👻' },
+    ice: { name: '얼음', icon: '❄️' },
+    dragon: { name: '드래곤', icon: '🐉' },
   };
-  // 효과가 굉장해요(×1.5) / 별로예요(×0.7) — 실제 포켓몬 상성을 쉽게 줄인 표
+  // 효과가 굉장해요(×1.5) / 별로예요(×0.7) — 실제 포켓몬 상성을 쉽게 줄인 표 (효과 없음도 '별로예요'로)
   const STRONG = {
-    water: ['fire', 'ground', 'rock'], fire: ['grass'], grass: ['water', 'ground', 'rock'], electric: ['water', 'flying'],
-    ground: ['fire', 'electric', 'rock'], rock: ['fire', 'flying'], flying: ['grass', 'fighting'], fighting: ['rock', 'normal'],
-    psychic: ['fighting'], fairy: ['fighting'],
+    water: ['fire', 'ground', 'rock'], fire: ['grass', 'bug', 'ice'], grass: ['water', 'ground', 'rock'],
+    electric: ['water', 'flying'], ice: ['grass', 'ground', 'flying', 'dragon'], fighting: ['normal', 'ice', 'rock'],
+    poison: ['grass', 'fairy'], ground: ['fire', 'electric', 'poison', 'rock'], flying: ['grass', 'fighting', 'bug'],
+    psychic: ['fighting', 'poison'], bug: ['grass', 'psychic'], rock: ['fire', 'ice', 'flying', 'bug'],
+    ghost: ['psychic', 'ghost'], dragon: ['dragon'], fairy: ['fighting', 'dragon'],
   };
   const WEAK = {
-    water: ['water', 'grass'], fire: ['fire', 'water', 'rock'], grass: ['grass', 'fire', 'flying'], electric: ['electric', 'grass', 'ground'],
-    ground: ['grass', 'flying'], rock: ['fighting', 'ground'], flying: ['electric', 'rock'], fighting: ['flying', 'psychic', 'fairy'],
-    normal: ['rock'], psychic: ['psychic'], fairy: ['fire'],
+    water: ['water', 'grass', 'dragon'], fire: ['fire', 'water', 'rock', 'dragon'], grass: ['grass', 'fire', 'poison', 'flying', 'bug', 'dragon'],
+    electric: ['electric', 'grass', 'ground', 'dragon'], ice: ['fire', 'water', 'ice'], fighting: ['poison', 'flying', 'psychic', 'bug', 'fairy', 'ghost'],
+    poison: ['poison', 'ground', 'rock', 'ghost'], ground: ['grass', 'bug', 'flying'], flying: ['electric', 'rock'],
+    psychic: ['psychic'], bug: ['fire', 'fighting', 'poison', 'flying', 'ghost', 'fairy'], rock: ['fighting', 'ground'],
+    ghost: ['normal'], dragon: ['fairy'], normal: ['rock', 'ghost'], fairy: ['fire', 'poison'],
   };
 
   // 동네 회사 8곳 — 이 순서가 상성 원이에요 (앞 회사가 다음 회사를 이겨요)
@@ -1254,29 +1276,64 @@ details.more[open] > summary { margin-bottom: 10px; }
     flying: { up: ['방학이라 제주도 가는 사람이 많대요', '새 비행기를 샀대요', '제주도 비행기 표가 매진됐대요'], down: ['태풍 때문에 비행기가 못 뜬대요', '비행기 기름 값이 올랐대요', '안개가 짙어서 비행기가 늦어졌대요'] },
   };
 
-  // 포켓몬: [이름, 도감 번호, 타입, 공격력, 볼 단계(0 = 뽑기에 안 나옴)]
+  // 포켓몬: [이름, 도감 번호, 타입, 공격력, 볼 단계(0 = 뽑기에 안 나옴)] — 1세대 151종 + 다른 세대 15종
   const SPECIES_ROWS = {
     bulbasaur: ['이상해씨', 1, 'grass', 14, 1], ivysaur: ['이상해풀', 2, 'grass', 34, 2], venusaur: ['이상해꽃', 3, 'grass', 68, 3],
     charmander: ['파이리', 4, 'fire', 15, 1], charmeleon: ['리자드', 5, 'fire', 35, 2], charizard: ['리자몽', 6, 'fire', 70, 3],
     squirtle: ['꼬부기', 7, 'water', 14, 1], wartortle: ['어니부기', 8, 'water', 34, 2], blastoise: ['거북왕', 9, 'water', 68, 3],
+    caterpie: ['캐터피', 10, 'bug', 5, 1], metapod: ['단데기', 11, 'bug', 18, 2], butterfree: ['버터플', 12, 'flying', 55, 3],
+    weedle: ['뿔충이', 13, 'bug', 5, 1], kakuna: ['딱충이', 14, 'bug', 18, 2], beedrill: ['독침붕', 15, 'bug', 55, 3],
     pidgey: ['구구', 16, 'flying', 12, 1], pidgeotto: ['피죤', 17, 'flying', 32, 2], pidgeot: ['피죤투', 18, 'flying', 62, 3],
-    pikachu: ['피카츄', 25, 'electric', 15, 1], raichu: ['라이츄', 26, 'electric', 45, 2],
-    sandshrew: ['모래두지', 27, 'ground', 13, 1], sandslash: ['고지', 28, 'ground', 40, 2],
-    jigglypuff: ['푸린', 39, 'fairy', 10, 1], wigglytuff: ['푸크린', 40, 'fairy', 30, 2],
-    machop: ['알통몬', 66, 'fighting', 14, 1], machoke: ['근육몬', 67, 'fighting', 34, 2], machamp: ['괴력몬', 68, 'fighting', 68, 3],
-    geodude: ['꼬마돌', 74, 'rock', 13, 1], graveler: ['데구리', 75, 'rock', 33, 2], golem: ['딱구리', 76, 'rock', 66, 3],
-    magikarp: ['잉어킹', 129, 'water', 5, 1], gyarados: ['갸라도스', 130, 'water', 60, 2],
-    lapras: ['라프라스', 131, 'water', 58, 3],
-    eevee: ['이브이', 133, 'normal', 13, 1],
-    vaporeon: ['샤미드', 134, 'water', 55, 0], jolteon: ['쥬피썬더', 135, 'electric', 55, 0], flareon: ['부스터', 136, 'fire', 55, 0],
-    leafeon: ['리피아', 470, 'grass', 55, 0], sylveon: ['님피아', 700, 'fairy', 55, 0],
-    snorlax: ['잠만보', 143, 'normal', 60, 3], dragonite: ['망나뇽', 149, 'flying', 75, 3],
-    luxray: ['렌트라', 405, 'electric', 62, 3], garchomp: ['한카리아스', 445, 'ground', 75, 3], lucario: ['루카리오', 448, 'fighting', 64, 3],
-    mewtwo: ['뮤츠', 150, 'psychic', 120, 4], mew: ['뮤', 151, 'psychic', 95, 4],
-    lugia: ['루기아', 249, 'flying', 105, 4], hooh: ['칠색조', 250, 'fire', 105, 4], celebi: ['세레비', 251, 'grass', 95, 4],
-    regirock: ['레지락', 377, 'rock', 95, 4], kyogre: ['가이오가', 382, 'water', 110, 4], groudon: ['그란돈', 383, 'ground', 110, 4],
-    rayquaza: ['레쿠쟈', 384, 'flying', 120, 4], arceus: ['아르세우스', 493, 'normal', 125, 4],
-    koraidon: ['코라이돈', 1007, 'fighting', 115, 4], miraidon: ['미라이돈', 1008, 'electric', 115, 4],
+    rattata: ['꼬렛', 19, 'normal', 10, 1], raticate: ['레트라', 20, 'normal', 33, 2], spearow: ['깨비참', 21, 'flying', 10, 1],
+    fearow: ['깨비드릴조', 22, 'flying', 38, 2], ekans: ['아보', 23, 'poison', 13, 1], arbok: ['아보크', 24, 'poison', 40, 2],
+    pikachu: ['피카츄', 25, 'electric', 15, 1], raichu: ['라이츄', 26, 'electric', 45, 2], sandshrew: ['모래두지', 27, 'ground', 13, 1],
+    sandslash: ['고지', 28, 'ground', 40, 2], nidoranf: ['니드런♀', 29, 'poison', 12, 1], nidorina: ['니드리나', 30, 'poison', 23, 2],
+    nidoqueen: ['니드퀸', 31, 'ground', 66, 3], nidoranm: ['니드런♂', 32, 'poison', 11, 1], nidorino: ['니드리노', 33, 'poison', 23, 2],
+    nidoking: ['니드킹', 34, 'ground', 66, 3], clefairy: ['삐삐', 35, 'fairy', 15, 1], clefable: ['픽시', 36, 'fairy', 47, 2],
+    vulpix: ['식스테일', 37, 'fire', 13, 1], ninetales: ['나인테일', 38, 'fire', 51, 2], jigglypuff: ['푸린', 39, 'fairy', 10, 1],
+    wigglytuff: ['푸크린', 40, 'fairy', 30, 2], zubat: ['주뱃', 41, 'flying', 9, 1], golbat: ['골뱃', 42, 'flying', 41, 2],
+    oddish: ['뚜벅쵸', 43, 'grass', 15, 1], gloom: ['냄새꼬', 44, 'grass', 29, 2], vileplume: ['라플레시아', 45, 'grass', 64, 3],
+    paras: ['파라스', 46, 'grass', 12, 1], parasect: ['파라섹트', 47, 'grass', 31, 2], venonat: ['콘팡', 48, 'bug', 14, 1],
+    venomoth: ['도나리', 49, 'bug', 40, 2], diglett: ['디그다', 50, 'ground', 11, 1], dugtrio: ['닥트리오', 51, 'ground', 35, 2],
+    meowth: ['나옹', 52, 'normal', 13, 1], persian: ['페르시온', 53, 'normal', 38, 2], psyduck: ['고라파덕', 54, 'water', 15, 1],
+    golduck: ['골덕', 55, 'water', 50, 2], mankey: ['망키', 56, 'fighting', 14, 1], primeape: ['성원숭', 57, 'fighting', 41, 2],
+    growlithe: ['가디', 58, 'fire', 18, 1], arcanine: ['윈디', 59, 'fire', 61, 2], poliwag: ['발챙이', 60, 'water', 14, 1],
+    poliwhirl: ['슈륙챙이', 61, 'water', 27, 2], poliwrath: ['강챙이', 62, 'water', 66, 3], abra: ['캐이시', 63, 'psychic', 14, 1],
+    kadabra: ['윤겔라', 64, 'psychic', 30, 2], alakazam: ['후딘', 65, 'psychic', 65, 3], machop: ['알통몬', 66, 'fighting', 14, 1],
+    machoke: ['근육몬', 67, 'fighting', 34, 2], machamp: ['괴력몬', 68, 'fighting', 68, 3], bellsprout: ['모다피', 69, 'grass', 14, 1],
+    weepinbell: ['우츠동', 70, 'grass', 28, 2], victreebel: ['우츠보트', 71, 'grass', 64, 3], tentacool: ['왕눈해', 72, 'water', 16, 1],
+    tentacruel: ['독파리', 73, 'water', 53, 2], geodude: ['꼬마돌', 74, 'rock', 13, 1], graveler: ['데구리', 75, 'rock', 33, 2],
+    golem: ['딱구리', 76, 'rock', 66, 3], ponyta: ['포니타', 77, 'fire', 22, 1], rapidash: ['날쌩마', 78, 'fire', 50, 2],
+    slowpoke: ['야돈', 79, 'water', 15, 1], slowbro: ['야도란', 80, 'water', 48, 2], magnemite: ['코일', 81, 'electric', 16, 1],
+    magneton: ['레어코일', 82, 'electric', 43, 2], farfetchd: ['파오리', 83, 'flying', 20, 1], doduo: ['두두', 84, 'flying', 14, 1],
+    dodrio: ['두트리오', 85, 'flying', 44, 2], seel: ['쥬쥬', 86, 'water', 16, 1], dewgong: ['쥬레곤', 87, 'water', 45, 2],
+    grimer: ['질퍽이', 88, 'poison', 16, 1], muk: ['질뻐기', 89, 'poison', 50, 2], shellder: ['셀러', 90, 'water', 14, 1],
+    cloyster: ['파르셀', 91, 'water', 55, 2], gastly: ['고오스', 92, 'ghost', 14, 1], haunter: ['고우스트', 93, 'ghost', 31, 2],
+    gengar: ['팬텀', 94, 'ghost', 65, 3], onix: ['롱스톤', 95, 'rock', 20, 1], drowzee: ['슬리프', 96, 'psychic', 16, 1],
+    hypno: ['슬리퍼', 97, 'psychic', 47, 2], krabby: ['크랩', 98, 'water', 16, 1], kingler: ['킹크랩', 99, 'water', 45, 2],
+    voltorb: ['찌리리공', 100, 'electric', 16, 1], electrode: ['붐볼', 101, 'electric', 48, 2], exeggcute: ['아라리', 102, 'grass', 16, 1],
+    exeggutor: ['나시', 103, 'grass', 56, 2], cubone: ['탕구리', 104, 'ground', 15, 1], marowak: ['텅구리', 105, 'ground', 35, 2],
+    hitmonlee: ['시라소몬', 106, 'fighting', 41, 2], hitmonchan: ['홍수몬', 107, 'fighting', 41, 2], lickitung: ['내루미', 108, 'normal', 20, 1],
+    koffing: ['또가스', 109, 'poison', 17, 1], weezing: ['또도가스', 110, 'poison', 48, 2], rhyhorn: ['뿔카노', 111, 'ground', 17, 1],
+    rhydon: ['코뿌리', 112, 'ground', 47, 2], chansey: ['럭키', 113, 'normal', 40, 2], tangela: ['덩쿠리', 114, 'grass', 37, 2],
+    kangaskhan: ['캥카', 115, 'normal', 48, 2], horsea: ['쏘드라', 116, 'water', 13, 1], seadra: ['시드라', 117, 'water', 38, 2],
+    goldeen: ['콘치', 118, 'water', 15, 1], seaking: ['왕콘치', 119, 'water', 40, 2], staryu: ['별가사리', 120, 'water', 17, 1],
+    starmie: ['아쿠스타', 121, 'water', 54, 2], mrmime: ['마임맨', 122, 'psychic', 42, 2], scyther: ['스라크', 123, 'flying', 65, 3],
+    jynx: ['루주라', 124, 'ice', 41, 2], electabuzz: ['에레브', 125, 'electric', 48, 2], magmar: ['마그마', 126, 'fire', 49, 2],
+    pinsir: ['쁘사이저', 127, 'bug', 65, 3], tauros: ['켄타로스', 128, 'normal', 48, 2], magikarp: ['잉어킹', 129, 'water', 5, 1],
+    gyarados: ['갸라도스', 130, 'water', 60, 2], lapras: ['라프라스', 131, 'water', 58, 3], ditto: ['메타몽', 132, 'normal', 13, 1],
+    eevee: ['이브이', 133, 'normal', 13, 1], vaporeon: ['샤미드', 134, 'water', 55, 0], jolteon: ['쥬피썬더', 135, 'electric', 55, 0],
+    flareon: ['부스터', 136, 'fire', 55, 0], porygon: ['폴리곤', 137, 'normal', 21, 1], omanyte: ['암나이트', 138, 'rock', 18, 1],
+    omastar: ['암스타', 139, 'rock', 49, 2], kabuto: ['투구', 140, 'rock', 18, 1], kabutops: ['투구푸스', 141, 'rock', 49, 2],
+    aerodactyl: ['프테라', 142, 'rock', 67, 3], snorlax: ['잠만보', 143, 'normal', 60, 3], articuno: ['프리져', 144, 'ice', 95, 4],
+    zapdos: ['썬더', 145, 'electric', 95, 4], moltres: ['파이어', 146, 'fire', 95, 4], dratini: ['미뇽', 147, 'dragon', 14, 1],
+    dragonair: ['신뇽', 148, 'dragon', 34, 2], dragonite: ['망나뇽', 149, 'flying', 75, 3], mewtwo: ['뮤츠', 150, 'psychic', 120, 4],
+    mew: ['뮤', 151, 'psychic', 95, 4], lugia: ['루기아', 249, 'flying', 105, 4], hooh: ['칠색조', 250, 'fire', 105, 4],
+    celebi: ['세레비', 251, 'grass', 95, 4], regirock: ['레지락', 377, 'rock', 95, 4], kyogre: ['가이오가', 382, 'water', 110, 4],
+    groudon: ['그란돈', 383, 'ground', 110, 4], rayquaza: ['레쿠쟈', 384, 'flying', 120, 4], luxray: ['렌트라', 405, 'electric', 62, 3],
+    garchomp: ['한카리아스', 445, 'ground', 75, 3], lucario: ['루카리오', 448, 'fighting', 64, 3], leafeon: ['리피아', 470, 'grass', 55, 0],
+    arceus: ['아르세우스', 493, 'normal', 125, 4], sylveon: ['님피아', 700, 'fairy', 55, 0], koraidon: ['코라이돈', 1007, 'fighting', 115, 4],
+    miraidon: ['미라이돈', 1008, 'electric', 115, 4],
   };
   const SP = {};
   Object.keys(SPECIES_ROWS).forEach((k) => {
@@ -1293,7 +1350,21 @@ details.more[open] > summary { margin-bottom: 10px; }
     bulba: ['bulbasaur', 'ivysaur', 'venusaur'], char: ['charmander', 'charmeleon', 'charizard'], squirt: ['squirtle', 'wartortle', 'blastoise'],
     pidgey: ['pidgey', 'pidgeotto', 'pidgeot'], pika: ['pikachu', 'raichu'], sand: ['sandshrew', 'sandslash'],
     jiggly: ['jigglypuff', 'wigglytuff'], machop: ['machop', 'machoke', 'machamp'], geo: ['geodude', 'graveler', 'golem'],
-    karp: ['magikarp', 'gyarados'], eevee: ['eevee', 'vaporeon'],
+    karp: ['magikarp', 'gyarados'], eevee: ['eevee', 'vaporeon'], cater: ['caterpie', 'metapod', 'butterfree'],
+    weedle: ['weedle', 'kakuna', 'beedrill'], rattata: ['rattata', 'raticate'], spearow: ['spearow', 'fearow'],
+    ekans: ['ekans', 'arbok'], nidof: ['nidoranf', 'nidorina', 'nidoqueen'], nidom: ['nidoranm', 'nidorino', 'nidoking'],
+    clefairy: ['clefairy', 'clefable'], vulpix: ['vulpix', 'ninetales'], zubat: ['zubat', 'golbat'],
+    oddish: ['oddish', 'gloom', 'vileplume'], paras: ['paras', 'parasect'], venonat: ['venonat', 'venomoth'],
+    diglett: ['diglett', 'dugtrio'], meowth: ['meowth', 'persian'], psyduck: ['psyduck', 'golduck'],
+    mankey: ['mankey', 'primeape'], growlithe: ['growlithe', 'arcanine'], poli: ['poliwag', 'poliwhirl', 'poliwrath'],
+    abra: ['abra', 'kadabra', 'alakazam'], bell: ['bellsprout', 'weepinbell', 'victreebel'], tentacool: ['tentacool', 'tentacruel'],
+    ponyta: ['ponyta', 'rapidash'], slowpoke: ['slowpoke', 'slowbro'], magnemite: ['magnemite', 'magneton'],
+    doduo: ['doduo', 'dodrio'], seel: ['seel', 'dewgong'], grimer: ['grimer', 'muk'],
+    shellder: ['shellder', 'cloyster'], gastly: ['gastly', 'haunter', 'gengar'], drowzee: ['drowzee', 'hypno'],
+    krabby: ['krabby', 'kingler'], voltorb: ['voltorb', 'electrode'], exeggcute: ['exeggcute', 'exeggutor'],
+    cubone: ['cubone', 'marowak'], koffing: ['koffing', 'weezing'], rhyhorn: ['rhyhorn', 'rhydon'],
+    horsea: ['horsea', 'seadra'], goldeen: ['goldeen', 'seaking'], staryu: ['staryu', 'starmie'],
+    omanyte: ['omanyte', 'omastar'], kabuto: ['kabuto', 'kabutops'], dragonite: ['dratini', 'dragonair', 'dragonite'],
   };
   const EEVEE_FORMS = { water: 'vaporeon', electric: 'jolteon', fire: 'flareon', grass: 'leafeon' };
   const FAM_OF = {};
@@ -1536,10 +1607,13 @@ details.more[open] > summary { margin-bottom: 10px; }
     if (!COUNTER_DMG[level] || n < COUNTER_FROM) return 0;
     return Math.min(COUNTER_MAX, (n - COUNTER_FROM + 1) * COUNTER_STEP);
   }
-  function capsuleCounts(p) {
+  // 캡슐 상자: 회사 타입마다 2개 + 그 회사 주식 2주마다 1개(최대 +5)
+  // 무지개 캡슐(회사가 없는 타입)은 그 볼의 무지개 포켓몬 4종마다 1개 (최소 2개)
+  const rainbowCaps = (ball) => Math.max(2, Math.round(((POOLS[ball] && POOLS[ball].rainbow) || []).length / 4));
+  function capsuleCounts(p, ball) {
     const out = {};
     RING.forEach((c) => { out[c] = 2 + Math.min(5, Math.floor((p.sh[c] || 0) / 2)); });
-    out.rainbow = 2;
+    out.rainbow = ball ? rainbowCaps(ball) : 2;
     return out;
   }
   // 승리 확률: 양쪽 공격력에 0.6~1.4배 운이 곱해져요 (실제 배틀과 같은 규칙)
@@ -2079,7 +2153,7 @@ details.more[open] > summary { margin-bottom: 10px; }
       if (p.cash < DRAW_PRICE) return fail('💸 ' + fmt(DRAW_PRICE - p.cash) + '원이 더 필요해요! 주식으로 돈을 불려 봐요 📈');
       p.cash -= DRAW_PRICE;
       p.stats.draws += 1;
-      const caps = capsuleCounts(p);
+      const caps = capsuleCounts(p, ball);
       const w = {};
       CAPSULE_KEYS.forEach((k) => { if (POOLS[ball][k] && POOLS[ball][k].length) w[k] = caps[k]; });
       const ck = weightedPick(w);
@@ -2989,10 +3063,10 @@ details.more[open] > summary { margin-bottom: 10px; }
   const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const ui = {
     tab: 'board', busy: false, sheets: [], anim: null, seenMove: -1, suspense: 0,
-    drawAnim: null, reveal: null, ball: 0, pickPlace: -1, meetingSeen: {}, panel: null, lastHandoff: '', peek: false, rooms: null, rolling: false,
+    drawAnim: null, reveal: null, ball: 0, open: {}, pickPlace: -1, meetingSeen: {}, panel: null, lastHandoff: '', peek: false, rooms: null, rolling: false,
   };
-  const TYPE_C = { water: '#3b82f6', fire: '#f97316', grass: '#22c55e', electric: '#facc15', rock: '#a8a29e', ground: '#d97706', flying: '#38bdf8', fighting: '#f43f5e', normal: '#94a3b8', psychic: '#a855f7', fairy: '#ec4899' };
-  const TYPE_HI = { water: '#dbeafe', fire: '#ffedd5', grass: '#dcfce7', electric: '#fef9c3', rock: '#f5f5f4', ground: '#fef3c7', flying: '#e0f2fe', fighting: '#ffe4e6', normal: '#f8fafc', psychic: '#f3e8ff', fairy: '#fce7f3' };
+  const TYPE_C = { water: '#3b82f6', fire: '#f97316', grass: '#22c55e', electric: '#facc15', rock: '#a8a29e', ground: '#d97706', flying: '#38bdf8', fighting: '#f43f5e', normal: '#94a3b8', psychic: '#a855f7', fairy: '#ec4899', poison: '#c026d3', bug: '#84cc16', ghost: '#6366f1', ice: '#22d3ee', dragon: '#7c3aed' };
+  const TYPE_HI = { water: '#dbeafe', fire: '#ffedd5', grass: '#dcfce7', electric: '#fef9c3', rock: '#f5f5f4', ground: '#fef3c7', flying: '#e0f2fe', fighting: '#ffe4e6', normal: '#f8fafc', psychic: '#f3e8ff', fairy: '#fce7f3', poison: '#fae8ff', bug: '#ecfccb', ghost: '#e0e7ff', ice: '#cffafe', dragon: '#ede9fe' };
   const P_COLOR = { blue: '#2563eb', orange: '#ea580c', green: '#059669', purple: '#7c3aed' };
   const partnerSp = (p) => { const m = partnerMon(p); return m ? m.sp : null; };
 
@@ -4225,7 +4299,13 @@ details.more[open] > summary { margin-bottom: 10px; }
 
   function poolChips(b, v) {
     return CAPSULE_KEYS.map((k) => (POOLS[b][k] || []).map((sp) =>
-      '<span class="mon m-' + k + (v.dex[sp] ? ' seen' : '') + '">' + capIcon(k) + ' ' + esc(SP[sp].name) + (v.dex[sp] ? '' : ' ?') + '</span>').join('')).join('');
+      '<span class="mon m-' + k + (v.dex[sp] ? ' seen' : '') + '">' + (k === 'rainbow' ? TYPES[SP[sp].type].icon : capIcon(k)) + ' ' + esc(SP[sp].name) + (v.dex[sp] ? '' : ' ?') + '</span>').join('')).join('');
+  }
+  const poolSize = (b) => CAPSULE_KEYS.reduce((n, k) => n + (POOLS[b][k] || []).length, 0);
+  const poolSeen = (b, v) => CAPSULE_KEYS.reduce((n, k) => n + (POOLS[b][k] || []).filter((sp) => v.dex[sp]).length, 0);
+  // 접었다 펼치는 칸: 다시 그려도 펼친 채로 남아요
+  function keepDetails(key, summary, body) {
+    return '<details class="more" data-keep="' + key + '"' + (ui.open[key] ? ' open' : '') + '><summary>' + summary + '</summary>' + body + '</details>';
   }
   function machineHTML(v) {
     const b = shopBall(v);
@@ -4243,14 +4323,15 @@ details.more[open] > summary { margin-bottom: 10px; }
         '<div class="orb t' + b + '" aria-hidden="true"><div class="ring"></div><div class="core"></div><div class="bl">' + t.ball + '</div></div>' +
         '<div class="machine-title">' + t.name + ' 뽑기 · 한 번 ' + fmt(DRAW_PRICE) + '원</div>' +
         '<div class="machine-sub">' + BALL_DESC[b] + '</div>' +
-        '<div class="mons">' + poolChips(b, v) + '</div>' +
+        '<div class="pool-sum">' + CAPSULE_KEYS.filter((k) => POOLS[b][k]).map((k) => '<span class="ct">' + capIcon(k) + ' ' + POOLS[b][k].length + '종</span>').join('') + '</div>' +
+        keepDetails('pool' + b, '🔎 이 볼에서 나오는 포켓몬 ' + poolSize(b) + '종 보기 · 도감에 ' + poolSeen(b, v) + '종', '<div class="mons">' + poolChips(b, v) + '</div>') +
         '<button class="draw-btn t' + b + '" type="button" data-act="draw">' + t.ball + ' ' + t.name + '로 뽑기 (−' + fmt(DRAW_PRICE) + '원)</button>' +
         '<div class="caption">' + (short ? '💸 ' + fmt(DRAW_PRICE - v.cash) + '원이 더 필요해요. 주식으로 돈을 불려 봐요 📈' : '같은 가족이 또 나오면 합체해요. 3마리가 모이면 돈 없이 진화!') + '</div>' +
       '</div>';
   }
   function capsulesHTML(v) {
     const b = shopBall(v);
-    const caps = capsuleCounts(v);
+    const caps = capsuleCounts(v, b);
     let total = 0;
     CAPSULE_KEYS.forEach((k) => { if (POOLS[b][k]) total += caps[k]; });
     const mine = RING.filter((c) => (v.sh[c] || 0) > 0).map((c) => {
@@ -4263,8 +4344,10 @@ details.more[open] > summary { margin-bottom: 10px; }
     const chips = CAPSULE_KEYS.map((k) => '<span class="ct' + (caps[k] > 2 ? ' hot' : '') + '">' + capIcon(k) + ' ' + caps[k] + '개 · ' + Math.round((caps[k] / total) * 100) + '%</span>').join('');
     let top = null;
     RING.forEach((c) => { if (caps[c] > 2 && (!top || caps[c] > caps[top])) top = c; });
+    const topNames = top ? POOLS[b][top].map((k) => SP[k].name) : [];
+    const topText = topNames.slice(0, 4).join('·') + (topNames.length > 4 ? ' 등' : '');
     const note = top
-      ? '→ 이번 ' + TIERS[b].ball + ' ' + TIERS[b].name + '에서는 ' + COMP[top].icon + ' ' + POOLS[b][top].map((k) => SP[k].name).join('·') + iga(SP[POOLS[b][top][POOLS[b][top].length - 1]].name) + ' 가장 잘 나와요! 캡슐은 고른 볼 안에서만 확률을 바꿔요.'
+      ? '→ 이번 ' + TIERS[b].ball + ' ' + TIERS[b].name + '에서는 ' + COMP[top].icon + ' ' + topText + iga(topText) + ' 가장 잘 나와요! 캡슐은 고른 볼 안에서만 확률을 바꿔요.'
       : '→ 지금은 모든 타입이 똑같이 나와요. 좋아하는 타입 회사의 주식을 2주 모으면 그 타입이 더 잘 나와요!';
     return '<h2 class="card-title">🎰 뽑기 상자 · 내 주식이 바꿔요</h2>' +
       '<div class="caption">상자에는 타입마다 캡슐 2개가 기본으로 들어 있어요. 회사 주식 <b>2주마다</b> 그 회사 타입 캡슐이 1개 늘어나요 (최대 +5개).</div>' +
@@ -4272,7 +4355,7 @@ details.more[open] > summary { margin-bottom: 10px; }
       '<div class="capbox mt8" aria-hidden="true">' + box + '</div>' +
       '<div class="mt8">' + chips + '</div>' +
       '<div class="banner banner-info mt8">' + note + '</div>' +
-      '<div class="caption mt8">🌈 무지개 캡슐에서는 회사가 없는 타입(노말 · 에스퍼 · 페어리) 포켓몬이 나와요. 이 캡슐은 주식으로 늘어나지 않아요.</div>';
+      '<div class="caption mt8">🌈 무지개 캡슐에서는 회사가 없는 타입(노말 · 에스퍼 · 페어리 · 독 · 벌레 · 고스트 · 얼음 · 드래곤) 포켓몬이 나와요. 무지개 포켓몬 4종마다 캡슐이 1개씩 있어요 (최소 2개). 이 캡슐은 주식으로 늘어나지 않아요.</div>';
   }
   function tiersHTML(v) {
     const rows = [1, 2, 3, 4].map((t) => {
@@ -4281,7 +4364,7 @@ details.more[open] > summary { margin-bottom: 10px; }
       const req = t === 1 ? BALL_REQ[1] : '주식 ' + T.shares + '주 + 주식으로 번 돈 ' + fmt(T.earned) + '원 · ' + BALL_REQ[t];
       return '<div class="tier-box ' + cls + '"><div class="tier-head"><div class="tb" aria-hidden="true">' + T.ball + '</div><div style="min-width: 0">' +
         '<div class="tn">' + t + '단계 · ' + T.name + (cls === 'done' ? ' ✅' : cls === 'now' ? ' · 지금' : ' 🔒') + '</div><div class="tc">' + req + '</div></div></div>' +
-        '<div class="mons">' + poolChips(t, v) + '</div></div>';
+        keepDetails('tier' + t, poolSize(t) + '종 보기 · 도감에 ' + poolSeen(t, v) + '종', '<div class="mons">' + poolChips(t, v) + '</div>') + '</div>';
     }).join('');
     let next = '';
     if (v.tier < 4) {
@@ -5242,7 +5325,12 @@ details.more[open] > summary { margin-bottom: 10px; }
     document.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
     document.addEventListener('error', onImgError, true);
-    document.addEventListener('toggle', (e) => { if (e.target && e.target.id === 'img-more') pm.gridOpen = e.target.open; }, true);
+    document.addEventListener('toggle', (e) => {
+      const t = e.target;
+      if (!t || !t.dataset) return;
+      if (t.id === 'img-more') pm.gridOpen = t.open;
+      if (t.dataset.keep) ui.open[t.dataset.keep] = t.open;
+    }, true);
     document.addEventListener('input', (e) => { if (e.target && e.target.dataset && e.target.dataset.field) onSplitInput(e.target); });
     document.addEventListener('change', (e) => { if (e.target && e.target.dataset && e.target.dataset.field === 'clear') onSplitInput(e.target); });
     $('modal-ok').addEventListener('click', confirmModal);
