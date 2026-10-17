@@ -1,7 +1,7 @@
 // 포켓몬 주주 총회 — 인터넷이 잠깐 끊겨도 열리게 이 사이트 파일만 저장해 둬요.
 // 게임 파일은 언제나 인터넷에서 먼저 새로 받아요 (그래서 고친 게임이 바로 보여요).
 // 움직이는 포켓몬 그림(sprites/)은 한 번 받으면 폰에 저장해 두고 다시 받지 않아요.
-const CACHE = 'pokemon-shareholders-3.4';
+const CACHE = 'pokemon-shareholders-3.5';
 const SPRITES = 'pokemon-shareholders-sprites-1';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
