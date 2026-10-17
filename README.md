@@ -20,5 +20,5 @@
 
 - 게임은 폰마다 그 폰의 브라우저에 따로 저장돼요.
 - 한 폰으로 여럿이 돌아가며 하려면 ⚙️ 엄마·아빠 메뉴에서 사람을 추가해요.
-- 포켓몬 그림은 인터넷([PokeAPI](https://github.com/PokeAPI/sprites))에서 불러와요. 인터넷이 안 되면 타입 아이콘으로 나와요.
+- 포켓몬 그림은 인터넷([PokeAPI](https://github.com/PokeAPI/sprites))에서 큰 공식 일러스트를 불러와요. 인터넷이 안 되면 타입 아이콘으로 나와요.
 - 포켓몬 이름과 그림의 권리는 Nintendo · Creatures Inc. · GAME FREAK inc. · The Pokémon Company에 있어요. 이 게임은 가족끼리 쓰는 비영리 팬 게임이에요.

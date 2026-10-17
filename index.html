@@ -431,6 +431,9 @@ b, strong { font-weight: 800; }
 .vis.sm { height: 56px; margin: 0; }
 .vis.big { height: 150px; }
 .poke-img { display: block; max-width: 100%; height: 92px; object-fit: contain; filter: drop-shadow(0 4px 6px var(--shadow-strong)); image-rendering: auto; }
+/* 살짝 숨 쉬듯 움직여요 (도감 칸은 가만히) */
+@keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.mon-card .poke-img, .reveal-card .poke-img, .fighter .poke-img { animation: idle 2.6s ease-in-out infinite; }
 .vis.sm .poke-img { height: 52px; }
 .vis.big .poke-img { height: 140px; }
 .emblem {
@@ -2616,17 +2619,18 @@ details.more[open] > summary { margin-bottom: 10px; }
   }
   const img = { ref: null, unsub: null };
   // Claude 밖(혼자 열리는 파일)에서는 인터넷의 움직이는 그림을 써요
-  const SPRITE_ANI = (n) => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/' + n + '.gif';
-  const SPRITE_PNG = (n) => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + n + '.png';
+  // 큰 공식 일러스트(475px) → 안 되면 HOME 그림(512px) → 그래도 안 되면 타입 엠블럼
+  const SPRITE_ART = (n) => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/' + n + '.png';
+  const SPRITE_HOME = (n) => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/' + n + '.png';
   let spritesOn = false;
-  const aniFail = new Set();
-  const pngFail = new Set();
+  const artFail = new Set();
+  const homeFail = new Set();
   const validId = (id) => typeof id === 'string' && /^[A-Za-z0-9_-]{8,64}$/.test(id);
 
   function imgUrl(dex) {
     if (IMG[dex]) return '/_blob/' + IMG[dex];
     if (EMBED[dex]) return EMBED[dex];
-    if (spritesOn && !IN_CLAUDE && !(aniFail.has(dex) && pngFail.has(dex))) return aniFail.has(dex) ? SPRITE_PNG(dex) : SPRITE_ANI(dex);
+    if (spritesOn && !IN_CLAUDE && !(artFail.has(dex) && homeFail.has(dex))) return artFail.has(dex) ? SPRITE_HOME(dex) : SPRITE_ART(dex);
     return null;
   }
   const imgCount = () => SPECIES_KEYS.filter((k) => IMG[SP[k].dex] || EMBED[SP[k].dex]).length;
@@ -2639,7 +2643,7 @@ details.more[open] > summary { margin-bottom: 10px; }
     const s = SP[sp];
     const url = imgUrl(s.dex);
     const inner = url
-      ? '<img class="poke-img" src="' + url + '" data-dex="' + s.dex + '" data-sp="' + sp + '" alt="' + esc(s.name) + '" decoding="async">'
+      ? '<img class="poke-img" src="' + url + '" data-dex="' + s.dex + '" data-sp="' + sp + '" alt="' + esc(s.name) + '" loading="lazy" decoding="async">'
       : emblemHTML(sp, s.name);
     return '<div class="vis' + (cls ? ' ' + cls : '') + '">' + inner + '</div>';
   }
@@ -2648,7 +2652,7 @@ details.more[open] > summary { margin-bottom: 10px; }
     if (!sp) return '<span class="mini-em pawn-em' + add + '" role="img" aria-label="기본 말"></span>';
     const s = SP[sp];
     const url = imgUrl(s.dex);
-    if (url) return '<span class="mini-em photo' + add + '"><img src="' + url + '" alt="' + esc(s.name) + '" data-dex="' + s.dex + '" data-sp="' + sp + '"></span>';
+    if (url) return '<span class="mini-em photo' + add + '"><img src="' + url + '" alt="' + esc(s.name) + '" data-dex="' + s.dex + '" data-sp="' + sp + '" loading="lazy" decoding="async"></span>';
     return '<span class="mini-em t-' + s.type + add + '" role="img" aria-label="' + esc(s.name) + '">' + TYPES[s.type].icon + '</span>';
   }
   // 그림을 못 불러오면: 움직이는 그림 → 멈춘 그림 → 타입 엠블럼
@@ -2660,11 +2664,11 @@ details.more[open] > summary { margin-bottom: 10px; }
     if (src.indexOf('blob:') === 0 && EMBED_IMG[dex] && embedFallback()) { el.src = EMBED_IMG[dex]; return; }
     // 직접 넣은 그림을 못 불러오면 기본 그림으로
     if (src.indexOf('/_blob/') === 0 && EMBED[dex]) { el.src = EMBED[dex]; return; }
-    if (src === SPRITE_ANI(dex)) {
-      aniFail.add(dex);
-      if (!pngFail.has(dex)) { el.src = SPRITE_PNG(dex); return; }
-    } else if (src === SPRITE_PNG(dex)) {
-      pngFail.add(dex);
+    if (src === SPRITE_ART(dex)) {
+      artFail.add(dex);
+      if (!homeFail.has(dex)) { el.src = SPRITE_HOME(dex); return; }
+    } else if (src === SPRITE_HOME(dex)) {
+      homeFail.add(dex);
     }
     const sp = el.dataset.sp || SP_BY_DEX[dex];
     if (!SP[sp]) return;
@@ -2682,7 +2686,9 @@ details.more[open] > summary { margin-bottom: 10px; }
     if (IN_CLAUDE) return;
     const t = new Image();
     t.onload = () => { spritesOn = true; render(true); };
-    t.src = SPRITE_ANI(25);
+    // 일러스트가 잠깐 안 되면 HOME 그림으로 한 번 더 확인해요
+    t.onerror = () => { t.onerror = null; t.src = SPRITE_HOME(25); };
+    t.src = SPRITE_ART(25);
   }
 
   function initImages() {
